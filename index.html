@@ -1,0 +1,842 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>TTRPG/TCG — Sistema Core v0.1</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:        #0b0b10;
+  --bg2:       #12121a;
+  --bg3:       #1a1a26;
+  --bg4:       #222232;
+  --border:    rgba(255,255,255,0.07);
+  --border2:   rgba(255,255,255,0.13);
+  --text:      #e8e4d8;
+  --text2:     #9490a0;
+  --text3:     #56536a;
+  --mod:       #7c6af7;
+  --mod-dim:   rgba(124,106,247,0.12);
+  --mod-glow:  rgba(124,106,247,0.25);
+  --teal:      #2ec4a0;
+  --teal-dim:  rgba(46,196,160,0.12);
+  --amber:     #f0a500;
+  --amber-dim: rgba(240,165,0,0.10);
+  --red:       #c94040;
+  --red-dim:   rgba(201,64,64,0.12);
+  --parch:     #f0ede4;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:'Inter',system-ui,sans-serif;font-size:15px;line-height:1.7;display:flex;flex-direction:column;min-height:100vh;}
+
+/* ── TOPBAR ── */
+.topbar{position:fixed;top:0;left:0;right:0;z-index:100;height:48px;background:rgba(11,11,16,0.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 24px;gap:16px;}
+.topbar-title{font-family:'Cinzel',serif;font-size:13px;font-weight:600;letter-spacing:.12em;color:var(--text2);text-transform:uppercase;}
+.topbar-version{font-size:10px;color:var(--text3);border:1px solid var(--border2);border-radius:3px;padding:1px 6px;font-family:'JetBrains Mono',monospace;}
+.part-toggle{display:flex;background:var(--bg3);border-radius:6px;padding:3px;gap:2px;margin-left:auto;}
+.ptbtn{padding:4px 14px;border-radius:4px;border:none;background:transparent;font-family:'Inter',sans-serif;font-size:11px;font-weight:600;cursor:pointer;transition:all .2s;color:var(--text2);letter-spacing:.04em;}
+.ptbtn.active-man{background:var(--mod);color:#fff;}
+.ptbtn.active-dev{background:var(--teal);color:#0b0b10;}
+
+/* ── LAYOUT ── */
+.layout{display:grid;grid-template-columns:260px 1fr;min-height:100vh;padding-top:48px;}
+
+/* ── SIDEBAR ── */
+.sidebar{position:sticky;top:48px;height:calc(100vh - 48px);overflow-y:auto;background:var(--bg2);border-right:1px solid var(--border);padding:24px 0;display:flex;flex-direction:column;}
+.sidebar::-webkit-scrollbar{width:3px;}
+.sidebar::-webkit-scrollbar-thumb{background:var(--bg3);}
+.sb-part-label{font-family:'Cinzel',serif;font-size:9px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;padding:0 20px 8px;margin-bottom:4px;display:flex;align-items:center;gap:8px;}
+.sb-part-label::after{content:'';flex:1;height:1px;background:var(--border);}
+.sb-part-label.man{color:var(--mod);}
+.sb-part-label.dev{color:var(--teal);}
+.sb-link{display:block;padding:5px 20px 5px 24px;font-size:12px;color:var(--text2);text-decoration:none;border-left:2px solid transparent;transition:all .15s;line-height:1.4;}
+.sb-link:hover{color:var(--text);background:rgba(255,255,255,0.03);}
+.sb-link.active.man{color:var(--mod);border-left-color:var(--mod);background:var(--mod-dim);}
+.sb-link.active.dev{color:var(--teal);border-left-color:var(--teal);background:var(--teal-dim);}
+.sb-section-num{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text3);margin-right:6px;}
+.sb-gap{height:20px;}
+
+/* ── MAIN CONTENT ── */
+.main{padding:48px 56px 80px;max-width:820px;}
+.part{display:none;}
+.part.visible{display:block;}
+
+/* ── SECTION ── */
+.section{margin-bottom:64px;}
+
+/* ── CARD HEADER (the signature element) ── */
+.section-card{position:relative;background:var(--bg2);border:1px solid var(--border2);border-radius:8px;padding:14px 20px 12px;margin-bottom:28px;display:flex;align-items:center;gap:12px;overflow:hidden;}
+.section-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;}
+.section-card.man::before{background:linear-gradient(90deg,var(--mod),transparent);}
+.section-card.dev::before{background:linear-gradient(90deg,var(--teal),transparent);}
+.card-num{font-family:'Cinzel',serif;font-size:11px;font-weight:700;letter-spacing:.1em;color:var(--text3);min-width:28px;}
+.card-title{font-family:'Cinzel',serif;font-size:18px;font-weight:600;color:var(--text);letter-spacing:.03em;flex:1;}
+.card-pip{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+.card-pip.man{background:var(--mod);}
+.card-pip.dev{background:var(--teal);}
+
+/* ── TYPOGRAPHY ── */
+h3{font-family:'Inter',sans-serif;font-size:13px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--text2);margin:28px 0 12px;padding-bottom:6px;border-bottom:1px solid var(--border);}
+p{margin-bottom:14px;color:var(--text);line-height:1.75;}
+p:last-child{margin-bottom:0;}
+strong{color:var(--text);font-weight:600;}
+em{color:var(--text2);}
+
+/* ── FORMULA BLOCKS ── */
+.formula{background:var(--bg3);border:1px solid var(--mod-glow);border-radius:6px;padding:16px 20px;margin:16px 0;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--mod);line-height:1.9;position:relative;overflow:hidden;}
+.formula::before{content:'';position:absolute;top:0;right:0;width:120px;height:120px;background:radial-gradient(circle at top right,var(--mod-dim),transparent 70%);pointer-events:none;}
+.formula.dev{border-color:rgba(46,196,160,0.3);color:var(--teal);}
+.formula.dev::before{background:radial-gradient(circle at top right,var(--teal-dim),transparent 70%);}
+
+/* ── EXAMPLE BLOCKS ── */
+.example{background:var(--bg3);border-left:3px solid var(--mod);border-radius:0 6px 6px 0;padding:14px 18px;margin:16px 0;font-size:13.5px;line-height:1.75;}
+.example.dev{border-left-color:var(--teal);}
+.example-label{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--mod);margin-bottom:8px;display:block;}
+.example.dev .example-label{color:var(--teal);}
+.example pre{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text2);background:var(--bg4);padding:10px 14px;border-radius:4px;margin-top:8px;overflow-x:auto;}
+
+/* ── CALLOUT ── */
+.callout{background:var(--mod-dim);border:1px solid rgba(124,106,247,0.2);border-radius:6px;padding:12px 16px;margin:16px 0;font-size:13.5px;}
+.callout.amber{background:var(--amber-dim);border-color:rgba(240,165,0,0.2);color:var(--amber);}
+.callout.red{background:var(--red-dim);border-color:rgba(201,64,64,0.2);}
+
+/* ── TABLES ── */
+.table-wrap{overflow-x:auto;margin:16px 0;}
+table{width:100%;border-collapse:collapse;font-size:13px;}
+thead tr{background:var(--bg3);}
+thead th{font-family:'Inter',sans-serif;font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--text2);padding:10px 14px;text-align:left;border-bottom:1px solid var(--border2);}
+tbody tr{border-bottom:1px solid var(--border);}
+tbody tr:last-child{border-bottom:none;}
+tbody tr:nth-child(even){background:rgba(255,255,255,0.018);}
+tbody td{padding:9px 14px;color:var(--text);font-size:13px;}
+tbody td:first-child{font-weight:500;color:var(--text);}
+.t-mod thead tr{border-top:2px solid var(--mod);}
+.t-teal thead tr{border-top:2px solid var(--teal);}
+td.ok{color:var(--teal);font-weight:700;}
+td.warn{color:var(--amber);}
+td.bad{color:var(--red);}
+td.mono{font-family:'JetBrains Mono',monospace;font-size:12px;}
+
+/* ── STATS GRID (caratteristiche) ── */
+.stat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:16px 0;}
+.stat-card{background:var(--bg3);border:1px solid var(--border2);border-radius:8px;padding:16px 18px;position:relative;overflow:hidden;}
+.stat-card::after{content:attr(data-stat);position:absolute;bottom:-10px;right:10px;font-family:'Cinzel',serif;font-size:42px;font-weight:700;opacity:.04;pointer-events:none;}
+.stat-name{font-family:'Cinzel',serif;font-size:14px;font-weight:700;color:var(--mod);margin-bottom:6px;}
+.stat-desc{font-size:12.5px;color:var(--text2);line-height:1.5;}
+
+/* ── CONDITION GRID ── */
+.cond-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin:16px 0;}
+.cond-item{background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:10px 14px;}
+.cond-name{font-size:12px;font-weight:700;color:var(--amber);margin-bottom:3px;}
+.cond-effect{font-size:12px;color:var(--text2);line-height:1.45;}
+
+/* ── SLOT TABLE VISUAL ── */
+.slot-vis{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin:16px 0;}
+.slot-hdr{background:var(--bg4);border-radius:4px 4px 0 0;padding:6px 8px;font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--text3);text-align:center;}
+.slot-cell{background:var(--bg3);border:1px solid var(--border);border-radius:4px;padding:8px 6px;text-align:center;font-size:12px;font-weight:600;}
+.slot-cell.grade-label{background:transparent;border:none;font-family:'Cinzel',serif;font-size:12px;color:var(--mod);}
+.slot-cell.fixed{color:var(--text2);}
+.slot-cell.scale{color:var(--teal);}
+
+/* ── BOSS/GOON SPLIT ── */
+.enemy-split{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:16px 0;}
+.enemy-card{border-radius:8px;padding:18px;border:1px solid;}
+.enemy-card.boss{background:var(--red-dim);border-color:rgba(201,64,64,0.3);}
+.enemy-card.goon{background:var(--amber-dim);border-color:rgba(240,165,0,0.25);}
+.enemy-label{font-family:'Cinzel',serif;font-size:13px;font-weight:700;margin-bottom:10px;}
+.enemy-card.boss .enemy-label{color:var(--red);}
+.enemy-card.goon .enemy-label{color:var(--amber);}
+.enemy-row{display:flex;justify-content:space-between;font-size:12px;padding:4px 0;border-bottom:1px solid rgba(255,255,255,0.05);}
+.enemy-row:last-child{border-bottom:none;}
+.enemy-row .k{color:var(--text2);}
+.enemy-row .v{font-weight:600;color:var(--text);}
+
+/* ── HP TABLE ── */
+.hp-table-wrap{margin:16px 0;}
+
+/* ── CD TABLE (difficoltà) ── */
+.cd-bar{display:flex;align-items:center;gap:10px;margin:6px 0;}
+.cd-val{font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:var(--text);min-width:28px;}
+.cd-label{font-size:12px;font-weight:600;min-width:130px;}
+.cd-desc{font-size:12px;color:var(--text2);}
+.cd-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+
+/* ── CHECKLIST ── */
+.checklist{display:flex;flex-direction:column;gap:4px;margin:16px 0;}
+.check-item{display:flex;align-items:flex-start;gap:10px;padding:8px 12px;background:var(--bg3);border-radius:5px;font-size:13px;}
+.check-icon{font-size:14px;flex-shrink:0;margin-top:1px;}
+.check-text{color:var(--text);}
+.check-note{color:var(--text2);font-size:11px;margin-top:2px;}
+
+/* ── SCARTATI ── */
+.scartato{background:var(--bg3);border-left:3px solid var(--red);border-radius:0 6px 6px 0;padding:12px 16px;margin:10px 0;}
+.scartato-label{font-size:10px;font-weight:700;letter-spacing:.1em;color:var(--red);margin-bottom:4px;}
+
+/* ── INTENZIONE CARDS ── */
+.intent-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:16px 0;}
+.intent-card{background:var(--bg3);border:1px solid var(--border2);border-radius:6px;padding:14px 16px;}
+.intent-title{font-size:12px;font-weight:700;color:var(--teal);margin-bottom:6px;}
+.intent-body{font-size:12.5px;color:var(--text2);line-height:1.5;}
+
+/* ── MOBILE ── */
+@media(max-width:900px){
+  .layout{grid-template-columns:1fr;}
+  .sidebar{position:static;height:auto;border-right:none;border-bottom:1px solid var(--border);}
+  .main{padding:32px 20px 60px;}
+  .stat-grid,.cond-grid,.enemy-split,.intent-grid{grid-template-columns:1fr;}
+}
+
+/* ── SCROLL PROGRESS ── */
+.scroll-bar{position:fixed;top:48px;left:0;right:0;height:2px;background:transparent;z-index:99;}
+.scroll-fill{height:2px;background:var(--mod);width:0%;transition:width .1s;}
+.scroll-fill.dev{background:var(--teal);}
+
+/* ── QUICK REF PILLS ── */
+.ref-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:16px 0;}
+.ref-item{background:var(--bg3);border-radius:5px;padding:8px 12px;display:flex;justify-content:space-between;align-items:center;gap:8px;}
+.ref-label{font-size:12px;color:var(--text2);}
+.ref-val{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--mod);text-align:right;}
+
+/* ── ARMATURA DIAGRAM ── */
+.armor-axes{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:16px 0;}
+.axis-card{border-radius:7px;padding:14px;text-align:center;border:1px solid;}
+.axis-card.main{background:var(--mod-dim);border-color:rgba(124,106,247,0.35);}
+.axis-card.base{background:var(--bg3);border-color:var(--border);}
+.axis-name{font-family:'Cinzel',serif;font-size:12px;font-weight:700;margin-bottom:6px;}
+.axis-card.main .axis-name{color:var(--mod);}
+.axis-card.base .axis-name{color:var(--text2);}
+.axis-formula{font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--text);margin-bottom:4px;}
+.axis-note{font-size:10px;color:var(--text2);}
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <span class="topbar-title">TTRPG / TCG</span>
+  <span class="topbar-version">v0.1 pre-playtest</span>
+  <div class="part-toggle">
+    <button class="ptbtn active-man" id="btn-man" onclick="setPart('man')">I · Manuale</button>
+    <button class="ptbtn" id="btn-dev" onclick="setPart('dev')">II · Sviluppo</button>
+  </div>
+</div>
+
+<!-- SCROLL PROGRESS -->
+<div class="scroll-bar"><div class="scroll-fill" id="scroll-fill"></div></div>
+
+<div class="layout">
+<!-- SIDEBAR -->
+<nav class="sidebar" id="sidebar">
+  <div class="sb-part-label man">Manuale</div>
+  <a class="sb-link man" href="#s1" data-part="man"><span class="sb-section-num">01</span>Il Gioco</a>
+  <a class="sb-link man" href="#s2" data-part="man"><span class="sb-section-num">02</span>Le Carte</a>
+  <a class="sb-link man" href="#s3" data-part="man"><span class="sb-section-num">03</span>Le Caratteristiche</a>
+  <a class="sb-link man" href="#s4" data-part="man"><span class="sb-section-num">04</span>Creazione e Progressione</a>
+  <a class="sb-link man" href="#s5" data-part="man"><span class="sb-section-num">05</span>Slot Attivi</a>
+  <a class="sb-link man" href="#s6" data-part="man"><span class="sb-section-num">06</span>Sistema di Combattimento</a>
+  <a class="sb-link man" href="#s7" data-part="man"><span class="sb-section-num">07</span>Tiri Caratteristica</a>
+  <a class="sb-link man" href="#s8" data-part="man"><span class="sb-section-num">08</span>Il Riposo</a>
+  <a class="sb-link man" href="#s9" data-part="man"><span class="sb-section-num">09</span>L'Armatura</a>
+  <a class="sb-link man" href="#s10" data-part="man"><span class="sb-section-num">10</span>Carte Oggetto</a>
+  <a class="sb-link man" href="#s11" data-part="man"><span class="sb-section-num">11</span>Le Condizioni</a>
+  <a class="sb-link man" href="#s12" data-part="man"><span class="sb-section-num">12</span>Nemici, Boss e Goon</a>
+  <a class="sb-link man" href="#s13" data-part="man"><span class="sb-section-num">13</span>Potenziare gli Oggetti</a>
+  <a class="sb-link man" href="#s14" data-part="man"><span class="sb-section-num">14</span>Riferimento Rapido</a>
+  <div class="sb-gap"></div>
+  <div class="sb-part-label dev">Sviluppo</div>
+  <a class="sb-link dev" href="#da" data-part="dev"><span class="sb-section-num">A</span>Intenzioni di Design</a>
+  <a class="sb-link dev" href="#db" data-part="dev"><span class="sb-section-num">B</span>Test 1 — Divisore MOD</a>
+  <a class="sb-link dev" href="#dc" data-part="dev"><span class="sb-section-num">C</span>Test 2 — Armatura</a>
+  <a class="sb-link dev" href="#dd" data-part="dev"><span class="sb-section-num">D</span>Test 3 — HP Nemici</a>
+  <a class="sb-link dev" href="#de" data-part="dev"><span class="sb-section-num">E</span>Test 4 — Party Misto</a>
+  <a class="sb-link dev" href="#df" data-part="dev"><span class="sb-section-num">F</span>Test 5 — Boss</a>
+  <a class="sb-link dev" href="#dg" data-part="dev"><span class="sb-section-num">G</span>Test 6 — Scaling Grado</a>
+  <a class="sb-link dev" href="#dh" data-part="dev"><span class="sb-section-num">H</span>Test 7 — Goon</a>
+  <a class="sb-link dev" href="#di" data-part="dev"><span class="sb-section-num">I</span>Sistemi Scartati</a>
+  <a class="sb-link dev" href="#dm" data-part="dev"><span class="sb-section-num">M</span>Da Definire</a>
+  <a class="sb-link dev" href="#dn" data-part="dev"><span class="sb-section-num">N</span>Checklist</a>
+</nav>
+
+<!-- MAIN -->
+<main class="main">
+
+<!-- ═══════════════════ PARTE I ═══════════════════ -->
+<div class="part visible" id="part-man">
+
+<!-- INTRO -->
+<div style="margin-bottom:48px;padding:20px 0 24px;border-bottom:1px solid var(--border);">
+  <div style="font-family:'Cinzel',serif;font-size:28px;font-weight:700;color:var(--text);letter-spacing:.04em;margin-bottom:6px;">Sistema Core</div>
+  <div style="font-size:13px;color:var(--text2);margin-bottom:16px;">Documento di Progetto v0.1 · Pre-playtest · Bozza interna</div>
+  <div class="callout" style="font-size:13.5px;">Questo documento è diviso in due parti. La <strong>Parte I</strong> è il manuale di gioco: spiega le regole, le formule, e come funziona ogni elemento. La <strong>Parte II</strong> raccoglie le intenzioni di design, i test di bilanciamento e le analisi numeriche. Usa il toggle in alto per passare tra le due parti.</div>
+</div>
+
+<!-- S1 -->
+<div class="section" id="s1">
+  <div class="section-card man"><span class="card-num">01</span><span class="card-title">Il Gioco</span><span class="card-pip man"></span></div>
+  <p>Questo è un gioco di ruolo da tavolo con un cuore da gioco di carte. Ogni oggetto che un personaggio può portare con sé — un'arma, un'armatura, un oggetto magico, un aumento cibernetico — è fisicamente rappresentato da una carta. Il mazzo personale di ogni giocatore è il suo equipaggiamento.</p>
+  <p>L'idea di base è semplice: invece di segnare su una scheda che il tuo personaggio ha "una spada +2 e uno scudo", tieni in mano la carta <em>Spada</em> e la carta <em>Scudo</em>. Quando vuoi usarla in combat, la giochi. Quando la perdi o la consumi, la togli dal mazzo. Questo crea un'esperienza fisica e tangibile che un normale TTRPG non ha.</p>
+  <p>Il sistema non sostituisce la narrazione, l'improvvisazione o la libertà che ci si aspetta da un gioco di ruolo. Le carte sono il livello meccanico — il <em>come si fa</em> — mentre il <em>cosa si fa</em> rimane interamente nelle mani dei giocatori e del master.</p>
+</div>
+
+<!-- S2 -->
+<div class="section" id="s2">
+  <div class="section-card man"><span class="card-num">02</span><span class="card-title">Le Carte</span><span class="card-pip man"></span></div>
+  <p>Ci sono quattro tipi di carte nel gioco, ognuno con uno scopo diverso.</p>
+  <p><strong>La Carta Regolamento</strong> è una singola carta di riferimento che ogni giocatore può tenere davanti a sé. Riassume le formule fondamentali. Non è necessaria per giocare una volta che si conosce il sistema, ma è preziosa le prime partite.</p>
+  <p><strong>La Carta Personaggio</strong> è la scheda del PG in formato carta. Per un personaggio creato dal giocatore, ogni panel ha un campo numerico per le caratteristiche. Per un personaggio preesistente la carta usa indicatori visivi al posto di numeri fissi.</p>
+  <p>Gli indicatori visivi usano tre simboli: <strong>→</strong> per un punto di forza secondario, <strong>→→</strong> per la caratteristica principale, nessun simbolo per una caratteristica libera. Accanto alle difese compaiono <strong>↑</strong> (difesa forte) e <strong>↓</strong> (punto debole). Questi indicatori funzionano anche sulle carte NPC e nemici.</p>
+  <div class="example">
+    <span class="example-label">Esempio — Personaggio preesistente</span>
+    <pre>Captain America
+CORPO →→ / MENTE / ANIMA →
+Difesa: Corpo ↑  Mente —  Anima —</pre>
+    <p style="margin-top:10px;font-size:13px;">Le due frecce su Corpo indicano la caratteristica principale. Una freccia su Anima suggerisce investimento secondario. La freccia ↑ su Corpo indica buona resistenza fisica. Il giocatore non è obbligato a seguire gli indicatori — sono un suggerimento narrativo, non un vincolo meccanico.</p>
+  </div>
+  <p><strong>Le Carte Oggetto</strong> sono la parte TCG del gioco. Ogni oggetto ha un peso indicato sulla carta. Il mazzo può contenere quanti oggetti si vuole, a patto che la somma dei pesi non superi la capacità di trasporto del personaggio.</p>
+  <p><strong>Le Carte Nemico e NPC</strong> sono gestite dal master. Hanno HP espliciti, valori di difesa flat per ogni asse e azioni descritte per esteso — il master legge e gioca, senza calcoli. Usano anch'esse gli indicatori ↑ e ↓ per comunicare i punti deboli ai giocatori in modo narrativo.</p>
+</div>
+
+<!-- S3 -->
+<div class="section" id="s3">
+  <div class="section-card man"><span class="card-num">03</span><span class="card-title">Le Caratteristiche</span><span class="card-pip man"></span></div>
+  <div class="stat-grid">
+    <div class="stat-card" data-stat="C"><div class="stat-name">Corpo</div><div class="stat-desc">Forza fisica, resistenza, velocità. Determina i movimenti in combat e la capacità di sopportare danni fisici.</div></div>
+    <div class="stat-card" data-stat="M"><div class="stat-name">Mente</div><div class="stat-desc">Intelletto, concentrazione, volontà. Magie mentali, resistenza psichica, logica e percezione.</div></div>
+    <div class="stat-card" data-stat="A"><div class="stat-name">Anima</div><div class="stat-desc">Carisma, spirito, connessione. Persuasione, manipolazione, magie spirituali. Spesso l'asse meno difeso dai nemici fisici.</div></div>
+  </div>
+  <p>I valori vanno da 1 a 24. Non esiste un valore "medio" di default: la distribuzione è una scelta del giocatore.</p>
+
+  <h3>Il Modificatore</h3>
+  <p>Le caratteristiche non si usano direttamente nei calcoli — si usa il loro Modificatore, derivato dividendo per tre (arrotondato per difetto).</p>
+  <div class="formula">MOD = floor( STAT / 3 )</div>
+  <div class="table-wrap"><table class="t-mod">
+    <thead><tr><th>STAT</th><th>1</th><th>2</th><th>3–5</th><th>6–8</th><th>9–11</th><th>12–14</th><th>15–17</th><th>18–20</th><th>21–23</th><th>24</th></tr></thead>
+    <tbody><tr><td>MOD</td><td class="mono">+0</td><td class="mono">+0</td><td class="mono">+1</td><td class="mono">+2</td><td class="mono">+3</td><td class="mono">+4</td><td class="mono">+5</td><td class="mono">+6</td><td class="mono">+7</td><td class="mono">+8</td></tr></tbody>
+  </table></div>
+  <p>Il MOD scala in step da 3 punti. Raggiungere 6 in Corpo dà MOD +2, raggiungere 12 dà +4, raggiungere 18 dà +6. La progressione è intuitiva da memorizzare.</p>
+
+  <h3>Statistiche Derivate</h3>
+  <div class="ref-grid">
+    <div class="ref-item"><span class="ref-label">HP</span><span class="ref-val">Corpo + Mente + Anima</span></div>
+    <div class="ref-item"><span class="ref-label">Velocità (m/turno)</span><span class="ref-val">Corpo</span></div>
+    <div class="ref-item"><span class="ref-label">Iniziativa</span><span class="ref-val">1d12 + MOD(Corpo)</span></div>
+    <div class="ref-item"><span class="ref-label">Capacità Trasporto</span><span class="ref-val">(MOD×2 + 1) × Peso × C</span></div>
+  </div>
+  <p>Gli <strong>HP</strong> sono la somma pura delle tre caratteristiche. Un personaggio 10/1/1 e uno 5/4/3 hanno entrambi 12 HP — la differenza non è nella quantità ma in come li difendono e su quale asse vengono attaccati.</p>
+  <p>La <strong>Capacità di Trasporto</strong> usa il MOD del Corpo con peso doppio rispetto alla corporatura. Il `×2` fa pesare la forza il doppio. Il `+1` garantisce un risultato positivo anche con MOD 0. <strong>C</strong> è il coefficiente di Controllo — da calibrare dopo il playtest in base alla scala di peso delle carte.</p>
+  <div class="table-wrap"><table class="t-mod">
+    <thead><tr><th>Corpo</th><th>MOD</th><th>Peso PG</th><th>Capacità (C=1)</th><th>Lettura</th></tr></thead>
+    <tbody>
+      <tr><td>1–2</td><td class="mono">+0</td><td>50 kg</td><td class="ok">50</td><td>Porta al massimo il suo peso</td></tr>
+      <tr><td>6</td><td class="mono">+2</td><td>50 kg</td><td class="ok">250</td><td>Porta 5× il suo peso</td></tr>
+      <tr><td>10</td><td class="mono">+3</td><td>70 kg</td><td class="ok">490</td><td>Guerriero — carico elevato</td></tr>
+      <tr><td>10</td><td class="mono">+3</td><td>90 kg</td><td class="ok">630</td><td>Guerriero massiccio — carico massimo</td></tr>
+    </tbody>
+  </table></div>
+</div>
+
+<!-- S4 -->
+<div class="section" id="s4">
+  <div class="section-card man"><span class="card-num">04</span><span class="card-title">Creazione del Personaggio e Progressione</span><span class="card-pip man"></span></div>
+  <h3>Grado 1 — La Partenza</h3>
+  <p>Al Grado 1 il giocatore sceglie come distribuire le caratteristiche tra due opzioni: <strong>12 punti fissi</strong> (minimo 1 per caratteristica, massimo 10 su una singola stat) oppure <strong>3d6</strong> distribuiti liberamente. La scelta fissa garantisce il personaggio esatto che si vuole; il dado può sorprendere.</p>
+  <p>All'inizio il giocatore sceglie anche l'equipaggiamento iniziale: una carta Arma, una carta Aumento e una carta Armatura o Oggetto.</p>
+  <h3>Gradi 2, 3 e 4 — La Progressione</h3>
+  <p>A ogni Grado successivo: +12 punti da distribuire (massimo 24 per caratteristica) e la possibilità di aumentare di un Grado uno degli oggetti già posseduti. La progressione riguarda sia il personaggio sia l'equipaggiamento.</p>
+  <div class="table-wrap"><table class="t-mod">
+    <thead><tr><th>Grado</th><th>Punti</th><th>Massimo per stat</th><th>Bonus</th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td>12 fissi o 3d6</td><td>10</td><td>Equipaggiamento iniziale</td></tr>
+      <tr><td>2</td><td>+12 fissi o +3d6</td><td>24</td><td>Aumenta 1 oggetto di Grado</td></tr>
+      <tr><td>3</td><td>+12 fissi o +3d6</td><td>24</td><td>Aumenta 1 oggetto di Grado</td></tr>
+      <tr><td>4</td><td>+12 fissi o +3d6</td><td>24</td><td>Aumenta 1 oggetto di Grado</td></tr>
+    </tbody>
+  </table></div>
+  <h3>Quante Cose Può Possedere un Personaggio?</h3>
+  <p>Il numero massimo di oggetti possedibili per categoria è pari al Grado del personaggio. Al Grado 4 si possono avere fino a 4 Armi, 1 sola Armatura, 4 Aumenti e 4 Oggetti nel mazzo totale. Si può possedere e portare una sola Armatura per volta.</p>
+</div>
+
+<!-- S5 -->
+<div class="section" id="s5">
+  <div class="section-card man"><span class="card-num">05</span><span class="card-title">Slot Attivi</span><span class="card-pip man"></span></div>
+  <p>Il mazzo è l'intero inventario. Gli slot attivi sono ciò che il personaggio ha effettivamente in uso — in mano, indosso, pronto all'uso immediato. Arma e Armatura sono sempre fissi a 1. Aumenti e Oggetti scalano con il Grado.</p>
+
+  <div class="slot-vis">
+    <div class="slot-hdr"></div>
+    <div class="slot-hdr">Arma</div>
+    <div class="slot-hdr">Armatura</div>
+    <div class="slot-hdr">Aumenti</div>
+    <div class="slot-hdr">Oggetti</div>
+    <div class="slot-cell grade-label">G1</div><div class="slot-cell fixed">1</div><div class="slot-cell fixed">1</div><div class="slot-cell scale">1</div><div class="slot-cell scale">1</div>
+    <div class="slot-cell grade-label">G2</div><div class="slot-cell fixed">1</div><div class="slot-cell fixed">1</div><div class="slot-cell scale">2</div><div class="slot-cell scale">2</div>
+    <div class="slot-cell grade-label">G3</div><div class="slot-cell fixed">1</div><div class="slot-cell fixed">1</div><div class="slot-cell scale">3</div><div class="slot-cell scale">3</div>
+    <div class="slot-cell grade-label">G4</div><div class="slot-cell fixed">1</div><div class="slot-cell fixed">1</div><div class="slot-cell scale">4</div><div class="slot-cell scale">4</div>
+  </div>
+  <p>Al Grado 4 il personaggio gestisce fino a 10 slot attivi totali. La separazione tra Aumenti e Oggetti è intenzionale: si può scegliere di investire in Aumenti permanenti (impianti, potenziamenti) o in Oggetti consumabili, creando build molto diverse allo stesso Grado.</p>
+  <h3>Cambiare Equipaggiamento in Combat</h3>
+  <p>Scambiare un oggetto attivo con uno nel mazzo <strong>costa 1 turno intero (6 secondi)</strong>. Vale per armi, anelli, pozioni e tutto ciò che si può usare in pochi secondi. Non vale per armature, impianti corporei o qualsiasi oggetto con tempo di attivazione superiore a 6 secondi — queste scelte si fanno prima dello scontro.</p>
+</div>
+
+<!-- S6 -->
+<div class="section" id="s6">
+  <div class="section-card man"><span class="card-num">06</span><span class="card-title">Il Sistema di Combattimento</span><span class="card-pip man"></span></div>
+  <h3>Gli Assi</h3>
+  <p>Ogni attacco avviene su uno dei tre assi — Corpo, Mente o Anima — e sia l'attaccante che il difensore usano la stessa caratteristica per quel calcolo. Un attacco fisico è Corpo contro Corpo. Un attacco mentale è Mente contro Mente. Un attacco spirituale è Anima contro Anima.</p>
+  <p>La scelta dell'asse non è arbitraria: un Mago con Mente 10 che attacca un guerriero su asse Mente (dove il guerriero ha difesa bassa) fa molto più danno che attaccarlo su Corpo. Leggere il nemico e scegliere l'asse giusto è la profondità tattica centrale del sistema.</p>
+
+  <h3>La Formula del Danno</h3>
+  <div class="formula">DANNO = max( 0,  Attacco − Soglia )
+
+Attacco     = Grado_arma × d12 + MOD(stat_attaccante)
+Soglia (PG) = MOD(stat_difensore) + Armatura(asse)
+Soglia (NM) = Difesa_flat[asse]  ← dalla carta nemico</div>
+  <p>Non esiste danno minimo garantito. Se l'attacco non supera la soglia, l'attacco fallisce. Attaccare l'asse sbagliato ha conseguenze reali.</p>
+
+  <h3>I Tipi di Attacco</h3>
+  <div class="table-wrap"><table class="t-mod">
+    <thead><tr><th>Tipo</th><th>Formula</th><th>Costo</th><th>Note</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Leggera d12</strong></td><td class="mono">Grado×d12 + MOD</td><td>1 azione</td><td>Attacco standard. Affidabile, media alta.</td></tr>
+      <tr><td><strong>Leggera d6 + Cond.</strong></td><td class="mono">Grado×d6 + MOD + Cond.</td><td>1 azione</td><td>Meno danno, applica una condizione per Grado turni.</td></tr>
+      <tr><td><strong>Caricata</strong></td><td class="mono">2×Grado×d12 + MOD + Cond.</td><td>2 turni</td><td>Burst per sfondare difese alte. Vulnerabile durante la prep.</td></tr>
+      <tr><td><strong>Senz'arma</strong></td><td class="mono">MOD(stat)</td><td>1 azione</td><td>Solo il bonus, nessun dado. Utile in emergenza.</td></tr>
+    </tbody>
+  </table></div>
+  <p>L'azione <strong>Caricata</strong> è particolarmente utile per personaggi con MOD basso contro nemici ben difesi: concentrando energia in un singolo burst si può superare una soglia che l'attacco normale non raggiungerebbe. Il costo è la vulnerabilità durante il turno di preparazione.</p>
+
+  <h3>Esempio di Combat</h3>
+  <div class="example">
+    <span class="example-label">Party da 4 PG vs Soldato (HP 70, Dif.Corpo=5, Dif.Mente=2, Dif.Anima=3)</span>
+    <div class="table-wrap" style="margin-top:10px;"><table>
+      <thead><tr><th>PG</th><th>Stat atk</th><th>Attacco medio</th><th>Soglia NM</th><th>Danno medio</th></tr></thead>
+      <tbody>
+        <tr><td>Guerriero</td><td>Corpo 10 (+3)</td><td class="mono">6.5+3=9.5</td><td class="mono">5</td><td class="ok">4.5/turno</td></tr>
+        <tr><td>Mago</td><td>Mente 10 (+3)</td><td class="mono">6.5+3=9.5</td><td class="mono">2</td><td class="ok">7.5/turno ↑</td></tr>
+        <tr><td>Bardo</td><td>Anima 5 (+1)</td><td class="mono">6.5+1=7.5</td><td class="mono">3</td><td class="ok">4.5/turno</td></tr>
+        <tr><td>Ladro</td><td>Corpo 7 (+2)</td><td class="mono">6.5+2=8.5</td><td class="mono">5</td><td class="ok">3.5/turno</td></tr>
+      </tbody>
+    </table></div>
+    <p style="margin-top:10px;font-size:13px;">DPR totale party: ~20 HP/round. Il soldato dura ~3.5 round. Il Mago fa più danno attaccando l'asse debole (Mente=2 invece di Corpo=5).</p>
+  </div>
+</div>
+
+<!-- S7 -->
+<div class="section" id="s7">
+  <div class="section-card man"><span class="card-num">07</span><span class="card-title">Tiri Caratteristica Fuori dal Combat</span><span class="card-pip man"></span></div>
+  <p>Quando il master chiede di tentare qualcosa di incerto fuori dal combattimento — arrampicarsi, convincere una guardia, ricordare un rituale — il giocatore tira 1d12, aggiunge il MOD della caratteristica più rilevante, e confronta con una Classe Difficoltà (CD) stabilita dal master.</p>
+  <div class="formula">Risultato = 1d12 + MOD(caratteristica_rilevante)
+Successo se Risultato ≥ CD</div>
+  <p>Un <strong>1 naturale</strong> è sempre fallimento critico, indipendentemente da qualsiasi bonus. Un <strong>12 naturale</strong> è sempre successo critico. Il risultato teorico massimo è 20 (12 + MOD +8), praticamente irraggiungibile.</p>
+  <h3>Tabella delle Difficoltà</h3>
+  <div style="margin:16px 0;">
+    <div class="cd-bar"><span class="cd-val">5</span><span class="cd-dot" style="background:#2ec4a0"></span><span class="cd-label" style="color:var(--teal)">Molto facile</span><span class="cd-desc">Quasi chiunque con un minimo di impegno</span></div>
+    <div class="cd-bar"><span class="cd-val">7</span><span class="cd-dot" style="background:#5bc4a0"></span><span class="cd-label" style="color:#5bc4a0">Facile</span><span class="cd-desc">La maggior parte delle persone competenti</span></div>
+    <div class="cd-bar"><span class="cd-val">10</span><span class="cd-dot" style="background:#f0a500"></span><span class="cd-label" style="color:var(--amber)">Moderata</span><span class="cd-desc">Richiede abilità o esperienza specifica</span></div>
+    <div class="cd-bar"><span class="cd-val">12</span><span class="cd-dot" style="background:#e07030"></span><span class="cd-label" style="color:#e07030">Difficile</span><span class="cd-desc">Solo personaggi specializzati o con stat elevate</span></div>
+    <div class="cd-bar"><span class="cd-val">15</span><span class="cd-dot" style="background:#c94040"></span><span class="cd-label" style="color:var(--red)">Molto difficile</span><span class="cd-desc">Al limite delle capacità umane ordinarie</span></div>
+    <div class="cd-bar"><span class="cd-val">17</span><span class="cd-dot" style="background:#7c6af7"></span><span class="cd-label" style="color:var(--mod)">Eroica</span><span class="cd-desc">Solo i migliori, con un colpo di fortuna</span></div>
+    <div class="cd-bar"><span class="cd-val">19+</span><span class="cd-dot" style="background:#5040a0"></span><span class="cd-label" style="color:#8060d0">Quasi impossibile</span><span class="cd-desc">Praticamente irraggiungibile senza magia</span></div>
+  </div>
+  <div class="example">
+    <span class="example-label">Esempio</span>
+    <p>Un personaggio con Mente 9 (MOD +3) tenta di decifrare un testo antico (CD 12). Tira 1d12 e ottiene 8. Totale: 8 + 3 = 11. Manca di un punto. Il master descrive che capisce il senso generale ma non i dettagli critici.</p>
+  </div>
+  <h3>Quale Caratteristica Si Usa</h3>
+  <p><strong>Corpo</strong> per sforzi fisici, resistenza, velocità. <strong>Mente</strong> per memoria, logica, percezione, tecnica. <strong>Anima</strong> per persuasione, inganno, intimidazione, empatia. La caratteristica è sempre scelta dal master in base alla situazione — non esiste una lista fissa.</p>
+</div>
+
+<!-- S8 -->
+<div class="section" id="s8">
+  <div class="section-card man"><span class="card-num">08</span><span class="card-title">Il Riposo</span><span class="card-pip man"></span></div>
+  <h3>Riposo Corto</h3>
+  <p>Dura circa un'ora. Richiede sicurezza e assenza di attività intense. Durante un riposo corto il personaggio può spendere fino a <strong>Grado × d12 dadi vita</strong> per recuperare HP — tira i dadi e somma il risultato agli HP correnti, senza superare il massimo.</p>
+  <p>Il riposo corto rimuove la condizione <strong>Esausto</strong> e recupera gli utilizzi limitati di oggetti che lo specificano. Non recupera tutto — ogni carta specifica quando e come si recupera.</p>
+  <h3>Riposo Lungo</h3>
+  <p>Almeno 8 ore di sonno o attività leggera. Al termine recupera tutti gli HP e tutti gli utilizzi di tutti gli oggetti che lo prevedono. Massimo 1 riposo lungo per 24 ore. Le situazioni di pericolo o stress interrompono il riposo.</p>
+  <div class="table-wrap"><table class="t-mod">
+    <thead><tr><th>Tipo</th><th>Durata</th><th>HP recuperati</th><th>Altro</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Corto</strong></td><td>~1 ora</td><td>Spendi Grado×d12 dadi vita</td><td>Rimuove Esausto, recupera utilizzi "riposo corto"</td></tr>
+      <tr><td><strong>Lungo</strong></td><td>~8 ore</td><td>Tutti gli HP</td><td>Tutti gli utilizzi di tutti gli oggetti</td></tr>
+    </tbody>
+  </table></div>
+</div>
+
+<!-- S9 -->
+<div class="section" id="s9">
+  <div class="section-card man"><span class="card-num">09</span><span class="card-title">L'Armatura</span><span class="card-pip man"></span></div>
+  <p>L'armatura non è un valore unico — protegge un asse in modo principale e fornisce protezione base sugli altri. Ogni carta armatura specifica il suo asse principale.</p>
+  <div class="armor-axes">
+    <div class="axis-card main"><div class="axis-name">Asse Principale ★</div><div class="axis-formula">Grado × 3</div><div class="axis-note">La caratteristica specificata dalla carta</div></div>
+    <div class="axis-card base"><div class="axis-name">Assi Secondari</div><div class="axis-formula">Grado</div><div class="axis-note">Le altre due caratteristiche</div></div>
+    <div class="axis-card base"><div class="axis-name">Senza Armatura</div><div class="axis-formula">Grado PG</div><div class="axis-note">Protezione base su tutti gli assi</div></div>
+  </div>
+  <p>Nessun asse è mai completamente scoperto. Anche senza carta armatura il personaggio ha protezione pari al suo Grado su tutti gli assi — esperienza e riflessi del combattente.</p>
+  <div class="example">
+    <span class="example-label">Guerriero Grado 2 con Armatura Corpo G2</span>
+    <div class="ref-grid" style="margin-top:10px;">
+      <div class="ref-item"><span class="ref-label">Soglia Corpo (★)</span><span class="ref-val" style="color:var(--mod)">MOD + 6</span></div>
+      <div class="ref-item"><span class="ref-label">Soglia Mente (base)</span><span class="ref-val">MOD + 2</span></div>
+      <div class="ref-item"><span class="ref-label">Soglia Anima (base)</span><span class="ref-val">MOD + 2</span></div>
+      <div class="ref-item"><span class="ref-label">Senza armatura</span><span class="ref-val">MOD + 2 (tutti)</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- S10 -->
+<div class="section" id="s10">
+  <div class="section-card man"><span class="card-num">10</span><span class="card-title">Le Carte Oggetto</span><span class="card-pip man"></span></div>
+  <p>Ogni carta oggetto contiene sempre le stesse informazioni. <strong>Tipologia</strong> (Arma/Armatura/Aumento/Oggetto), <strong>Grado</strong> (1–4), <strong>Rarità</strong> (Comune → Artefatto), <strong>Peso</strong>, <strong>Tempo di Attivazione</strong> e <strong>Azioni</strong>.</p>
+  <p>Il <strong>Tempo di Attivazione</strong> separa ciò che si può cambiare in combat da ciò che non si può: armi e oggetti semplici costano 1 azione (6 sec) e si possono scambiare. Armature e impianti richiedono minuti o ore.</p>
+  <div class="table-wrap"><table class="t-mod">
+    <thead><tr><th>Tipo</th><th>Minimo</th><th>Se raro</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Arma</strong></td><td>1 azione Leggera (d12 o d6+Cond)</td><td>Rapide con bonus, Passive, azioni extra</td></tr>
+      <tr><td><strong>Armatura</strong></td><td>Passiva: asse protetto e valore</td><td>Rapida reattiva, Passiva bonus</td></tr>
+      <tr><td><strong>Aumento</strong></td><td>Passiva o Rapida</td><td>Boost permanenti al MOD, azioni extra</td></tr>
+      <tr><td><strong>Oggetto</strong></td><td>Passiva o Rapida (no danno di solito)</td><td>Può fare danno se molto raro</td></tr>
+    </tbody>
+  </table></div>
+  <div class="table-wrap" style="margin-top:16px;"><table class="t-mod">
+    <thead><tr><th>Tipo Azione</th><th>Descrizione</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Passiva</strong></td><td>Effetto permanente o per N turni. Non richiede azione.</td></tr>
+      <tr><td><strong>Rapida</strong></td><td>Attivazione istantanea. Non consuma azione nel turno.</td></tr>
+      <tr><td><strong>Leggera</strong></td><td>Richiede 1 azione per essere eseguita.</td></tr>
+      <tr><td><strong>Caricata</strong></td><td>1 turno di preparazione + 1 turno di esecuzione.</td></tr>
+    </tbody>
+  </table></div>
+</div>
+
+<!-- S11 -->
+<div class="section" id="s11">
+  <div class="section-card man"><span class="card-num">11</span><span class="card-title">Le Condizioni</span><span class="card-pip man"></span></div>
+  <p>Le condizioni sono stati alterati che si applicano quando certe azioni vanno a segno. Alcune carte possono specificare condizioni <strong>per asse</strong> — varianti mirate che operano solo su una caratteristica specifica (es. "Accecato [Mente]" applica svantaggio solo alle prove di Mente). Il testo della carta è sempre la fonte autoritativa.</p>
+  <div class="cond-grid">
+    <div class="cond-item"><div class="cond-name">Accecato</div><div class="cond-effect">Non vede. Svantaggio a Corpo e Mente.</div></div>
+    <div class="cond-item"><div class="cond-name">Affascinato</div><div class="cond-effect">Non può agire contro il bersaglio. Svantaggio a Mente/Anima vs di esso. Tiro per liberarsi.</div></div>
+    <div class="cond-item"><div class="cond-name">Assordato</div><div class="cond-effect">Svantaggio su Mente e Anima.</div></div>
+    <div class="cond-item"><div class="cond-name">Avvelenato / Infuocato / Congelato</div><div class="cond-effect">−1d4 HP per turno. Si differenziano per origine e rimozione.</div></div>
+    <div class="cond-item"><div class="cond-name">Afferrato</div><div class="cond-effect">Chi lo attacca ha vantaggio. Tiro Corpo vs Corpo per liberarsi.</div></div>
+    <div class="cond-item"><div class="cond-name">Incapacitato</div><div class="cond-effect">Perde il turno. Non può muoversi né agire.</div></div>
+    <div class="cond-item"><div class="cond-name">Invisibile</div><div class="cond-effect">Vantaggio a Corpo. Svantaggio per chi lo attacca.</div></div>
+    <div class="cond-item"><div class="cond-name">Paralizzato</div><div class="cond-effect">Perde il turno. Svantaggio a tutto.</div></div>
+    <div class="cond-item"><div class="cond-name">Pietrificato</div><div class="cond-effect">Fallimento automatico ai tiri su Corpo.</div></div>
+    <div class="cond-item"><div class="cond-name">Privo di Sensi</div><div class="cond-effect">A terra, non agisce, subisce svantaggio.</div></div>
+    <div class="cond-item"><div class="cond-name">Prono</div><div class="cond-effect">Movimento dimezzato.</div></div>
+    <div class="cond-item"><div class="cond-name">Intrappolato</div><div class="cond-effect">Non si muove. Chi attacca ha vantaggio. Tiro per liberarsi.</div></div>
+    <div class="cond-item"><div class="cond-name">Spaventato</div><div class="cond-effect">Non può avvicinarsi o attaccare la fonte. Svantaggio a Mente/Anima.</div></div>
+    <div class="cond-item"><div class="cond-name">Stordito</div><div class="cond-effect">Svantaggio a Mente e Anima.</div></div>
+    <div class="cond-item"><div class="cond-name">Esausto</div><div class="cond-effect">Svantaggio a tutto fino a riposo corto.</div></div>
+  </div>
+</div>
+
+<!-- S12 -->
+<div class="section" id="s12">
+  <div class="section-card man"><span class="card-num">12</span><span class="card-title">Nemici, Boss e Goon</span><span class="card-pip man"></span></div>
+  <p>La differenza più importante tra PG e nemici: i nemici <strong>non seguono le stesse formule dei PG</strong>. Ogni carta nemico è self-contained: HP espliciti, difesa flat per asse, azioni descritte. Il master legge e gioca, senza calcoli. Lo stesso vale per gli NPC alleati.</p>
+  <div class="enemy-split">
+    <div class="enemy-card boss">
+      <div class="enemy-label">Boss</div>
+      <div class="enemy-row"><span class="k">HP</span><span class="v">Alti — dura 3–5 round</span></div>
+      <div class="enemy-row"><span class="k">Azioni/round</span><span class="v">2+ (pressione costante)</span></div>
+      <div class="enemy-row"><span class="k">Azioni Leggendarie</span><span class="v">Reazioni dopo ogni PG</span></div>
+      <div class="enemy-row"><span class="k">Numero</span><span class="v">1 da solo vs party</span></div>
+    </div>
+    <div class="enemy-card goon">
+      <div class="enemy-label">Goon</div>
+      <div class="enemy-row"><span class="k">HP</span><span class="v">Bassi — 1–2 colpi per KO</span></div>
+      <div class="enemy-row"><span class="k">Azioni/round</span><span class="v">1 (come un PG)</span></div>
+      <div class="enemy-row"><span class="k">Forza</span><span class="v">Il numero — sopraffazione</span></div>
+      <div class="enemy-row"><span class="k">Numero</span><span class="v">2 per PG nel party</span></div>
+    </div>
+  </div>
+  <p>Le <strong>Azioni Leggendarie</strong> dei Boss si attivano come reazione alla fine del turno di ogni PG — non nel turno del Boss. Un Boss con tre Azioni Leggendarie agisce potenzialmente quattro volte per round in un party da quattro. Le reazioni sono azioni limitate e specifiche: applicare una condizione, spostarsi, attivare una difesa — non l'attacco completo. Oltre alle reazioni, i Boss possono avere Passive leggendarie permanenti.</p>
+  <h3>Calibrare gli HP dei Nemici</h3>
+  <p>HP target = DPR_party × round_desiderati. Per scalare: <code>HP_effettivi = HP_carta × N_PG / 4</code>.</p>
+  <div class="table-wrap"><table class="t-mod">
+    <thead><tr><th>Tipo</th><th>Grado</th><th>HP (party 4)</th><th>Round target</th><th>Note</th></tr></thead>
+    <tbody>
+      <tr><td>Minion</td><td>½</td><td class="ok">~15</td><td>≤1</td><td>One-shot, nessuna difesa speciale</td></tr>
+      <tr><td>Soldato</td><td>½</td><td class="ok">~25</td><td>1–2</td><td>Muore in 2 colpi</td></tr>
+      <tr><td>Nemico standard</td><td>1</td><td class="ok">70–80</td><td>3–5 ✓</td><td>Sfida bilanciata</td></tr>
+      <tr><td>Elite</td><td>1+</td><td class="warn">~100</td><td>5–7</td><td>Stat superiori al party</td></tr>
+      <tr><td>Boss</td><td>2</td><td class="warn">~160</td><td>5–8</td><td>2 azioni/round, leggendarie</td></tr>
+      <tr><td>Boss finale</td><td>4</td><td class="bad">~450</td><td>8–12</td><td>3 azioni/round, sfida epica</td></tr>
+    </tbody>
+  </table></div>
+</div>
+
+<!-- S13 -->
+<div class="section" id="s13">
+  <div class="section-card man"><span class="card-num">13</span><span class="card-title">Potenziare gli Oggetti</span><span class="card-pip man"></span></div>
+  <div class="formula">Costo    = Grado_destinazione × 2.000 Monete Oro
+Tempo    = Grado_destinazione giorni
+Requisito: Grado_PG ≥ Grado_destinazione</div>
+  <div class="table-wrap"><table class="t-mod">
+    <thead><tr><th>Da → A</th><th>Costo MO</th><th>Tempo</th><th>Req. PG</th></tr></thead>
+    <tbody>
+      <tr><td>G1 → G2</td><td>4.000</td><td>2 giorni</td><td>Grado 2+</td></tr>
+      <tr><td>G2 → G3</td><td>6.000</td><td>3 giorni</td><td>Grado 3+</td></tr>
+      <tr><td>G3 → G4</td><td>8.000</td><td>4 giorni</td><td>Grado 4</td></tr>
+    </tbody>
+  </table></div>
+</div>
+
+<!-- S14 -->
+<div class="section" id="s14">
+  <div class="section-card man"><span class="card-num">14</span><span class="card-title">Riferimento Rapido</span><span class="card-pip man"></span></div>
+  <div class="ref-grid">
+    <div class="ref-item"><span class="ref-label">MOD</span><span class="ref-val">floor(STAT / 3)</span></div>
+    <div class="ref-item"><span class="ref-label">HP</span><span class="ref-val">Corpo + Mente + Anima</span></div>
+    <div class="ref-item"><span class="ref-label">Velocità</span><span class="ref-val">Corpo m/turno</span></div>
+    <div class="ref-item"><span class="ref-label">Iniziativa</span><span class="ref-val">1d12 + MOD(Corpo)</span></div>
+    <div class="ref-item"><span class="ref-label">Attacco d12</span><span class="ref-val">G×d12 + MOD(atk)</span></div>
+    <div class="ref-item"><span class="ref-label">Attacco d6+Cond</span><span class="ref-val">G×d6 + MOD + Cond</span></div>
+    <div class="ref-item"><span class="ref-label">Attacco Caricato</span><span class="ref-val">2×G×d12 + MOD + Cond</span></div>
+    <div class="ref-item"><span class="ref-label">Attacco Senz'arma</span><span class="ref-val">MOD(atk)</span></div>
+    <div class="ref-item"><span class="ref-label">Soglia PG — princ.</span><span class="ref-val">MOD + Grado×3</span></div>
+    <div class="ref-item"><span class="ref-label">Soglia PG — sec.</span><span class="ref-val">MOD + Grado</span></div>
+    <div class="ref-item"><span class="ref-label">Soglia PG — no armor</span><span class="ref-val">MOD + Grado PG</span></div>
+    <div class="ref-item"><span class="ref-label">Soglia Nemico</span><span class="ref-val">Dif.flat[asse] (carta)</span></div>
+    <div class="ref-item"><span class="ref-label">Danno</span><span class="ref-val">max(0, Attacco − Soglia)</span></div>
+    <div class="ref-item"><span class="ref-label">HP Nemico scalato</span><span class="ref-val">HP × N_PG / 4</span></div>
+    <div class="ref-item"><span class="ref-label">Trasporto</span><span class="ref-val">(MOD×2+1) × Peso × C</span></div>
+    <div class="ref-item"><span class="ref-label">Riposo corto HP</span><span class="ref-val">Spendi Grado×d12</span></div>
+    <div class="ref-item"><span class="ref-label">Potenziamento</span><span class="ref-val">G_dest × 2000 MO + giorni</span></div>
+    <div class="ref-item"><span class="ref-label">Tiro caratteristica</span><span class="ref-val">1d12 + MOD vs CD</span></div>
+  </div>
+</div>
+
+</div><!-- /part-man -->
+
+<!-- ═══════════════════ PARTE II ═══════════════════ -->
+<div class="part" id="part-dev">
+
+<div style="margin-bottom:48px;padding:20px 0 24px;border-bottom:1px solid var(--border);">
+  <div style="font-family:'Cinzel',serif;font-size:28px;font-weight:700;color:var(--teal);letter-spacing:.04em;margin-bottom:6px;">Sviluppo &amp; Test</div>
+  <div style="font-size:13px;color:var(--text2);">Intenzioni di design · Test numerici pre-playtest · Analisi di bilanciamento</div>
+</div>
+
+<!-- DA -->
+<div class="section" id="da">
+  <div class="section-card dev"><span class="card-num">A</span><span class="card-title">Intenzioni di Design</span><span class="card-pip dev"></span></div>
+  <div class="intent-grid">
+    <div class="intent-card"><div class="intent-title">Semplicità al tavolo</div><div class="intent-body">Ogni calcolo deve essere risolvibile mentalmente. Formula del danno = una sottrazione. MOD = divisione per 3. Soglie nemici = valori flat sulla carta.</div></div>
+    <div class="intent-card"><div class="intent-title">Profondità strategica</div><div class="intent-body">Scegliere su quale asse attaccare deve contare. Un Mago su asse Mente fa molto più danno al guerriero fisico che su Corpo. Leggere il nemico è il gameplay.</div></div>
+    <div class="intent-card"><div class="intent-title">Il dado conta sempre</div><div class="intent-body">MOD massimo = +8. Dado a Grado 4 = 4–48. Il dado rimane il fattore principale anche ai livelli massimi — nessun bonus fisso lo schiaccia.</div></div>
+    <div class="intent-card"><div class="intent-title">Carte come oggetti fisici</div><div class="intent-body">Tenere in mano le carte, scegliere il mazzo prima di uscire, scambiare un'arma con un compagno — interazioni fisiche che un TTRPG classico non ha.</div></div>
+    <div class="intent-card"><div class="intent-title">Party cooperativo</div><div class="intent-body">Il bilanciamento usa il party da 4 come unità di misura. Un nemico G1 è calibrato per 4 persone che lavorano insieme. La cooperazione è il cuore del sistema.</div></div>
+    <div class="intent-card"><div class="intent-title">Progressione leggibile</div><div class="intent-body">Ogni Grado aggiunge qualcosa di concreto: punti stat, oggetti, slot. La crescita deve essere sentita senza diventare gestione contabile.</div></div>
+  </div>
+</div>
+
+<!-- DB -->
+<div class="section" id="db">
+  <div class="section-card dev"><span class="card-num">B</span><span class="card-title">Test 1 — Scelta del Divisore MOD</span><span class="card-pip dev"></span></div>
+  <p><strong>Problema:</strong> Il sistema originale usava ÷4, scelto arbitrariamente. Su stat 1–24 produce MOD da +0 a +6 — accettabile ma piatto. La differenza tra stat 6 e stat 24 è solo 5 punti. La domanda era se quel gap fosse abbastanza significativo.</p>
+  <div class="table-wrap"><table class="t-teal">
+    <thead><tr><th>Divisore</th><th>MOD min</th><th>MOD max</th><th>a stat 6</th><th>a stat 12</th><th>a stat 24</th><th>Giudizio</th></tr></thead>
+    <tbody>
+      <tr><td>÷2</td><td>+0</td><td>+12</td><td>+3</td><td>+6</td><td>+12</td><td class="bad">MOD schiaccia il dado</td></tr>
+      <tr><td><strong>÷3</strong></td><td><strong>+0</strong></td><td><strong>+8</strong></td><td><strong>+2</strong></td><td><strong>+4</strong></td><td><strong>+8</strong></td><td class="ok">✓ Ottimale</td></tr>
+      <tr><td>÷4</td><td>+0</td><td>+6</td><td>+1</td><td>+3</td><td>+6</td><td class="warn">Accettabile ma piatto</td></tr>
+      <tr><td>÷5</td><td>+0</td><td>+4</td><td>+1</td><td>+2</td><td>+4</td><td class="bad">Stat quasi irrilevanti</td></tr>
+      <tr><td>÷6</td><td>+0</td><td>+4</td><td>+1</td><td>+2</td><td>+4</td><td class="bad">Come ÷5</td></tr>
+    </tbody>
+  </table></div>
+  <p><strong>Risultato:</strong> ÷3 selezionato. Produce soglie naturali ogni 3 punti stat (3, 6, 9, 12…) intuitive da memorizzare. La differenza tra stat 6 (+2) e stat 18 (+6) è 4 punti — abbastanza da sentirsi in ogni round.</p>
+</div>
+
+<!-- DC -->
+<div class="section" id="dc">
+  <div class="section-card dev"><span class="card-num">C</span><span class="card-title">Test 2 — Moltiplicatore Armatura</span><span class="card-pip dev"></span></div>
+  <p><strong>Problema:</strong> L'armatura deve essere un vantaggio reale senza essere obbligatoria. Chi sceglie di non equipaggiare un'armatura in favore di oggetti difensivi alternativi deve poter sopravvivere a uno scontro normale.</p>
+  <div class="table-wrap"><table class="t-teal">
+    <thead><tr><th>Mult.</th><th>Soglia con G1</th><th>Soglia senza</th><th>Round con armor</th><th>Round senza</th><th>Giudizio</th></tr></thead>
+    <tbody>
+      <tr><td>×2</td><td>MOD+2</td><td>MOD</td><td>2–3r</td><td>1–2r</td><td class="bad">Troppo letale senza</td></tr>
+      <tr><td><strong>×3</strong></td><td><strong>MOD+3</strong></td><td><strong>MOD</strong></td><td class="ok"><strong>3–5r ✓</strong></td><td class="ok"><strong>2–3r</strong></td><td class="ok">✓ Ottimale</td></tr>
+      <tr><td>×4</td><td>MOD+4</td><td>MOD</td><td>5–8r</td><td>3–5r</td><td class="warn">Armor quasi obbligatoria</td></tr>
+      <tr><td>×5</td><td>MOD+5</td><td>MOD</td><td>7–12r</td><td>4–6r</td><td class="bad">Troppo lento</td></tr>
+    </tbody>
+  </table></div>
+  <p><strong>Risultato:</strong> ×3 selezionato. Senza armatura lo scontro dura 2–3 round (rapido, non letale). Con armatura 3–5 round. Un oggetto alternativo con +2 alla soglia può parzialmente compensare — le build creative sono supportate.</p>
+</div>
+
+<!-- DD -->
+<div class="section" id="dd">
+  <div class="section-card dev"><span class="card-num">D</span><span class="card-title">Test 3 — Il Problema degli HP dei Nemici</span><span class="card-pip dev"></span></div>
+  <p><strong>Problema critico:</strong> Con HP = Corpo + Mente + Anima (come i PG), i nemici morivano in meno di un round contro un party da 4. Il DPR di quattro PG sommati è 15–30 HP/round; un nemico con stat 6/2/2 ha solo 10 HP.</p>
+  <div class="callout amber">Il DPR del party è moltiplicato ×4. La formula HP = C+M+A è calibrata per duelli 1v1, non per un party cooperativo da 4.</div>
+  <div class="table-wrap" style="margin-top:16px;"><table class="t-teal">
+    <thead><tr><th>Soluzione</th><th>Pro</th><th>Contro</th><th>Adottata?</th></tr></thead>
+    <tbody>
+      <tr><td>HP × N_PG</td><td>Semplice</td><td>Goblin con 40 HP non sembra un goblin</td><td class="bad">No</td></tr>
+      <tr><td>HP = Grado×stat×k</td><td>Scala con grado</td><td>k è arbitrario e difficile da ricordare</td><td class="bad">No</td></tr>
+      <tr><td><strong>HP espliciti sulla carta</strong></td><td>Controllo totale</td><td>Richiede lavoro di design per ogni carta</td><td class="ok">✓ Sì</td></tr>
+    </tbody>
+  </table></div>
+  <p><strong>Risultato:</strong> HP espliciti sulla carta. La formula consigliata per il designer: <code>HP = DPR_party_Grado × round_target</code>. Scalatura: <code>HP_effettivi = HP_carta × N_PG / 4</code>.</p>
+</div>
+
+<!-- DE -->
+<div class="section" id="de">
+  <div class="section-card dev"><span class="card-num">E</span><span class="card-title">Test 4 — Party Misto e Assi</span><span class="card-pip dev"></span></div>
+  <p><strong>Setup:</strong> Party da 4 con build diverse vs nemici con stat eterogenee. Obiettivo: verificare che la varietà degli assi crei decisioni tattiche reali.</p>
+  <div class="table-wrap"><table class="t-teal">
+    <thead><tr><th>PG</th><th>Stat atk</th><th>vs Soldato (Dif.C=5)</th><th>vs Lich (Dif.M=2)</th><th>vs Banshee (Dif.A=3)</th></tr></thead>
+    <tbody>
+      <tr><td>Guerriero</td><td>Corpo 10 (+3)</td><td class="ok">4.5 dmg</td><td>5.5 (Dif.C=4)</td><td>6.5 (Dif.C=3)</td></tr>
+      <tr><td>Mago</td><td>Mente 10 (+3)</td><td>7.5 (Dif.M=2)</td><td class="warn">3.5 (Dif.M=6)</td><td class="ok">8.5 (Dif.M=1) ↑</td></tr>
+      <tr><td>Bardo</td><td>Anima 5 (+1)</td><td>5.5 (Dif.A=3)</td><td class="ok">6.5 (Dif.A=1)</td><td class="warn">3.5 (Dif.A=4)</td></tr>
+      <tr><td>Ladro</td><td>Corpo 7 (+2)</td><td class="ok">3.5 dmg</td><td>4.5 (Dif.C=4)</td><td>5.5 (Dif.C=3)</td></tr>
+    </tbody>
+  </table></div>
+  <p><strong>Risultato:</strong> Il Mago è devastante contro la Banshee (8.5) ma penalizzato contro il Lich sulla sua stessa stat (3.5). Il sistema crea decisioni tattiche reali: ogni PG ha la sua nicchia e il party deve coordinarsi per massimizzare il danno totale.</p>
+</div>
+
+<!-- DF -->
+<div class="section" id="df">
+  <div class="section-card dev"><span class="card-num">F</span><span class="card-title">Test 5 — Boss con Azioni Multiple</span><span class="card-pip dev"></span></div>
+  <p><strong>Premessa:</strong> Un Boss con solo più HP è noioso — è un sacco da boxe più grande. Le azioni multiple creano un tipo di pressione diverso.</p>
+  <div class="table-wrap"><table class="t-teal">
+    <thead><tr><th>Configurazione</th><th>HP Boss</th><th>Round KO party→boss</th><th>Danno boss in quei round</th><th>Esito</th></tr></thead>
+    <tbody>
+      <tr><td>1 azione/round</td><td>80</td><td>~5r</td><td>~22 HP totali</td><td class="warn">Nessun PG in pericolo reale</td></tr>
+      <tr><td><strong>2 azioni/round</strong></td><td>80</td><td>~5r</td><td class="ok">~45 HP concentrati</td><td class="ok">PG focus KO in 1–2r — scelte reali</td></tr>
+    </tbody>
+  </table></div>
+  <p><strong>Risultato:</strong> Con 2 azioni il Boss costringe il party a decidere: chi cura il PG in pericolo? Si continua ad attaccare o si protegge il compagno? Lo scontro diventa gestione delle risorse. Standard: 2 azioni per Boss G2, 3 per Boss finali.</p>
+</div>
+
+<!-- DG -->
+<div class="section" id="dg">
+  <div class="section-card dev"><span class="card-num">G</span><span class="card-title">Test 6 — Scaling da Grado 1 a Grado 4</span><span class="card-pip dev"></span></div>
+  <p><strong>Setup:</strong> Party 4 PG con Corpo 6 fisso (MOD +2). Arma e armatura scalano con il Grado. Nemico con HP = 70 × Grado.</p>
+  <div class="table-wrap"><table class="t-teal">
+    <thead><tr><th>Grado</th><th>Atk avg</th><th>Soglia NM</th><th>DPR party</th><th>HP NM</th><th>Round KO NM</th><th>Danno NM/r</th><th>Round KO PG</th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td class="mono">8.5</td><td class="mono">3</td><td class="mono">~22</td><td>70</td><td class="ok">~3.2r ✓</td><td class="mono">~7</td><td>~1.7r</td></tr>
+      <tr><td>2</td><td class="mono">15.0</td><td class="mono">6</td><td class="mono">~36</td><td>140</td><td class="ok">~3.9r ✓</td><td class="mono">~14</td><td class="warn">~0.9r</td></tr>
+      <tr><td>3</td><td class="mono">21.5</td><td class="mono">9</td><td class="mono">~50</td><td>210</td><td class="ok">~4.2r ✓</td><td class="mono">~21</td><td class="bad">~0.6r</td></tr>
+      <tr><td>4</td><td class="mono">28.0</td><td class="mono">12</td><td class="mono">~64</td><td>280</td><td class="ok">~4.4r ✓</td><td class="mono">~28</td><td class="bad">~0.4r</td></tr>
+    </tbody>
+  </table></div>
+  <p><strong>Risultato:</strong> I round KO rimangono stabili a 3–5 a tutti i Gradi. Il problema emergente: ai Gradi alti il nemico diventa molto più letale per i PG. Questo è in parte intenzionale — Grado alto deve sembrare pericoloso — ma conferma che i PG devono investire i 48 punti aggiuntivi, non ignorarli.</p>
+</div>
+
+<!-- DH -->
+<div class="section" id="dh">
+  <div class="section-card dev"><span class="card-num">H</span><span class="card-title">Test 7 — Goon: Quanti e Quanto Forti</span><span class="card-pip dev"></span></div>
+  <p><strong>Setup:</strong> 8 Goon (2 per PG) contro party da 4 PG di Grado 1.</p>
+  <p>Il problema dei Goon non è sopravvivere a lungo — è fare abbastanza danno collettivo. 8 Goon che fanno 2–3 HP per round producono DPR collettivo di 16–24, paragonabile a un Boss G2. La differenza: il party può eliminarli uno alla volta, il Boss deve essere abbattuto tutto insieme.</p>
+  <div class="table-wrap"><table class="t-teal">
+    <thead><tr><th>HP Goon</th><th>DPR PG</th><th>Colpi per KO</th><th>Giudizio</th></tr></thead>
+    <tbody>
+      <tr><td>15</td><td>5</td><td>3</td><td class="bad">Troppo resistente</td></tr>
+      <tr><td>15</td><td>7–8</td><td>2</td><td class="warn">Borderline accettabile</td></tr>
+      <tr><td>10</td><td>7</td><td>1–2</td><td class="ok">✓ Target</td></tr>
+    </tbody>
+  </table></div>
+  <p><strong>Risultato:</strong> La ratio 2 Goon per PG funziona quando calibrati per morire in 1–2 colpi. Goon che resistono di più non sono più spaventosi — sono solo rallentamenti.</p>
+</div>
+
+<!-- DI -->
+<div class="section" id="di">
+  <div class="section-card dev"><span class="card-num">I</span><span class="card-title">Sistemi Scartati</span><span class="card-pip dev"></span></div>
+  <div class="scartato"><div class="scartato-label">Scartato — Sistema STAT diretta</div>Usare la STAT direttamente invece del MOD. Produce scaling esplosivo: a Corpo 20, attacco medio a G4 supera 110. I combattimenti ad alto livello diventano istant-kill.</div>
+  <div class="scartato"><div class="scartato-label">Scartato — Difesa Residua come formula</div>Ogni nemico aveva soglia minima = floor(MOD_primario/2) su tutti gli assi. Scartato perché la soluzione corretta è di design: ogni carta deve avere Dif.flat &gt; 0 su ogni asse. La formula era una patch, non una soluzione.</div>
+  <div class="scartato"><div class="scartato-label">Scartato — Moltiplicatore armatura ×4</div>Rendeva l'armatura quasi obbligatoria. Senza armatura ogni attacco era devastante. Scartato in favore di ×3.</div>
+</div>
+
+<!-- DM -->
+<div class="section" id="dm">
+  <div class="section-card dev"><span class="card-num">M</span><span class="card-title">Da Definire in Futuro</span><span class="card-pip dev"></span></div>
+  <div class="callout" style="font-size:13.5px;"><strong>Carta Difesa Senz'arma / Combattimento Naturale.</strong> Una carta base che descrive l'attacco o la difesa naturale del personaggio — calci, pugni, arti marziali, poteri corporei. Permetterebbe archetipi di lottatori e monaci senza dover equipaggiare oggetti in quegli slot. Segue le stesse regole degli oggetti normali ed è potenziabile. <em>Rimandata alla fase di design delle carte specifiche.</em></div>
+</div>
+
+<!-- DN -->
+<div class="section" id="dn">
+  <div class="section-card dev"><span class="card-num">N</span><span class="card-title">Checklist Pre-Playtest</span><span class="card-pip dev"></span></div>
+  <div class="checklist">
+    <div class="check-item"><span class="check-icon">✅</span><div><div class="check-text">Divisore MOD (÷3)</div><div class="check-note">Confermato da simulazione</div></div></div>
+    <div class="check-item"><span class="check-icon">✅</span><div><div class="check-text">Moltiplicatore armatura (×3)</div><div class="check-note">Confermato da simulazione</div></div></div>
+    <div class="check-item"><span class="check-icon">✅</span><div><div class="check-text">Armatura per asse (Grado×3 / Grado)</div><div class="check-note">Regola definita e verificata</div></div></div>
+    <div class="check-item"><span class="check-icon">✅</span><div><div class="check-text">HP nemici espliciti sulla carta</div><div class="check-note">Adottato e verificato</div></div></div>
+    <div class="check-item"><span class="check-icon">✅</span><div><div class="check-text">Struttura Boss / Goon</div><div class="check-note">2 azioni Boss, 2 Goon per PG</div></div></div>
+    <div class="check-item"><span class="check-icon">✅</span><div><div class="check-text">Azioni Leggendarie come Reazioni</div><div class="check-note">Integrate nella sezione Boss</div></div></div>
+    <div class="check-item"><span class="check-icon">✅</span><div><div class="check-text">Durata scontro 3–5 round a Grado 1</div><div class="check-note">Verificata con party misto</div></div></div>
+    <div class="check-item"><span class="check-icon">✅</span><div><div class="check-text">Scaling Grado 1→4 stabile</div><div class="check-note">HP nemico ×Grado, stabile a tutti i livelli</div></div></div>
+    <div class="check-item"><span class="check-icon">✅</span><div><div class="check-text">Capacità di trasporto</div><div class="check-note">Formula definita — C da calibrare post-playtest</div></div></div>
+    <div class="check-item"><span class="check-icon">✅</span><div><div class="check-text">Tiri caratteristica fuori combat</div><div class="check-note">1d12+MOD vs CD, tabella difficoltà</div></div></div>
+    <div class="check-item"><span class="check-icon">✅</span><div><div class="check-text">Riposo corto / lungo</div><div class="check-note">Riposo corto = Grado×d12 dadi vita</div></div></div>
+    <div class="check-item"><span class="check-icon">✅</span><div><div class="check-text">Slot attivi — Aumenti e Oggetti separati</div><div class="check-note">Entrambi scalano = Grado del personaggio</div></div></div>
+    <div class="check-item"><span class="check-icon">✅</span><div><div class="check-text">Indicatori visivi su tutte le carte</div><div class="check-note">↑ ↓ → →→ su carte prefatte, NPC, nemici</div></div></div>
+    <div class="check-item"><span class="check-icon">✅</span><div><div class="check-text">Condizioni per asse</div><div class="check-note">Delegate al testo delle carte singole</div></div></div>
+    <div class="check-item"><span class="check-icon">⚠️</span><div><div class="check-text">Coefficiente C (trasporto)</div><div class="check-note">Da calibrare dopo il playtest in base ai pesi delle carte</div></div></div>
+    <div class="check-item"><span class="check-icon">⚠️</span><div><div class="check-text">Primo set carte di test</div><div class="check-note">4 PG + nemici base — da creare</div></div></div>
+    <div class="check-item"><span class="check-icon">⏳</span><div><div class="check-text">Prima sessione di playtest reale</div><div class="check-note">In attesa</div></div></div>
+  </div>
+</div>
+
+</div><!-- /part-dev -->
+
+</main>
+</div>
+
+<script>
+// ── PART TOGGLE ──────────────────────────────────────────────
+let curPart = 'man';
+function setPart(p){
+  curPart = p;
+  document.getElementById('part-man').classList.toggle('visible', p==='man');
+  document.getElementById('part-dev').classList.toggle('visible', p==='dev');
+  document.getElementById('btn-man').className = 'ptbtn' + (p==='man'?' active-man':'');
+  document.getElementById('btn-dev').className = 'ptbtn' + (p==='dev'?' active-dev':'');
+  const fill = document.getElementById('scroll-fill');
+  fill.className = 'scroll-fill' + (p==='dev'?' dev':'');
+  updateActiveLinks();
+  window.scrollTo(0,0);
+}
+
+// ── SCROLL PROGRESS ──────────────────────────────────────────
+window.addEventListener('scroll', ()=>{
+  const el = document.documentElement;
+  const pct = el.scrollTop / (el.scrollHeight - el.clientHeight) * 100;
+  document.getElementById('scroll-fill').style.width = Math.min(100,pct) + '%';
+  updateActiveLinks();
+}, {passive:true});
+
+// ── ACTIVE SIDEBAR LINKS ─────────────────────────────────────
+function updateActiveLinks(){
+  const sections = document.querySelectorAll('.section');
+  let active = null;
+  sections.forEach(s => {
+    const rect = s.getBoundingClientRect();
+    if(rect.top <= 120) active = s.id;
+  });
+  document.querySelectorAll('.sb-link').forEach(a => {
+    const href = a.getAttribute('href').slice(1);
+    const part = a.dataset.part;
+    const isActive = href === active && part === curPart;
+    a.classList.toggle('active', isActive);
+  });
+}
+
+// ── SMOOTH SCROLL FOR SIDEBAR LINKS ──────────────────────────
+document.querySelectorAll('.sb-link').forEach(a => {
+  a.addEventListener('click', e => {
+    const part = a.dataset.part;
+    if(part !== curPart) setPart(part);
+  });
+});
+
+// init
+updateActiveLinks();
+</script>
+</body>
+</html>
