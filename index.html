@@ -245,6 +245,7 @@ td.mono{font-family:'JetBrains Mono',monospace;font-size:12px;}
   <a class="sb-link man" href="#s12" data-part="man"><span class="sb-section-num">12</span>Nemici, Boss e Goon</a>
   <a class="sb-link man" href="#s13" data-part="man"><span class="sb-section-num">13</span>Potenziare gli Oggetti</a>
   <a class="sb-link man" href="#s14" data-part="man"><span class="sb-section-num">14</span>Riferimento Rapido</a>
+  <a class="sb-link man" href="#s15" data-part="man"><span class="sb-section-num">15</span>Glossario — Parole Chiave</a>
   <div class="sb-gap"></div>
   <div class="sb-part-label dev">Sviluppo</div>
   <a class="sb-link dev" href="#da" data-part="dev"><span class="sb-section-num">A</span>Intenzioni di Design</a>
@@ -297,6 +298,7 @@ Difesa: Corpo ↑  Mente —  Anima —</pre>
   </div>
   <p><strong>Le Carte Oggetto</strong> sono la parte TCG del gioco. Ogni oggetto ha un peso indicato sulla carta. Il mazzo può contenere quanti oggetti si vuole, a patto che la somma dei pesi non superi la capacità di trasporto del personaggio.</p>
   <p><strong>Le Carte Nemico e NPC</strong> sono gestite dal master. Hanno HP espliciti, valori di difesa flat per ogni asse e azioni descritte per esteso — il master legge e gioca, senza calcoli. Usano anch'esse gli indicatori ↑ e ↓ per comunicare i punti deboli ai giocatori in modo narrativo.</p>
+  <p>Ogni carta — oggetto, nemico o NPC — può portare tre informazioni aggiuntive di natura tassonomica. L'<strong>Origine</strong> descrive la fonte o la natura dell'oggetto (es. <em>Tecnologia</em>, <em>Magia</em>, <em>Natura</em>, <em>Artigianato</em>): è un campo testuale libero pensato per il flavor e per le sinergie narrative. I <strong>Tag</strong> sono etichette brevi che categorizzano l'oggetto per tipo, tema o appartenenza (es. <em>Fuoco</em>, <em>Bestia</em>, <em>Meccanico</em>): permettono alle azioni delle carte di referenziare altre carte per categoria. Infine, su nemici e NPC (e opzionalmente sugli oggetti), compaiono <strong>Immunità</strong>, <strong>Resistenze</strong> e <strong>Debolezze</strong>, che indicano rispettivamente i tipi di danno o condizione completamente ignorati, subiti a metà, o subiti con effetto doppio.</p>
 </div>
 
 <!-- S3 -->
@@ -323,17 +325,19 @@ Difesa: Corpo ↑  Mente —  Anima —</pre>
     <div class="ref-item"><span class="ref-label">HP</span><span class="ref-val">Corpo + Mente + Anima</span></div>
     <div class="ref-item"><span class="ref-label">Velocità (m/turno)</span><span class="ref-val">Corpo</span></div>
     <div class="ref-item"><span class="ref-label">Iniziativa</span><span class="ref-val">1d12 + MOD(Corpo)</span></div>
-    <div class="ref-item"><span class="ref-label">Capacità Trasporto</span><span class="ref-val">(MOD×2 + 1) × Peso × C</span></div>
+    <div class="ref-item"><span class="ref-label">Capacità Trasporto</span><span class="ref-val">Corpo × 3 kg</span></div>
   </div>
   <p>Gli <strong>HP</strong> sono la somma pura delle tre caratteristiche. Un personaggio 10/1/1 e uno 5/4/3 hanno entrambi 12 HP — la differenza non è nella quantità ma in come li difendono e su quale asse vengono attaccati.</p>
-  <p>La <strong>Capacità di Trasporto</strong> usa il MOD del Corpo con peso doppio rispetto alla corporatura. Il `×2` fa pesare la forza il doppio. Il `+1` garantisce un risultato positivo anche con MOD 0. <strong>C</strong> è il coefficiente di Controllo — da calibrare dopo il playtest in base alla scala di peso delle carte.</p>
+  <p>La <strong>Capacità di Trasporto</strong> è semplicemente <strong>Corpo × 3 kg</strong>. Un personaggio con Corpo 6 porta 18 kg, uno con Corpo 12 porta 36 kg. Il peso di ogni carta è espresso direttamente in kg — una spada lunga pesa 2 kg, una cotta di maglia 15 kg. La capacità è una risorsa tattica reale: portare un'armatura pesante richiede investimento in Corpo, e oggetti come zaini o impianti di potenziamento fisico possono aumentarla.</p>
   <div class="table-wrap"><table class="t-mod">
-    <thead><tr><th>Corpo</th><th>MOD</th><th>Peso PG</th><th>Capacità (C=1)</th><th>Lettura</th></tr></thead>
+    <thead><tr><th>Corpo</th><th>Capacità</th><th>Esempio equipaggiamento</th></tr></thead>
     <tbody>
-      <tr><td>1–2</td><td class="mono">+0</td><td>50 kg</td><td class="ok">50</td><td>Porta al massimo il suo peso</td></tr>
-      <tr><td>6</td><td class="mono">+2</td><td>50 kg</td><td class="ok">250</td><td>Porta 5× il suo peso</td></tr>
-      <tr><td>10</td><td class="mono">+3</td><td>70 kg</td><td class="ok">490</td><td>Guerriero — carico elevato</td></tr>
-      <tr><td>10</td><td class="mono">+3</td><td>90 kg</td><td class="ok">630</td><td>Guerriero massiccio — carico massimo</td></tr>
+      <tr><td>1–2</td><td class="ok">3–6 kg</td><td>Daga + abiti — nient'altro</td></tr>
+      <tr><td>3–5</td><td class="ok">9–15 kg</td><td>Spada + armatura leggera</td></tr>
+      <tr><td>6–8</td><td class="ok">18–24 kg</td><td>Cotta di maglia + spada + qualcosa</td></tr>
+      <tr><td>9–11</td><td class="ok">27–33 kg</td><td>Piastre + spada + oggetti</td></tr>
+      <tr><td>12–17</td><td class="warn">36–51 kg</td><td>Build pesante completa con margine</td></tr>
+      <tr><td>18–24</td><td class="warn">54–72 kg</td><td>Qualsiasi build — spazio abbondante</td></tr>
     </tbody>
   </table></div>
 </div>
@@ -509,28 +513,164 @@ Successo se Risultato ≥ CD</div>
       <tr><td><strong>Caricata</strong></td><td>1 turno di preparazione + 1 turno di esecuzione.</td></tr>
     </tbody>
   </table></div>
+
+  <h3>Origine, Tag e Interazioni</h3>
+  <p>Ogni carta può portare tre campi di classificazione che non modificano le formule ma abilitano sinergie testuali tra carte.</p>
+  <p><strong>Origine</strong> è un campo libero che descrive la fonte o la natura dell'oggetto — <em>Tecnologia</em>, <em>Magia Arcana</em>, <em>Natura</em>, <em>Artigianato Nanico</em>. Serve per il flavor e per costruire coerenza narrativa nel mazzo. Un'azione può referenziare l'Origine: <em>"Se la tua Arma ha Origine Tecnologia, questa Rapida non consuma azione."</em></p>
+  <p><strong>Tag</strong> sono etichette brevi che categorizzano l'oggetto per tipo o tema — <em>Fuoco</em>, <em>Bestia</em>, <em>Meccanico</em>, <em>Ombra</em>. Più carte possono condividere lo stesso tag, e le azioni possono contare quante carte attive condividono un tag per produrre effetti scalanti: <em>"Per ogni carta attiva con tag [Fuoco]: +1 al danno."</em></p>
+  <p><strong>Immunità, Resistenze e Debolezze</strong> sono tre liste opzionali che compaiono soprattutto sulle carte Nemico e NPC, ma possono comparire anche su oggetti che modificano il profilo difensivo di chi li equipaggia. Un'<strong>Immunità</strong> annulla completamente i danni o l'effetto di quel tipo. Una <strong>Resistenza</strong> dimezza i danni subiti di quel tipo (arrotondati per difetto). Una <strong>Debolezza</strong> raddoppia i danni subiti di quel tipo. Questi attributi vengono comunicati dal master quando pertinenti — i PG possono scoprirli in gioco tramite osservazione o prove di Mente.</p>
+  <div class="example">
+    <span class="example-label">Esempio — Golem di Pietra</span>
+    <pre>Origine: Magia Antica  |  Tag: Costrutto, Terra
+Immunità: Veleno, Psichico, Freddo
+Resistenze: Contundente, Tagliente, Perforante
+Debolezze: Acido, Forza</pre>
+    <p style="margin-top:10px;font-size:13px;">Un PG che usa un'arma da Tagliente fa metà danno. Uno che usa un oggetto con tag [Acido] sfrutta la debolezza. Il master non anticipa queste informazioni — i giocatori le scoprono col tempo.</p>
+  </div>
 </div>
 
 <!-- S11 -->
 <div class="section" id="s11">
   <div class="section-card man"><span class="card-num">11</span><span class="card-title">Le Condizioni</span><span class="card-pip man"></span></div>
-  <p>Le condizioni sono stati alterati che si applicano quando certe azioni vanno a segno. Alcune carte possono specificare condizioni <strong>per asse</strong> — varianti mirate che operano solo su una caratteristica specifica (es. "Accecato [Mente]" applica svantaggio solo alle prove di Mente). Il testo della carta è sempre la fonte autoritativa.</p>
+  <p>Le condizioni sono stati alterati applicati quando un'azione lo specifica esplicitamente. Alcune carte possono specificare condizioni <strong>per asse</strong> — varianti mirate che operano solo su una caratteristica specifica (es. "Accecato [Mente]" applica svantaggio solo alle prove di Mente). Il testo della carta è sempre la fonte autoritativa.</p>
+
+  <h3>Regola IRD e Condizioni</h3>
+  <p>Le <strong>Immunità, Resistenze e Debolezze</strong> di un bersaglio interagiscono con le condizioni nel modo seguente. Se il bersaglio è <strong>immune</strong> al tipo di danno, non subisce né danno né condizioni da quella fonte. Se è <strong>resistente</strong>, subisce danno dimezzato ma le condizioni specificate sull'azione si applicano normalmente. Se è <strong>debole</strong>, subisce danno raddoppiato e <em>qualsiasi condizione associabile a quel tipo di danno si applica automaticamente</em> — anche se l'azione non la specifica.</p>
+
+  <h3>Tipi di Azione</h3>
+  <p>Ogni azione su una carta è classificata in uno dei seguenti tipi, ognuno con un colore standardizzato per facilitare la lettura rapida.</p>
   <div class="cond-grid">
-    <div class="cond-item"><div class="cond-name">Accecato</div><div class="cond-effect">Non vede. Svantaggio a Corpo e Mente.</div></div>
-    <div class="cond-item"><div class="cond-name">Affascinato</div><div class="cond-effect">Non può agire contro il bersaglio. Svantaggio a Mente/Anima vs di esso. Tiro per liberarsi.</div></div>
-    <div class="cond-item"><div class="cond-name">Assordato</div><div class="cond-effect">Svantaggio su Mente e Anima.</div></div>
-    <div class="cond-item"><div class="cond-name">Avvelenato / Infuocato / Congelato</div><div class="cond-effect">−1d4 HP per turno. Si differenziano per origine e rimozione.</div></div>
-    <div class="cond-item"><div class="cond-name">Afferrato</div><div class="cond-effect">Chi lo attacca ha vantaggio. Tiro Corpo vs Corpo per liberarsi.</div></div>
-    <div class="cond-item"><div class="cond-name">Incapacitato</div><div class="cond-effect">Perde il turno. Non può muoversi né agire.</div></div>
-    <div class="cond-item"><div class="cond-name">Invisibile</div><div class="cond-effect">Vantaggio a Corpo. Svantaggio per chi lo attacca.</div></div>
-    <div class="cond-item"><div class="cond-name">Paralizzato</div><div class="cond-effect">Perde il turno. Svantaggio a tutto.</div></div>
-    <div class="cond-item"><div class="cond-name">Pietrificato</div><div class="cond-effect">Fallimento automatico ai tiri su Corpo.</div></div>
-    <div class="cond-item"><div class="cond-name">Privo di Sensi</div><div class="cond-effect">A terra, non agisce, subisce svantaggio.</div></div>
-    <div class="cond-item"><div class="cond-name">Prono</div><div class="cond-effect">Movimento dimezzato.</div></div>
-    <div class="cond-item"><div class="cond-name">Intrappolato</div><div class="cond-effect">Non si muove. Chi attacca ha vantaggio. Tiro per liberarsi.</div></div>
-    <div class="cond-item"><div class="cond-name">Spaventato</div><div class="cond-effect">Non può avvicinarsi o attaccare la fonte. Svantaggio a Mente/Anima.</div></div>
-    <div class="cond-item"><div class="cond-name">Stordito</div><div class="cond-effect">Svantaggio a Mente e Anima.</div></div>
-    <div class="cond-item"><div class="cond-name">Esausto</div><div class="cond-effect">Svantaggio a tutto fino a riposo corto.</div></div>
+    <div class="cond-item" style="border-left:3px solid #6b7280">
+      <div class="cond-name" style="color:#6b7280">Passiva</div>
+      <div class="cond-effect">Effetto permanente attivo finché la carta è equipaggiata. Non richiede azione.</div>
+    </div>
+    <div class="cond-item" style="border-left:3px solid #2ec4a0">
+      <div class="cond-name" style="color:#2ec4a0">Rapida</div>
+      <div class="cond-effect">Si esegue senza consumare l'azione del turno. Formula: MOD(Asse).</div>
+    </div>
+    <div class="cond-item" style="border-left:3px solid #5890e8">
+      <div class="cond-name" style="color:#5890e8">Leggera</div>
+      <div class="cond-effect">Richiede 1 azione. Formula: G×d12+MOD o G×d6+MOD+Condizione.</div>
+    </div>
+    <div class="cond-item" style="border-left:3px solid #e05050">
+      <div class="cond-name" style="color:#e05050">Caricata</div>
+      <div class="cond-effect">1 turno preparazione + 1 esecuzione. Formula: 2G×d12+MOD+Condizione.</div>
+    </div>
+    <div class="cond-item" style="border-left:3px solid #a070e8">
+      <div class="cond-name" style="color:#a070e8">Reazione</div>
+      <div class="cond-effect">Si esegue fuori turno in risposta a un evento specificato sulla carta. Non consuma l'azione del turno.</div>
+    </div>
+    <div class="cond-item" style="border-left:3px solid #f0a500">
+      <div class="cond-name" style="color:#f0a500">Concentrazione</div>
+      <div class="cond-effect">Non puoi avere due azioni in Concentrazione attive. Se subisci danno: tira 1d12 + MOD(Mente o Anima, la più alta) contro 6 + danno subito post-soglia. Se fallisci, la Concentrazione si spezza.</div>
+    </div>
+  </div>
+
+  <h3>Condizioni</h3>
+  <p>Le condizioni sono raggruppate per famiglia meccanica. Più condizioni dello stesso tipo su uno stesso bersaglio non si sommano — si usa la peggiore.</p>
+
+  <p style="font-size:12px;font-weight:700;color:#e05050;margin:12px 0 6px;letter-spacing:1px;font-family:'Cinzel',serif">DANNO CONTINUO</p>
+  <div class="cond-grid">
+    <div class="cond-item" style="border-left:3px solid #e05050">
+      <div class="cond-name" style="color:#e05050">Sanguinante</div>
+      <div class="cond-effect">Perde 1 HP a inizio turno. Si rimuove con un'azione (bendarsi) o con cura. Fonte: danno Tagliente specificato sulla carta.</div>
+    </div>
+    <div class="cond-item" style="border-left:3px solid #e05050">
+      <div class="cond-name" style="color:#e05050">Intossicato</div>
+      <div class="cond-effect">Perde 1d4 HP a inizio turno. Danno da sostanza tossica generica — non specificatamente veleno. Si rimuove con antidoto o riposo lungo.</div>
+    </div>
+    <div class="cond-item" style="border-left:3px solid #e05050">
+      <div class="cond-name" style="color:#e05050">Avvelenato</div>
+      <div class="cond-effect">Perde 1d4 HP a inizio turno e ha −MOD(Corpo) a tutti i tiri finché dura. Fonte: tipo danno Veleno specificato sulla carta. Si rimuove con antidoto o riposo lungo.</div>
+    </div>
+    <div class="cond-item" style="border-left:3px solid #e05050">
+      <div class="cond-name" style="color:#e05050">Infuocato</div>
+      <div class="cond-effect">Perde 1d4 HP da Fuoco a inizio turno. Si rimuove spendendo 1 azione per spegnersi o con acqua/freddo. Fonte: tipo danno Fuoco specificato sulla carta.</div>
+    </div>
+    <div class="cond-item" style="border-left:3px solid #e05050">
+      <div class="cond-name" style="color:#e05050">Corroso</div>
+      <div class="cond-effect">La soglia difensiva dell'asse colpito è ridotta di un valore pari al Grado dell'attaccante. Si rimuove spendendo 1 azione per pulire l'armatura. Fonte: tipo danno Acido specificato sulla carta.</div>
+    </div>
+  </div>
+
+  <p style="font-size:12px;font-weight:700;color:#f0a500;margin:12px 0 6px;letter-spacing:1px;font-family:'Cinzel',serif">CONTROLLO FISICO</p>
+  <div class="cond-grid">
+    <div class="cond-item" style="border-left:3px solid #f0a500">
+      <div class="cond-name" style="color:#f0a500">Afferrato</div>
+      <div class="cond-effect">Chi lo attacca ha vantaggio. Tiro Corpo vs Corpo per liberarsi.</div>
+    </div>
+    <div class="cond-item" style="border-left:3px solid #f0a500">
+      <div class="cond-name" style="color:#f0a500">Prono</div>
+      <div class="cond-effect">Movimento dimezzato. Costa 1 azione rialzarsi.</div>
+    </div>
+    <div class="cond-item" style="border-left:3px solid #f0a500">
+      <div class="cond-name" style="color:#f0a500">Intrappolato</div>
+      <div class="cond-effect">Non si muove. Chi attacca ha vantaggio. Tiro Corpo per liberarsi.</div>
+    </div>
+    <div class="cond-item" style="border-left:3px solid #f0a500">
+      <div class="cond-name" style="color:#f0a500">Pietrificato</div>
+      <div class="cond-effect">Fallimento automatico ai tiri su Corpo. Non si muove.</div>
+    </div>
+  </div>
+
+  <p style="font-size:12px;font-weight:700;color:#9996aa;margin:12px 0 6px;letter-spacing:1px;font-family:'Cinzel',serif">PERDITA TURNO / AZIONE</p>
+  <div class="cond-grid">
+    <div class="cond-item" style="border-left:3px solid #9996aa">
+      <div class="cond-name" style="color:#9996aa">Stordito</div>
+      <div class="cond-effect">Svantaggio a Mente e Anima.</div>
+    </div>
+    <div class="cond-item" style="border-left:3px solid #9996aa">
+      <div class="cond-name" style="color:#9996aa">Paralizzato</div>
+      <div class="cond-effect">Perde il turno. Svantaggio a tutto.</div>
+    </div>
+    <div class="cond-item" style="border-left:3px solid #9996aa">
+      <div class="cond-name" style="color:#9996aa">Incapacitato</div>
+      <div class="cond-effect">Perde il turno. Non può muoversi né agire.</div>
+    </div>
+    <div class="cond-item" style="border-left:3px solid #9996aa">
+      <div class="cond-name" style="color:#9996aa">Privo di Sensi</div>
+      <div class="cond-effect">A terra, non agisce, subisce svantaggio a tutto.</div>
+    </div>
+  </div>
+
+  <p style="font-size:12px;font-weight:700;color:#6b7280;margin:12px 0 6px;letter-spacing:1px;font-family:'Cinzel',serif">ALTERAZIONE SENSORIALE</p>
+  <div class="cond-grid">
+    <div class="cond-item" style="border-left:3px solid #6b7280">
+      <div class="cond-name" style="color:#6b7280">Accecato</div>
+      <div class="cond-effect">Svantaggio a Corpo e Mente. Non può usare azioni che richiedano visione.</div>
+    </div>
+    <div class="cond-item" style="border-left:3px solid #6b7280">
+      <div class="cond-name" style="color:#6b7280">Assordato</div>
+      <div class="cond-effect">Svantaggio su Mente e Anima. Non percepisce suoni.</div>
+    </div>
+  </div>
+
+  <p style="font-size:12px;font-weight:700;color:#a070e8;margin:12px 0 6px;letter-spacing:1px;font-family:'Cinzel',serif">ALTERAZIONE MENTALE</p>
+  <div class="cond-grid">
+    <div class="cond-item" style="border-left:3px solid #a070e8">
+      <div class="cond-name" style="color:#a070e8">Spaventato</div>
+      <div class="cond-effect">Non può avvicinarsi o attaccare la fonte. Svantaggio a Mente e Anima.</div>
+    </div>
+    <div class="cond-item" style="border-left:3px solid #a070e8">
+      <div class="cond-name" style="color:#a070e8">Affascinato</div>
+      <div class="cond-effect">Non può agire contro il bersaglio. Svantaggio a Mente/Anima contro di esso. Tiro per liberarsi.</div>
+    </div>
+    <div class="cond-item" style="border-left:3px solid #a070e8">
+      <div class="cond-name" style="color:#a070e8">Esausto</div>
+      <div class="cond-effect">Svantaggio a tutto fino a riposo corto.</div>
+    </div>
+  </div>
+
+  <p style="font-size:12px;font-weight:700;color:#5890e8;margin:12px 0 6px;letter-spacing:1px;font-family:'Cinzel',serif">AMBIENTE</p>
+  <div class="cond-grid">
+    <div class="cond-item" style="border-left:3px solid #5890e8">
+      <div class="cond-name" style="color:#5890e8">Congelato</div>
+      <div class="cond-effect">Movimento ridotto a 0. Svantaggio a Corpo. Si rimuove con calore o spendendo 1 azione per rompersi il ghiaccio.</div>
+    </div>
+    <div class="cond-item" style="border-left:3px solid #2ec4a0">
+      <div class="cond-name" style="color:#2ec4a0">Invisibile</div>
+      <div class="cond-effect">Vantaggio a Corpo. Svantaggio per chi lo attacca senza poterlo percepire.</div>
+    </div>
   </div>
 </div>
 
@@ -538,6 +678,7 @@ Successo se Risultato ≥ CD</div>
 <div class="section" id="s12">
   <div class="section-card man"><span class="card-num">12</span><span class="card-title">Nemici, Boss e Goon</span><span class="card-pip man"></span></div>
   <p>La differenza più importante tra PG e nemici: i nemici <strong>non seguono le stesse formule dei PG</strong>. Ogni carta nemico è self-contained: HP espliciti, difesa flat per asse, azioni descritte. Il master legge e gioca, senza calcoli. Lo stesso vale per gli NPC alleati.</p>
+  <p>Le carte nemico includono sempre anche <strong>Origine</strong>, <strong>Tag</strong> e, dove rilevante, <strong>Immunità</strong>, <strong>Resistenze</strong> e <strong>Debolezze</strong> ai tipi di danno e alle condizioni. Queste informazioni guidano il design del nemico e possono essere scoperte dai PG durante il gioco — non vengono anticipate dal master a meno che non sia narrativamente giustificato.</p>
   <div class="enemy-split">
     <div class="enemy-card boss">
       <div class="enemy-label">Boss</div>
@@ -604,10 +745,82 @@ Requisito: Grado_PG ≥ Grado_destinazione</div>
     <div class="ref-item"><span class="ref-label">Soglia Nemico</span><span class="ref-val">Dif.flat[asse] (carta)</span></div>
     <div class="ref-item"><span class="ref-label">Danno</span><span class="ref-val">max(0, Attacco − Soglia)</span></div>
     <div class="ref-item"><span class="ref-label">HP Nemico scalato</span><span class="ref-val">HP × N_PG / 4</span></div>
-    <div class="ref-item"><span class="ref-label">Trasporto</span><span class="ref-val">(MOD×2+1) × Peso × C</span></div>
+    <div class="ref-item"><span class="ref-label">Trasporto</span><span class="ref-val">Corpo × 3 kg</span></div>
     <div class="ref-item"><span class="ref-label">Riposo corto HP</span><span class="ref-val">Spendi Grado×d12</span></div>
     <div class="ref-item"><span class="ref-label">Potenziamento</span><span class="ref-val">G_dest × 2000 MO + giorni</span></div>
     <div class="ref-item"><span class="ref-label">Tiro caratteristica</span><span class="ref-val">1d12 + MOD vs CD</span></div>
+  </div>
+</div><!-- S15 -->
+<div class="section" id="s15">
+  <div class="section-card man"><span class="card-num">15</span><span class="card-title">Glossario — Parole Chiave</span><span class="card-pip man"></span></div>
+  <p>Alcune parole appaiono nel testo delle carte con un significato meccanico preciso e standardizzato. Quando una carta usa una di queste parole chiave, si applica sempre la definizione qui sotto — il testo della carta non ha bisogno di riscriverla per esteso. In caso di conflitto tra testo della carta e parola chiave, il testo ha sempre la precedenza.</p>
+
+  <h3>Modificatori al Calcolo del Danno</h3>
+  <div class="cond-grid">
+    <div class="cond-item">
+      <div class="cond-name">Perforante</div>
+      <div class="cond-effect">Ignora la soglia difensiva del bersaglio (sia MOD che armatura). Il danno si applica direttamente agli HP. Il MOD dell'asse dell'attaccante si usa normalmente nella formula.</div>
+    </div>
+    <div class="cond-item">
+      <div class="cond-name">Dimezzante</div>
+      <div class="cond-effect">La soglia del bersaglio conta la metà (arrotondato per difetto) per questa azione. Non azzera la soglia, ma la riduce sensibilmente.</div>
+    </div>
+    <div class="cond-item">
+      <div class="cond-name">Penetrante N</div>
+      <div class="cond-effect">Riduce la soglia del bersaglio di N per questa azione. Via di mezzo tra nessun modificatore e Dimezzante. Il valore N è specificato sulla carta.</div>
+    </div>
+    <div class="cond-item">
+      <div class="cond-name">Sacrificio N</div>
+      <div class="cond-effect">Questa azione costa N HP al lanciatore invece di consumare un utilizzo. Non richiede slot utilizzi — si usa sempre finché il personaggio ha abbastanza HP.</div>
+    </div>
+  </div>
+
+  <h3>Modificatori alla Durata e all'Area</h3>
+  <div class="cond-grid">
+    <div class="cond-item">
+      <div class="cond-name">Persistente N</div>
+      <div class="cond-effect">L'effetto dura N turni dopo l'esecuzione, anche se la carta viene disattivata. Il valore N è specificato sulla carta.</div>
+    </div>
+    <div class="cond-item">
+      <div class="cond-name">Istantanea</div>
+      <div class="cond-effect">L'effetto avviene e finisce nello stesso momento. Non può essere interrotto, contrastato o rimosso da reazioni. Usato per cure immediate o buff istantanei.</div>
+    </div>
+    <div class="cond-item">
+      <div class="cond-name">Zona N</div>
+      <div class="cond-effect">Colpisce tutti i bersagli (amici inclusi, salvo diversa indicazione) entro N metri dal punto di impatto. Il valore N è specificato sulla carta.</div>
+    </div>
+    <div class="cond-item">
+      <div class="cond-name">Eco</div>
+      <div class="cond-effect">Se questa azione colpisce un bersaglio già affetto da una condizione specificata sulla carta, l'azione si ripete automaticamente una seconda volta sullo stesso bersaglio.</div>
+    </div>
+  </div>
+
+  <h3>Modificatori di Sinergia</h3>
+  <div class="cond-grid">
+    <div class="cond-item">
+      <div class="cond-name">Risonante [Tag]</div>
+      <div class="cond-effect">Questa azione scala con il numero di carte attive che condividono il Tag specificato. La formula di scaling è indicata sulla carta (es. "+1 dado per ogni [Fuoco] attivo").</div>
+    </div>
+    <div class="cond-item">
+      <div class="cond-name">Sinergia [Tag]</div>
+      <div class="cond-effect">Questa carta ha un effetto aggiuntivo se nel mazzo attivo è presente almeno un'altra carta con il Tag specificato. L'effetto è descritto sulla carta.</div>
+    </div>
+  </div>
+
+  <h3>Parole Chiave sulle Carte</h3>
+  <div class="cond-grid">
+    <div class="cond-item">
+      <div class="cond-name">Unica</div>
+      <div class="cond-effect">Non puoi possedere più di una copia di questa carta, indipendentemente dal Grado o dagli slot disponibili.</div>
+    </div>
+    <div class="cond-item">
+      <div class="cond-name">Legata</div>
+      <div class="cond-effect">Questa carta è legata al personaggio che la ottiene. Non può essere trasferita, venduta o scambiata. Può essere potenziata normalmente.</div>
+    </div>
+    <div class="cond-item">
+      <div class="cond-name">Fragile</div>
+      <div class="cond-effect">Se il bersaglio di questa carta ottiene un risultato naturale di 12 contro di essa, la carta viene distrutta e rimossa dal mazzo. Il master decide quando una carta Fragile è a rischio.</div>
+    </div>
   </div>
 </div>
 
@@ -777,7 +990,7 @@ Requisito: Grado_PG ≥ Grado_destinazione</div>
     <div class="check-item"><span class="check-icon">✅</span><div><div class="check-text">Slot attivi — Aumenti e Oggetti separati</div><div class="check-note">Entrambi scalano = Grado del personaggio</div></div></div>
     <div class="check-item"><span class="check-icon">✅</span><div><div class="check-text">Indicatori visivi su tutte le carte</div><div class="check-note">↑ ↓ → →→ su carte prefatte, NPC, nemici</div></div></div>
     <div class="check-item"><span class="check-icon">✅</span><div><div class="check-text">Condizioni per asse</div><div class="check-note">Delegate al testo delle carte singole</div></div></div>
-    <div class="check-item"><span class="check-icon">⚠️</span><div><div class="check-text">Coefficiente C (trasporto)</div><div class="check-note">Da calibrare dopo il playtest in base ai pesi delle carte</div></div></div>
+    <div class="check-item"><span class="check-icon">✅</span><div><div class="check-text">Capacità di trasporto</div><div class="check-note">Corpo × 3 kg — pesi carte in kg reali</div></div></div>
     <div class="check-item"><span class="check-icon">⚠️</span><div><div class="check-text">Primo set carte di test</div><div class="check-note">4 PG + nemici base — da creare</div></div></div>
     <div class="check-item"><span class="check-icon">⏳</span><div><div class="check-text">Prima sessione di playtest reale</div><div class="check-note">In attesa</div></div></div>
   </div>
