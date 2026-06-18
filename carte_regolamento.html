@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>CoreAndCards — Carte Regolamento</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Outfit:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --bg:#0b0b10;--bg2:#12121a;--bg3:#1a1a26;--bg4:#222232;
+  --border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.13);
+  --tx:#e8e4d8;--tx2:#9490a0;--tx3:#56536a;--gold:#e8a030;--mod:#7c6af7;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--tx);font-family:'Outfit',sans-serif;min-height:100vh;}
+
+.topbar{position:sticky;top:0;z-index:100;height:48px;
+  background:rgba(11,11,16,0.96);backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;padding:0 20px;gap:14px;}
+.topbar-logo{font-family:'Cinzel',serif;font-size:13px;font-weight:900;color:var(--mod);letter-spacing:.1em;}
+.topbar-sub{font-size:10px;color:var(--tx3);}
+.topbar-back{margin-left:auto;font-size:10px;color:var(--tx2);text-decoration:none;
+  border:1px solid var(--border2);border-radius:4px;padding:4px 10px;transition:all .15s;}
+.topbar-back:hover{color:var(--tx);border-color:var(--tx2);}
+
+.page{max-width:1300px;margin:0 auto;padding:28px 20px 60px;}
+.page-title{font-family:'Cinzel',serif;font-size:20px;font-weight:700;color:var(--tx);margin-bottom:4px;}
+.page-sub{font-size:12px;color:var(--tx2);margin-bottom:22px;line-height:1.6;}
+
+.controls{display:flex;align-items:center;gap:14px;margin-bottom:22px;
+  background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:10px 16px;}
+.controls label{font-size:10px;color:var(--tx3);text-transform:uppercase;letter-spacing:.08em;}
+.controls input[type=range]{accent-color:var(--gold);width:110px;}
+.scale-val{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--tx2);min-width:30px;}
+.dl-all{margin-left:auto;padding:6px 14px;background:var(--bg3);border:1px solid var(--border2);
+  border-radius:6px;color:var(--gold);font-family:'Cinzel',serif;font-size:10px;font-weight:700;
+  letter-spacing:1px;cursor:pointer;transition:all .15s;}
+.dl-all:hover{background:var(--bg4);border-color:var(--gold);}
+
+.card-grid{display:flex;flex-wrap:wrap;gap:18px;}
+
+.card-wrap{display:flex;flex-direction:column;align-items:center;gap:7px;}
+.dl-btn{padding:4px 12px;background:var(--bg2);border:1px solid var(--border2);
+  border-radius:5px;color:var(--tx2);font-family:'Cinzel',serif;font-size:9px;font-weight:700;
+  letter-spacing:1px;cursor:pointer;transition:all .15s;white-space:nowrap;}
+.dl-btn:hover{background:var(--bg3);color:var(--gold);border-color:var(--gold);}
+
+/* ── CARTA REGOLAMENTO 744×1039px ── */
+.rcard-outer{position:relative;flex-shrink:0;}
+.rcard-stage{width:744px;height:1039px;transform-origin:top left;position:absolute;top:0;left:0;}
+.rcard{width:744px;height:1039px;border-radius:36px;overflow:hidden;position:relative;font-family:'Outfit',sans-serif;}
+
+.rc-border{position:absolute;inset:0;border-radius:36px;z-index:50;pointer-events:none;}
+
+.rc-head{position:absolute;left:0;right:0;top:0;height:128px;
+  display:flex;align-items:center;padding:0 36px;gap:14px;z-index:10;}
+.rc-head-icon{font-size:44px;line-height:1;flex-shrink:0;}
+.rc-head-text{flex:1;}
+.rc-head-title{font-family:'Cinzel',serif;font-size:50px;font-weight:900;
+  letter-spacing:2px;line-height:1;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.rc-head-sub{font-size:24px;font-weight:400;color:rgba(255,255,255,0.55);letter-spacing:1px;margin-top:4px;}
+.rc-num{width:74px;height:74px;border-radius:50%;background:rgba(255,255,255,0.1);
+  border:3px solid rgba(255,255,255,0.25);display:flex;align-items:center;justify-content:center;
+  font-family:'JetBrains Mono',monospace;font-size:38px;font-weight:700;
+  color:rgba(255,255,255,0.75);flex-shrink:0;}
+
+.rc-body{position:absolute;left:0;right:0;top:128px;bottom:0;
+  padding:22px 36px 26px;overflow:hidden;z-index:5;}
+
+.rc-section{margin-bottom:16px;}
+.rc-section:last-child{margin-bottom:0;}
+
+/* TITLE sezione: ridotto */
+.rc-sec-title{font-size:19px;font-weight:700;letter-spacing:2px;text-transform:uppercase;
+  margin-bottom:8px;padding-bottom:5px;border-bottom:1.5px solid rgba(255,255,255,0.14);}
+
+/* ROW ridotta: font 23px invece di 26px */
+.rc-row{display:flex;align-items:baseline;gap:8px;
+  padding:4px 0;border-bottom:1px solid rgba(255,255,255,0.06);font-size:23px;line-height:1.3;}
+.rc-row:last-child{border-bottom:none;}
+.rc-row-label{font-weight:700;flex-shrink:0;font-size:22px;}
+.rc-row-val{color:rgba(255,255,255,0.68);font-size:21px;}
+.rc-row-val em{font-style:normal;font-family:'JetBrains Mono',monospace;
+  font-size:20px;color:rgba(255,255,255,0.88);}
+
+/* FORMULA ridotta: font 24px invece di 28px */
+.rc-formula{font-family:'JetBrains Mono',monospace;font-size:24px;font-weight:700;
+  color:#fff;background:rgba(0,0,0,0.28);border-radius:7px;
+  padding:9px 14px;margin:7px 0;line-height:1.45;}
+.rc-formula span{color:rgba(255,255,255,0.45);font-size:20px;}
+
+.rc-tag{display:inline-block;font-size:18px;font-weight:700;padding:2px 9px;
+  border-radius:5px;margin-right:5px;letter-spacing:.5px;flex-shrink:0;}
+.t-leggera {background:rgba(88,144,232,0.25);color:#5890e8;border:1px solid rgba(88,144,232,0.35);}
+.t-caricata{background:rgba(201,64,64,0.25); color:#e05050;border:1px solid rgba(201,64,64,0.35);}
+.t-rapida  {background:rgba(46,196,160,0.25);color:#2ec4a0;border:1px solid rgba(46,196,160,0.35);}
+.t-reazione{background:rgba(160,112,232,0.25);color:#a070e8;border:1px solid rgba(160,112,232,0.35);}
+.t-conc    {background:rgba(240,165,0,0.25);  color:#f0a500;border:1px solid rgba(240,165,0,0.35);}
+.t-passiva {background:rgba(150,150,150,0.18);color:#aaa;   border:1px solid rgba(150,150,150,0.28);}
+.t-immune  {background:rgba(46,196,160,0.22); color:#2ec4a0;}
+.t-resist  {background:rgba(88,144,232,0.22); color:#5890e8;}
+.t-debole  {background:rgba(201,64,64,0.22);  color:#e05050;}
+
+.rc-divider{height:1px;background:rgba(255,255,255,0.1);margin:12px 0;}
+
+.rc-note{position:absolute;bottom:18px;left:36px;right:36px;
+  font-size:18px;color:rgba(255,255,255,0.35);font-style:italic;text-align:center;
+  border-top:1px solid rgba(255,255,255,0.09);padding-top:10px;z-index:6;}
+
+/* ROW TALL per tipi azione (con subtitle) */
+.rc-row-tall{padding:6px 0;border-bottom:1px solid rgba(255,255,255,0.06);
+  display:flex;align-items:flex-start;gap:8px;}
+.rc-row-tall:last-child{border-bottom:none;}
+.rc-row-tall-body{display:flex;flex-direction:column;gap:1px;}
+.rc-row-tall-main{font-size:23px;font-weight:700;color:#fff;}
+.rc-row-tall-sub{font-size:19px;color:rgba(255,255,255,0.5);}
+
+/* TEMI */
+.theme-blue   .rcard,.theme-blue   .rc-head{background:#0d1a3a;}
+.theme-blue   .rc-body{background:linear-gradient(160deg,#0f1e42,#0a1228);}
+.theme-blue   .rc-border{border:12px solid #1a3a7a;box-shadow:inset 0 0 0 4px #2a5abf;}
+.theme-blue   .rc-sec-title{color:#5890e8;}
+
+.theme-red    .rcard,.theme-red    .rc-head{background:#2a0808;}
+.theme-red    .rc-body{background:linear-gradient(160deg,#300a0a,#1a0508);}
+.theme-red    .rc-border{border:12px solid #7a1a1a;box-shadow:inset 0 0 0 4px #b82020;}
+.theme-red    .rc-sec-title{color:#e05050;}
+
+.theme-gold   .rcard,.theme-gold   .rc-head{background:#1e1200;}
+.theme-gold   .rc-body{background:linear-gradient(160deg,#241500,#130c00);}
+.theme-gold   .rc-border{border:12px solid #7a5000;box-shadow:inset 0 0 0 4px #c07800;}
+.theme-gold   .rc-sec-title{color:#f0a500;}
+
+.theme-purple .rcard,.theme-purple .rc-head{background:#14092a;}
+.theme-purple .rc-body{background:linear-gradient(160deg,#18102e,#0e0618);}
+.theme-purple .rc-border{border:12px solid #4a1a7a;box-shadow:inset 0 0 0 4px #7040b8;}
+.theme-purple .rc-sec-title{color:#a070e8;}
+
+.theme-teal   .rcard,.theme-teal   .rc-head{background:#041e18;}
+.theme-teal   .rc-body{background:linear-gradient(160deg,#062420,#03120e);}
+.theme-teal   .rc-border{border:12px solid #0a4030;box-shadow:inset 0 0 0 4px #0f6050;}
+.theme-teal   .rc-sec-title{color:#2ec4a0;}
+
+.theme-gray   .rcard,.theme-gray   .rc-head{background:#141418;}
+.theme-gray   .rc-body{background:linear-gradient(160deg,#181820,#0e0e12);}
+.theme-gray   .rc-border{border:12px solid #30303a;box-shadow:inset 0 0 0 4px #48485a;}
+.theme-gray   .rc-sec-title{color:#9090a0;}
+
+.theme-green  .rcard,.theme-green  .rc-head{background:#081a08;}
+.theme-green  .rc-body{background:linear-gradient(160deg,#0a1e0a,#050e05);}
+.theme-green  .rc-border{border:12px solid #0a3a0a;box-shadow:inset 0 0 0 4px #146014;}
+.theme-green  .rc-sec-title{color:#40b840;}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <span class="topbar-logo">CoreAndCards</span>
+  <span class="topbar-sub">Carte Regolamento · da stampare e inserire nel mazzo</span>
+  <a class="topbar-back" href="index.html">&#8592; Manuale</a>
+</div>
+
+<div class="page">
+  <div class="page-title">Carte Regolamento</div>
+  <div class="page-sub">
+    7 carte formato standard da gioco (63x88mm · 744x1039px a 300dpi). Manuali compressi da tenere nel mazzo durante la sessione.<br>
+    Slider per la preview. Il bottone <strong>Scarica</strong> salva il PNG in alta risoluzione pronto per la stampa.
+  </div>
+  <div class="controls">
+    <label>Dimensione preview</label>
+    <input type="range" id="scale-sl" min="20" max="100" value="48" oninput="rescale(this.value)"/>
+    <span class="scale-val" id="scale-val">48%</span>
+    <button class="dl-all" onclick="dlAll()">&#8659; Scarica tutte</button>
+  </div>
+  <div class="card-grid" id="card-grid"></div>
+</div>
+
+<script>
+const CARDS = [
+{
+  id:'c1',num:'01',theme:'theme-blue',icon:'&#9876;',
+  title:'Formule Core',sub:'Basi del sistema',
+  note:'MOD = floor(stat/3) &middot; min 0 &middot; Soglia mai sotto 0',
+  body:`
+<div class="rc-section">
+  <div class="rc-sec-title">Derivati PG</div>
+  <div class="rc-row"><span class="rc-row-label">HP</span><span class="rc-row-val">Corpo + Mente + Anima (stat finali)</span></div>
+  <div class="rc-row"><span class="rc-row-label">Velocita</span><span class="rc-row-val"><em>Corpo</em> m/turno</span></div>
+  <div class="rc-row"><span class="rc-row-label">Cap. Carico</span><span class="rc-row-val"><em>Corpo &times; 3</em> kg</span></div>
+  <div class="rc-row"><span class="rc-row-label">Iniziativa</span><span class="rc-row-val"><em>1d12 + MOD(Corpo)</em></span></div>
+</div>
+<div class="rc-section">
+  <div class="rc-sec-title">Combattimento</div>
+  <div class="rc-formula">DANNO = max(0, Attacco &minus; Soglia)<span>
+Attacco   = G&times;dado + MOD(asse arma)
+Soglia PG = MOD(asse dif.) + Armor[asse]
+Soglia NM = Difesa flat[asse]</span></div>
+</div>
+<div class="rc-section">
+  <div class="rc-sec-title">Tiro Caratteristica</div>
+  <div class="rc-formula">1d12 + MOD(stat)<span>
+Facile 4+ &nbsp; Normale 7+ &nbsp; Difficile 10+ &nbsp; Estremo 14+</span></div>
+</div>
+<div class="rc-section">
+  <div class="rc-sec-title">Tabella MOD</div>
+  <div class="rc-row"><span class="rc-row-label" style="min-width:70px">1&ndash;2</span><span class="rc-row-val"><em>+0</em></span><span style="margin-left:24px;font-size:21px;color:rgba(255,255,255,.45)">3&ndash;5 &rarr; <em style="color:rgba(255,255,255,.85)">+1</em></span></div>
+  <div class="rc-row"><span class="rc-row-label" style="min-width:70px">6&ndash;8</span><span class="rc-row-val"><em>+2</em></span><span style="margin-left:24px;font-size:21px;color:rgba(255,255,255,.45)">9&ndash;11 &rarr; <em style="color:rgba(255,255,255,.85)">+3</em></span></div>
+  <div class="rc-row"><span class="rc-row-label" style="min-width:70px">12&ndash;14</span><span class="rc-row-val"><em>+4</em></span><span style="margin-left:24px;font-size:21px;color:rgba(255,255,255,.45)">15&ndash;17 &rarr; <em style="color:rgba(255,255,255,.85)">+5</em></span></div>
+  <div class="rc-row"><span class="rc-row-label" style="min-width:70px">18&ndash;20</span><span class="rc-row-val"><em>+6</em></span><span style="margin-left:24px;font-size:21px;color:rgba(255,255,255,.45)">21&ndash;23 &rarr; <em style="color:rgba(255,255,255,.85)">+7</em></span></div>
+  <div class="rc-row"><span class="rc-row-label" style="min-width:70px">24</span><span class="rc-row-val"><em>+8</em></span></div>
+</div>`
+},
+{
+  id:'c2',num:'02',theme:'theme-red',icon:'&#127922;',
+  title:'Tipi Attacco',sub:'Azioni &middot; Formule',
+  note:'G = Grado arma &middot; MOD = MOD(asse arma) &middot; Cond. = Condizione',
+  body:`
+<div class="rc-section">
+  <div class="rc-row-tall">
+    <span class="rc-tag t-leggera">LEGGERA</span>
+    <div class="rc-row-tall-body">
+      <div class="rc-row-tall-main">G&times;d12 + MOD</div>
+      <div class="rc-row-tall-sub">oppure G&times;d6 + MOD + Condizione &nbsp;&middot;&nbsp; 1 azione</div>
+    </div>
+  </div>
+  <div class="rc-row-tall">
+    <span class="rc-tag t-caricata">CARICATA</span>
+    <div class="rc-row-tall-body">
+      <div class="rc-row-tall-main">2&times;G&times;d12 + MOD + Condizione</div>
+      <div class="rc-row-tall-sub">2 turni: 1&deg; preparazione &middot; 2&deg; esecuzione</div>
+    </div>
+  </div>
+  <div class="rc-row-tall">
+    <span class="rc-tag t-rapida">RAPIDA</span>
+    <div class="rc-row-tall-body">
+      <div class="rc-row-tall-main">MOD(stat) &nbsp;&middot;&nbsp; 0 azioni</div>
+      <div class="rc-row-tall-sub">Si aggiunge ad altra azione nello stesso turno</div>
+    </div>
+  </div>
+  <div class="rc-row-tall">
+    <span class="rc-tag t-reazione">REAZIONE</span>
+    <div class="rc-row-tall-body">
+      <div class="rc-row-tall-main">Fuori turno &middot; non consuma azione</div>
+      <div class="rc-row-tall-sub">In risposta a evento specificato sulla carta</div>
+    </div>
+  </div>
+  <div class="rc-row-tall">
+    <span class="rc-tag t-conc">CONC.</span>
+    <div class="rc-row-tall-body">
+      <div class="rc-row-tall-main">Max 1 attiva alla volta</div>
+      <div class="rc-row-tall-sub">Se colpito: 1d12+MOD(migliore) vs 6+dan &middot; fallimento = interruzione</div>
+    </div>
+  </div>
+  <div class="rc-row-tall">
+    <span class="rc-tag t-passiva">PASSIVA</span>
+    <div class="rc-row-tall-body">
+      <div class="rc-row-tall-main">Sempre attiva &middot; nessun limite</div>
+      <div class="rc-row-tall-sub">Non richiede azione ne attivazione</div>
+    </div>
+  </div>
+</div>
+<div class="rc-section">
+  <div class="rc-sec-title">Vantaggio / Svantaggio</div>
+  <div class="rc-row"><span class="rc-row-label" style="color:#2ec4a0">Vantaggio</span><span class="rc-row-val">Tira 2d12 &middot; prendi il risultato migliore</span></div>
+  <div class="rc-row"><span class="rc-row-label" style="color:#e05050">Svantaggio</span><span class="rc-row-val">Tira 2d12 &middot; prendi il risultato peggiore</span></div>
+</div>`
+},
+{
+  id:'c3',num:'03',theme:'theme-gold',icon:'&#128737;',
+  title:'Armor & Slot',sub:'Difesa &middot; Inventario &middot; IRD',
+  note:'Senza armatura: protezione = Grado PG su tutti gli assi',
+  body:`
+<div class="rc-section">
+  <div class="rc-sec-title">Armatura</div>
+  <div class="rc-row"><span class="rc-row-label">Asse &#9733;</span><span class="rc-row-val">Grado &times; 3 &nbsp;<em style="font-size:19px;color:rgba(255,255,255,.4)">(asse specificato sulla carta)</em></span></div>
+  <div class="rc-row"><span class="rc-row-label">Assi sec.</span><span class="rc-row-val">Grado</span></div>
+  <div class="rc-row"><span class="rc-row-label">Senza arm.</span><span class="rc-row-val">Grado PG su tutti e tre gli assi</span></div>
+  <div class="rc-formula">Soglia PG = MOD(asse dif.) + Armor[asse]</div>
+</div>
+<div class="rc-section">
+  <div class="rc-sec-title">IRD</div>
+  <div class="rc-row"><span class="rc-tag t-immune">IMM</span><span class="rc-row-val">Danno annullato &middot; Condizioni bloccate</span></div>
+  <div class="rc-row"><span class="rc-tag t-resist">RES</span><span class="rc-row-val">Danno &divide;2 &middot; Condizioni normali</span></div>
+  <div class="rc-row"><span class="rc-tag t-debole">DEB</span><span class="rc-row-val">Danno &times;2 &middot; Condizioni automatiche</span></div>
+</div>
+<div class="rc-section">
+  <div class="rc-sec-title">Slot Attivi</div>
+  <div class="rc-row"><span class="rc-row-label" style="min-width:80px">Arma</span><span class="rc-row-val">max 1 &middot; sempre</span></div>
+  <div class="rc-row"><span class="rc-row-label" style="min-width:80px">Armatura</span><span class="rc-row-val">max 1 &middot; sempre</span></div>
+  <div class="rc-row"><span class="rc-row-label" style="min-width:80px">Pool AO G1</span><span class="rc-row-val"><em>3</em> slot &nbsp; G2: <em>4</em> &nbsp; G3: <em>5</em> &nbsp; G4: <em>6</em></span></div>
+  <div class="rc-row"><span class="rc-row-label" style="min-width:80px">Aumenti+Obj</span><span class="rc-row-val">condividono il pool insieme</span></div>
+</div>
+<div class="rc-section">
+  <div class="rc-sec-title">Potenziare Oggetti</div>
+  <div class="rc-row"><span class="rc-row-label">Costo</span><span class="rc-row-val">Grado dest. &times; 2.000 MO &middot; Grado dest. giorni</span></div>
+  <div class="rc-row"><span class="rc-row-label">Requisito</span><span class="rc-row-val">Grado PG &ge; Grado destinazione</span></div>
+</div>`
+},
+{
+  id:'c4',num:'04',theme:'theme-red',icon:'&#129656;',
+  title:'Condizioni I',sub:'Fisiche &middot; Danno Continuo',
+  note:'Rimuovere richiede azione (1 az.) o cura salvo indicazione diversa',
+  body:`
+<div class="rc-section">
+  <div class="rc-sec-title">Danno Continuo</div>
+  <div class="rc-row"><span class="rc-row-label" style="min-width:140px">Sanguinante</span><span class="rc-row-val">1 HP/turno &middot; bendarsi (1 az.) o cura &middot; Fonte: Tagliente</span></div>
+  <div class="rc-row"><span class="rc-row-label" style="min-width:140px">Intossicato</span><span class="rc-row-val">1d4 HP/turno &middot; antidoto o riposo lungo</span></div>
+  <div class="rc-row"><span class="rc-row-label" style="min-width:140px">Avvelenato</span><span class="rc-row-val">1d4 HP/turno + &minus;MOD(Corp) a tutto &middot; Fonte: Veleno</span></div>
+  <div class="rc-row"><span class="rc-row-label" style="min-width:140px">Infuocato</span><span class="rc-row-val">1d4 HP/turno &middot; spegnersi (1 az.) o acqua &middot; Fonte: Fuoco</span></div>
+  <div class="rc-row"><span class="rc-row-label" style="min-width:140px">Corroso</span><span class="rc-row-val">Soglia asse &minus;G att. &middot; pulire (1 az.) &middot; Fonte: Acido</span></div>
+</div>
+<div class="rc-section">
+  <div class="rc-sec-title">Controllo Fisico</div>
+  <div class="rc-row"><span class="rc-row-label" style="min-width:140px">Afferrato</span><span class="rc-row-val">Vantaggio per att. &middot; Corpo vs Corpo per liberarsi</span></div>
+  <div class="rc-row"><span class="rc-row-label" style="min-width:140px">Prono / Atterrato</span><span class="rc-row-val">Vel &divide;2 &middot; 1 azione per rialzarsi</span></div>
+  <div class="rc-row"><span class="rc-row-label" style="min-width:140px">Intrappolato</span><span class="rc-row-val">Immobile &middot; vantaggio per att. &middot; Corpo per liberarsi</span></div>
+  <div class="rc-row"><span class="rc-row-label" style="min-width:140px">Rallentato</span><span class="rc-row-val">Velocita dimezzata</span></div>
+</div>
+<div class="rc-section">
+  <div class="rc-sec-title">Perdita Turno</div>
+  <div class="rc-row"><span class="rc-row-label" style="min-width:140px">Stordito</span><span class="rc-row-val">Svantaggio a Mente e Anima</span></div>
+  <div class="rc-row"><span class="rc-row-label" style="min-width:140px">Paralizzato</span><span class="rc-row-val">Perde il turno &middot; svantaggio a tutto</span></div>
+  <div class="rc-row"><span class="rc-row-label" style="min-width:140px">Incapacitato</span><span class="rc-row-val">Perde turno &middot; non muove ne agisce</span></div>
+  <div class="rc-row"><span class="rc-row-label" style="min-width:140px">Privo di sensi</span><span class="rc-row-val">A terra &middot; non agisce &middot; svantaggio a tutto</span></div>
+</div>`
+},
+{
+  id:'c5',num:'05',theme:'theme-purple',icon:'&#129504;',
+  title:'Condizioni II',sub:'Mentali &middot; Sensoriali',
+  note:'Condizioni mentali: tiro Anima vs 7 per liberarsi (salvo diverso)',
+  body:`
+<div class="rc-section">
+  <div class="rc-sec-title">Sensoriale</div>
+  <div class="rc-row"><span class="rc-row-label" style="min-width:130px">Accecato</span><span class="rc-row-val">Svantaggio a Corpo e Mente</span></div>
+  <div class="rc-row"><span class="rc-row-label" style="min-width:130px">Assordato</span><span class="rc-row-val">Svantaggio a Mente e Anima</span></div>
+  <div class="rc-row"><span class="rc-row-label" style="min-width:130px">Marchiato</span><span class="rc-row-val">+1 dan da tutti gli alleati &middot; 1 turno</span></div>
+</div>
+<div class="rc-section">
+  <div class="rc-sec-title">Mentale</div>
+  <div class="rc-row"><span class="rc-row-label" style="min-width:130px">Spaventato</span><span class="rc-row-val">Non si avvicina alla fonte &middot; svantaggio Men+Ani</span></div>
+  <div class="rc-row"><span class="rc-row-label" style="min-width:130px">Affascinato</span><span class="rc-row-val">Non agisce contro il bersaglio &middot; tiro per liberarsi</span></div>
+  <div class="rc-row"><span class="rc-row-label" style="min-width:130px">Confuso</span><span class="rc-row-val">Azione casuale &middot; tiro Anima per liberarsi</span></div>
+  <div class="rc-row"><span class="rc-row-label" style="min-width:130px">Esausto</span><span class="rc-row-val">Svantaggio a tutto &middot; si rimuove con riposo Corto</span></div>
+</div>
+<div class="rc-section">
+  <div class="rc-sec-title">Difficolta Tiri</div>
+  <div class="rc-formula">Facile   4+ &nbsp; Normale 7+ &nbsp; Difficile 10+ &nbsp; Estremo 14+</div>
+</div>
+<div class="rc-section">
+  <div class="rc-sec-title">Tiro Concentrazione</div>
+  <div class="rc-formula">1d12 + MOD(migliore tra Mente/Anima)<span>
+vs  6 + danno subito
+Fallimento = Concentrazione interrotta</span></div>
+</div>
+<div class="rc-section">
+  <div class="rc-sec-title">Fonti Condizione</div>
+  <div class="rc-row"><span class="rc-row-label" style="min-width:130px">Tagliente</span><span class="rc-row-val">Sanguinante</span></div>
+  <div class="rc-row"><span class="rc-row-label" style="min-width:130px">Fuoco</span><span class="rc-row-val">Infuocato</span></div>
+  <div class="rc-row"><span class="rc-row-label" style="min-width:130px">Acido</span><span class="rc-row-val">Corroso</span></div>
+  <div class="rc-row"><span class="rc-row-label" style="min-width:130px">Veleno</span><span class="rc-row-val">Avvelenato</span></div>
+</div>`
+},
+{
+  id:'c6',num:'06',theme:'theme-teal',icon:'&#127769;',
+  title:'Riposo & PG',sub:'Recupero &middot; Creazione &middot; Progressione',
+  note:'rec.Corto ~1h &middot; rec.Lungo ~8h &middot; Pool AO = Aumenti+Oggetti insieme',
+  body:`
+<div class="rc-section">
+  <div class="rc-sec-title">Riposo Corto (~1 ora)</div>
+  <div class="rc-row"><span class="rc-row-label">HP</span><span class="rc-row-val">Spendi Grado&times;d12 dadi vita</span></div>
+  <div class="rc-row"><span class="rc-row-label">Condizioni</span><span class="rc-row-val">Rimuove Esausto</span></div>
+  <div class="rc-row"><span class="rc-row-label">Oggetti</span><span class="rc-row-val">Recupera tutti i tag <em>rec.Corto</em></span></div>
+</div>
+<div class="rc-section">
+  <div class="rc-sec-title">Riposo Lungo (~8 ore)</div>
+  <div class="rc-row"><span class="rc-row-label">HP</span><span class="rc-row-val">Tutti gli HP al massimo</span></div>
+  <div class="rc-row"><span class="rc-row-label">Oggetti</span><span class="rc-row-val">Tutti gli utilizzi di tutti gli oggetti</span></div>
+</div>
+<div class="rc-divider"></div>
+<div class="rc-section">
+  <div class="rc-sec-title">Creazione PG &middot; Grado 1</div>
+  <div class="rc-row"><span class="rc-row-label">Punti stat</span><span class="rc-row-val"><em>12 fissi</em> (min 1 / max 10) oppure 3d6</span></div>
+  <div class="rc-row"><span class="rc-row-label">Razza std</span><span class="rc-row-val">+2 stat primaria &middot; +1 stat secondaria diversa</span></div>
+  <div class="rc-row"><span class="rc-row-label">Razza bil.</span><span class="rc-row-val">+1 a tutte e tre + talento bonus</span></div>
+  <div class="rc-row"><span class="rc-row-label">Equip. G1</span><span class="rc-row-val">1 Arma &middot; 1 Armatura &middot; Pool AO 3 slot</span></div>
+</div>
+<div class="rc-section">
+  <div class="rc-sec-title">Progressione</div>
+  <div class="rc-row"><span class="rc-row-label">G1&rarr;G2</span><span class="rc-row-val">+12 punti stat &middot; Pool AO 4 &middot; max stat 24</span></div>
+  <div class="rc-row"><span class="rc-row-label">G2&rarr;G3</span><span class="rc-row-val">+12 punti &middot; Pool AO 5</span></div>
+  <div class="rc-row"><span class="rc-row-label">G3&rarr;G4</span><span class="rc-row-val">+12 punti &middot; Pool AO 6</span></div>
+  <div class="rc-row"><span class="rc-row-label">Upgrade</span><span class="rc-row-val">G dest. &times; 2.000 MO &middot; G dest. giorni</span></div>
+</div>`
+},
+{
+  id:'c7',num:'07',theme:'theme-gray',icon:'&#128128;',
+  title:'Nemici & Boss',sub:'Struttura &middot; Scalatura &middot; Boss',
+  note:'I nemici non seguono le formule PG - ogni carta e self-contained',
+  body:`
+<div class="rc-section">
+  <div class="rc-sec-title">Struttura Carta Nemico</div>
+  <div class="rc-row"><span class="rc-row-label">HP</span><span class="rc-row-val">Espliciti sulla carta &middot; scalabili per party</span></div>
+  <div class="rc-row"><span class="rc-row-label">Armor</span><span class="rc-row-val">Flat per asse &middot; es. CORPO +6/+2</span></div>
+  <div class="rc-row"><span class="rc-row-label">Scalatura</span><span class="rc-row-val"><em>HP &times; N_PG / 4</em></span></div>
+</div>
+<div class="rc-section">
+  <div class="rc-sec-title">Categorie &middot; HP party 4</div>
+  <div class="rc-row"><span class="rc-row-label" style="min-width:110px">Goon G1</span><span class="rc-row-val">HP 6&ndash;10 &middot; 1&ndash;2 colpi KO</span></div>
+  <div class="rc-row"><span class="rc-row-label" style="min-width:110px">Goon G2</span><span class="rc-row-val">HP 14&ndash;22 &middot; 2&ndash;4 colpi</span></div>
+  <div class="rc-row"><span class="rc-row-label" style="min-width:110px">Boss G1</span><span class="rc-row-val">HP 30&ndash;50 &middot; 4&ndash;6 round</span></div>
+  <div class="rc-row"><span class="rc-row-label" style="min-width:110px">Boss G2</span><span class="rc-row-val">HP 60&ndash;100 &middot; 5&ndash;8 round</span></div>
+  <div class="rc-row"><span class="rc-row-label" style="min-width:110px">Boss G3/G4</span><span class="rc-row-val">HP 120&ndash;400 &middot; 6&ndash;12 round</span></div>
+</div>
+<div class="rc-section">
+  <div class="rc-sec-title">Azioni Leggendarie (Boss)</div>
+  <div class="rc-row"><span class="rc-row-label">Quando</span><span class="rc-row-val">Fine turno di ogni PG (non nel proprio)</span></div>
+  <div class="rc-row"><span class="rc-row-label">Quante</span><span class="rc-row-val">1 per PG per round &middot; specificato sulla carta</span></div>
+</div>
+<div class="rc-section">
+  <div class="rc-sec-title">IRD Nemici</div>
+  <div class="rc-row"><span class="rc-tag t-immune">IMM</span><span class="rc-row-val">Danno 0 &middot; condizioni bloccate</span></div>
+  <div class="rc-row"><span class="rc-tag t-resist">RES</span><span class="rc-row-val">Danno &divide;2 &middot; condizioni normali</span></div>
+  <div class="rc-row"><span class="rc-tag t-debole">DEB</span><span class="rc-row-val">Danno &times;2 &middot; condizioni automatiche</span></div>
+</div>`
+}
+];
+
+const FW=744,FH=1039;
+let cs=0.48;
+
+function renderCards(){
+  const g=document.getElementById('card-grid');
+  g.innerHTML=CARDS.map(c=>`
+    <div class="card-wrap">
+      <div class="rcard-outer" id="o-${c.id}">
+        <div class="rcard-stage" id="s-${c.id}">
+          <div class="rcard ${c.theme}" id="card-${c.id}">
+            <div class="rc-border"></div>
+            <div class="rc-head">
+              <span class="rc-head-icon">${c.icon}</span>
+              <div class="rc-head-text">
+                <div class="rc-head-title">${c.title}</div>
+                <div class="rc-head-sub">${c.sub}</div>
+              </div>
+              <div class="rc-num">${c.num}</div>
+            </div>
+            <div class="rc-body">${c.body}</div>
+            <div class="rc-note">${c.note}</div>
+          </div>
+        </div>
+      </div>
+      <button class="dl-btn" onclick="dlCard('${c.id}','${c.title}')">&#8659; Scarica ${c.title}</button>
+    </div>`).join('');
+  applyScale();
+}
+
+function applyScale(){
+  CARDS.forEach(c=>{
+    const o=document.getElementById('o-'+c.id),s=document.getElementById('s-'+c.id);
+    if(!o||!s)return;
+    o.style.width=Math.round(FW*cs)+'px';
+    o.style.height=Math.round(FH*cs)+'px';
+    s.style.transform='scale('+cs+')';
+  });
+}
+
+function rescale(v){
+  cs=parseInt(v)/100;
+  document.getElementById('scale-val').textContent=v+'%';
+  applyScale();
+}
+
+async function ensureH2C(){
+  if(typeof html2canvas!=='undefined')return;
+  await new Promise((res,rej)=>{
+    const s=document.createElement('script');
+    s.src='https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
+    s.onload=res;s.onerror=rej;
+    document.head.appendChild(s);
+  });
+}
+
+async function dlCard(id,title){
+  await ensureH2C();
+  const stage=document.getElementById('s-'+id);
+  const card=document.getElementById('card-'+id);
+  const outer=document.getElementById('o-'+id);
+  const sT=stage.style.transform,sP=stage.style.position,
+        sTp=stage.style.top,sL=stage.style.left,sZ=stage.style.zIndex;
+  const oW=outer.style.width,oH=outer.style.height,oOF=outer.style.overflow;
+
+  stage.style.transform='none';
+  stage.style.position='fixed';
+  stage.style.top='0';
+  stage.style.left='-9999px';
+  stage.style.zIndex='9999';
+  outer.style.width=FW+'px';
+  outer.style.height=FH+'px';
+  outer.style.overflow='visible';
+
+  await new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));
+
+  try{
+    const canvas=await html2canvas(card,{
+      scale:1,useCORS:true,allowTaint:true,backgroundColor:null,
+      width:FW,height:FH,windowWidth:FW,windowHeight:FH,
+      x:0,y:0,scrollX:0,scrollY:0
+    });
+    const a=document.createElement('a');
+    a.download='cac_reg_'+title.toLowerCase().replace(/[^a-z0-9]/g,'_')+'.png';
+    a.href=canvas.toDataURL('image/png');a.click();
+  }finally{
+    stage.style.transform=sT;stage.style.position=sP;
+    stage.style.top=sTp;stage.style.left=sL;stage.style.zIndex=sZ;
+    outer.style.width=oW;outer.style.height=oH;outer.style.overflow=oOF;
+  }
+}
+
+async function dlAll(){
+  for(const c of CARDS){
+    await dlCard(c.id,c.title);
+    await new Promise(r=>setTimeout(r,500));
+  }
+}
+
+renderCards();
+</script>
+</body>
+</html>
