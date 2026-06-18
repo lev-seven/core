@@ -1,723 +1,531 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>TTRPG/TCG — Sistema Core v0.1</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>CoreAndCards — Manuale</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet"/>
 <style>
-:root {
-  --bg:        #0b0b10;
-  --bg2:       #12121a;
-  --bg3:       #1a1a26;
-  --bg4:       #222232;
-  --border:    rgba(255,255,255,0.07);
-  --border2:   rgba(255,255,255,0.13);
-  --text:      #e8e4d8;
-  --text2:     #9490a0;
-  --text3:     #56536a;
-  --mod:       #7c6af7;
-  --mod-dim:   rgba(124,106,247,0.12);
-  --mod-glow:  rgba(124,106,247,0.25);
-  --teal:      #2ec4a0;
-  --teal-dim:  rgba(46,196,160,0.12);
-  --amber:     #f0a500;
-  --amber-dim: rgba(240,165,0,0.10);
-  --red:       #c94040;
-  --red-dim:   rgba(201,64,64,0.12);
-  --parch:     #f0ede4;
+:root{
+  --bg:#0b0b10;--bg2:#12121a;--bg3:#1a1a26;--bg4:#222232;
+  --border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.13);
+  --tx:#e8e4d8;--tx2:#9490a0;--tx3:#56536a;
+  --mod:#7c6af7;--mod-dim:rgba(124,106,247,0.12);--mod-glow:rgba(124,106,247,0.25);
+  --teal:#2ec4a0;--teal-dim:rgba(46,196,160,0.12);
+  --amber:#f0a500;--amber-dim:rgba(240,165,0,0.10);
+  --red:#c94040;--red-dim:rgba(201,64,64,0.12);
+  --corpo:#2ec4a0;--mente:#f0a500;--anima:#c94040;
+  --gold:#e8a030;
 }
 *{box-sizing:border-box;margin:0;padding:0;}
 html{scroll-behavior:smooth;}
-body{background:var(--bg);color:var(--text);font-family:'Inter',system-ui,sans-serif;font-size:15px;line-height:1.7;display:flex;flex-direction:column;min-height:100vh;}
-
+body{background:var(--bg);color:var(--tx);font-family:'Outfit',sans-serif;font-size:15px;line-height:1.7;min-height:100vh;}
+ 
 /* ── TOPBAR ── */
-.topbar{position:fixed;top:0;left:0;right:0;z-index:100;height:48px;background:rgba(11,11,16,0.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 24px;gap:16px;}
-.topbar-title{font-family:'Cinzel',serif;font-size:13px;font-weight:600;letter-spacing:.12em;color:var(--text2);text-transform:uppercase;}
-.topbar-version{font-size:10px;color:var(--text3);border:1px solid var(--border2);border-radius:3px;padding:1px 6px;font-family:'JetBrains Mono',monospace;}
-.part-toggle{display:flex;background:var(--bg3);border-radius:6px;padding:3px;gap:2px;margin-left:auto;}
-.ptbtn{padding:4px 14px;border-radius:4px;border:none;background:transparent;font-family:'Inter',sans-serif;font-size:11px;font-weight:600;cursor:pointer;transition:all .2s;color:var(--text2);letter-spacing:.04em;}
-.ptbtn.active-man{background:var(--mod);color:#fff;}
-.ptbtn.active-dev{background:var(--teal);color:#0b0b10;}
-
+.topbar{position:fixed;top:0;left:0;right:0;z-index:100;height:50px;
+  background:rgba(11,11,16,0.95);backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 20px;gap:14px;}
+.topbar-logo{font-family:'Cinzel',serif;font-size:14px;font-weight:900;color:var(--mod);letter-spacing:.12em;}
+.topbar-ver{font-size:9px;color:var(--tx3);border:1px solid var(--border2);border-radius:3px;padding:1px 5px;font-family:'JetBrains Mono',monospace;}
+.tab-row{display:flex;gap:2px;background:var(--bg3);border-radius:6px;padding:3px;margin-left:auto;}
+.tab-btn{padding:4px 13px;border-radius:4px;border:none;background:transparent;font-family:'Outfit',sans-serif;
+  font-size:11px;font-weight:600;cursor:pointer;transition:all .18s;color:var(--tx2);letter-spacing:.03em;}
+.tab-btn.on-man{background:var(--mod);color:#fff;}
+.tab-btn.on-card{background:var(--gold);color:#0b0b10;}
+.tab-btn.on-dev{background:var(--teal);color:#0b0b10;}
+ 
+/* ── SCROLL BAR ── */
+.scroll-bar{position:fixed;top:50px;left:0;right:0;height:2px;z-index:99;}
+#scroll-fill{height:100%;width:0%;background:var(--mod);transition:width .08s;}
+ 
 /* ── LAYOUT ── */
-.layout{display:grid;grid-template-columns:260px 1fr;min-height:100vh;padding-top:48px;}
-
+.layout{display:grid;grid-template-columns:240px 1fr;min-height:100vh;padding-top:52px;}
+ 
 /* ── SIDEBAR ── */
-.sidebar{position:sticky;top:48px;height:calc(100vh - 48px);overflow-y:auto;background:var(--bg2);border-right:1px solid var(--border);padding:24px 0;display:flex;flex-direction:column;}
+.sidebar{position:sticky;top:52px;height:calc(100vh - 52px);overflow-y:auto;
+  background:var(--bg2);border-right:1px solid var(--border);padding:18px 0;}
 .sidebar::-webkit-scrollbar{width:3px;}
 .sidebar::-webkit-scrollbar-thumb{background:var(--bg3);}
-.sb-part-label{font-family:'Cinzel',serif;font-size:9px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;padding:0 20px 8px;margin-bottom:4px;display:flex;align-items:center;gap:8px;}
-.sb-part-label::after{content:'';flex:1;height:1px;background:var(--border);}
-.sb-part-label.man{color:var(--mod);}
-.sb-part-label.dev{color:var(--teal);}
-.sb-link{display:block;padding:5px 20px 5px 24px;font-size:12px;color:var(--text2);text-decoration:none;border-left:2px solid transparent;transition:all .15s;line-height:1.4;}
-.sb-link:hover{color:var(--text);background:rgba(255,255,255,0.03);}
-.sb-link.active.man{color:var(--mod);border-left-color:var(--mod);background:var(--mod-dim);}
-.sb-link.active.dev{color:var(--teal);border-left-color:var(--teal);background:var(--teal-dim);}
-.sb-section-num{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text3);margin-right:6px;}
-.sb-gap{height:20px;}
-
-/* ── MAIN CONTENT ── */
-.main{padding:48px 56px 80px;max-width:820px;}
-.part{display:none;}
-.part.visible{display:block;}
-
-/* ── SECTION ── */
-.section{margin-bottom:64px;}
-
-/* ── CARD HEADER (the signature element) ── */
-.section-card{position:relative;background:var(--bg2);border:1px solid var(--border2);border-radius:8px;padding:14px 20px 12px;margin-bottom:28px;display:flex;align-items:center;gap:12px;overflow:hidden;}
-.section-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;}
-.section-card.man::before{background:linear-gradient(90deg,var(--mod),transparent);}
-.section-card.dev::before{background:linear-gradient(90deg,var(--teal),transparent);}
-.card-num{font-family:'Cinzel',serif;font-size:11px;font-weight:700;letter-spacing:.1em;color:var(--text3);min-width:28px;}
-.card-title{font-family:'Cinzel',serif;font-size:18px;font-weight:600;color:var(--text);letter-spacing:.03em;flex:1;}
-.card-pip{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
-.card-pip.man{background:var(--mod);}
-.card-pip.dev{background:var(--teal);}
-
-/* ── TYPOGRAPHY ── */
-h3{font-family:'Inter',sans-serif;font-size:13px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--text2);margin:28px 0 12px;padding-bottom:6px;border-bottom:1px solid var(--border);}
-p{margin-bottom:14px;color:var(--text);line-height:1.75;}
-p:last-child{margin-bottom:0;}
-strong{color:var(--text);font-weight:600;}
-em{color:var(--text2);}
-
-/* ── FORMULA BLOCKS ── */
-.formula{background:var(--bg3);border:1px solid var(--mod-glow);border-radius:6px;padding:16px 20px;margin:16px 0;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--mod);line-height:1.9;position:relative;overflow:hidden;}
-.formula::before{content:'';position:absolute;top:0;right:0;width:120px;height:120px;background:radial-gradient(circle at top right,var(--mod-dim),transparent 70%);pointer-events:none;}
-.formula.dev{border-color:rgba(46,196,160,0.3);color:var(--teal);}
-.formula.dev::before{background:radial-gradient(circle at top right,var(--teal-dim),transparent 70%);}
-
-/* ── EXAMPLE BLOCKS ── */
-.example{background:var(--bg3);border-left:3px solid var(--mod);border-radius:0 6px 6px 0;padding:14px 18px;margin:16px 0;font-size:13.5px;line-height:1.75;}
-.example.dev{border-left-color:var(--teal);}
-.example-label{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--mod);margin-bottom:8px;display:block;}
-.example.dev .example-label{color:var(--teal);}
-.example pre{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text2);background:var(--bg4);padding:10px 14px;border-radius:4px;margin-top:8px;overflow-x:auto;}
-
+.sb-head{font-family:'Cinzel',serif;font-size:9px;font-weight:700;letter-spacing:.15em;
+  color:var(--tx3);padding:0 18px 6px;display:flex;align-items:center;gap:8px;margin-bottom:2px;}
+.sb-head::after{content:'';flex:1;height:1px;background:var(--border);}
+.sb-head.col-man{color:var(--mod);}
+.sb-head.col-card{color:var(--gold);}
+.sb-head.col-dev{color:var(--teal);}
+.sb-a{display:block;padding:4px 18px 4px 22px;font-size:12px;color:var(--tx2);text-decoration:none;
+  border-left:2px solid transparent;transition:all .13s;line-height:1.35;}
+.sb-a:hover{color:var(--tx);background:rgba(255,255,255,0.03);}
+.sb-a.cur.col-man{color:var(--mod);border-left-color:var(--mod);background:var(--mod-dim);}
+.sb-a.cur.col-card{color:var(--gold);border-left-color:var(--gold);background:rgba(232,160,48,0.1);}
+.sb-a.cur.col-dev{color:var(--teal);border-left-color:var(--teal);background:var(--teal-dim);}
+.sb-n{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--tx3);margin-right:5px;}
+ 
+/* ── MAIN ── */
+.main{padding:44px 52px 80px;max-width:860px;}
+.part{display:none;}.part.on{display:block;}
+.sec{margin-bottom:60px;}
+ 
+/* ── SEC HEADER ── */
+.sh{position:relative;background:var(--bg2);border:1px solid var(--border2);border-radius:8px;
+  padding:12px 18px 10px;margin-bottom:26px;display:flex;align-items:center;gap:11px;overflow:hidden;}
+.sh::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;}
+.sh.man::before{background:linear-gradient(90deg,var(--mod),transparent);}
+.sh.card::before{background:linear-gradient(90deg,var(--gold),transparent);}
+.sh.dev::before{background:linear-gradient(90deg,var(--teal),transparent);}
+.sh-n{font-family:'Cinzel',serif;font-size:10px;font-weight:700;letter-spacing:.1em;color:var(--tx3);min-width:26px;}
+.sh-t{font-family:'Cinzel',serif;font-size:17px;font-weight:600;color:var(--tx);letter-spacing:.02em;flex:1;}
+.sh-pip{width:9px;height:9px;border-radius:50%;flex-shrink:0;}
+.sh-pip.man{background:var(--mod);}.sh-pip.card{background:var(--gold);}.sh-pip.dev{background:var(--teal);}
+ 
+/* ── TYPE ── */
+h3{font-family:'Outfit',sans-serif;font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--tx2);margin:26px 0 10px;padding-bottom:5px;border-bottom:1px solid var(--border);}
+p{margin-bottom:13px;color:var(--tx);line-height:1.75;}p:last-child{margin-bottom:0;}
+strong{color:var(--tx);font-weight:600;}em{color:var(--tx2);}
+code{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--mod);background:var(--mod-dim);padding:1px 5px;border-radius:3px;}
+ 
+/* ── FORMULA ── */
+.formula{background:var(--bg3);border:1px solid var(--mod-glow);border-radius:6px;
+  padding:14px 18px;margin:14px 0;font-family:'JetBrains Mono',monospace;
+  font-size:12.5px;color:var(--mod);line-height:1.9;white-space:pre;overflow-x:auto;}
+ 
 /* ── CALLOUT ── */
-.callout{background:var(--mod-dim);border:1px solid rgba(124,106,247,0.2);border-radius:6px;padding:12px 16px;margin:16px 0;font-size:13.5px;}
+.callout{background:var(--mod-dim);border:1px solid rgba(124,106,247,0.2);border-radius:6px;
+  padding:11px 15px;margin:14px 0;font-size:13.5px;line-height:1.65;}
 .callout.amber{background:var(--amber-dim);border-color:rgba(240,165,0,0.2);color:var(--amber);}
-.callout.red{background:var(--red-dim);border-color:rgba(201,64,64,0.2);}
-
+ 
+/* ── EXAMPLE ── */
+.example{background:var(--bg3);border-left:3px solid var(--mod);border-radius:0 6px 6px 0;
+  padding:12px 16px;margin:14px 0;font-size:13.5px;}
+.ex-lbl{font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--mod);margin-bottom:6px;display:block;}
+ 
 /* ── TABLES ── */
-.table-wrap{overflow-x:auto;margin:16px 0;}
+.tw{overflow-x:auto;margin:14px 0;}
 table{width:100%;border-collapse:collapse;font-size:13px;}
 thead tr{background:var(--bg3);}
-thead th{font-family:'Inter',sans-serif;font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--text2);padding:10px 14px;text-align:left;border-bottom:1px solid var(--border2);}
+thead th{font-size:9.5px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;
+  color:var(--tx2);padding:9px 12px;text-align:left;border-bottom:1px solid var(--border2);}
 tbody tr{border-bottom:1px solid var(--border);}
 tbody tr:last-child{border-bottom:none;}
-tbody tr:nth-child(even){background:rgba(255,255,255,0.018);}
-tbody td{padding:9px 14px;color:var(--text);font-size:13px;}
-tbody td:first-child{font-weight:500;color:var(--text);}
-.t-mod thead tr{border-top:2px solid var(--mod);}
-.t-teal thead tr{border-top:2px solid var(--teal);}
-td.ok{color:var(--teal);font-weight:700;}
-td.warn{color:var(--amber);}
-td.bad{color:var(--red);}
-td.mono{font-family:'JetBrains Mono',monospace;font-size:12px;}
-
-/* ── STATS GRID (caratteristiche) ── */
-.stat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:16px 0;}
-.stat-card{background:var(--bg3);border:1px solid var(--border2);border-radius:8px;padding:16px 18px;position:relative;overflow:hidden;}
-.stat-card::after{content:attr(data-stat);position:absolute;bottom:-10px;right:10px;font-family:'Cinzel',serif;font-size:42px;font-weight:700;opacity:.04;pointer-events:none;}
-.stat-name{font-family:'Cinzel',serif;font-size:14px;font-weight:700;color:var(--mod);margin-bottom:6px;}
-.stat-desc{font-size:12.5px;color:var(--text2);line-height:1.5;}
-
-/* ── CONDITION GRID ── */
-.cond-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin:16px 0;}
-.cond-item{background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:10px 14px;}
-.cond-name{font-size:12px;font-weight:700;color:var(--amber);margin-bottom:3px;}
-.cond-effect{font-size:12px;color:var(--text2);line-height:1.45;}
-
-/* ── SLOT TABLE VISUAL ── */
-.slot-vis{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin:16px 0;}
-.slot-hdr{background:var(--bg4);border-radius:4px 4px 0 0;padding:6px 8px;font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--text3);text-align:center;}
-.slot-cell{background:var(--bg3);border:1px solid var(--border);border-radius:4px;padding:8px 6px;text-align:center;font-size:12px;font-weight:600;}
-.slot-cell.grade-label{background:transparent;border:none;font-family:'Cinzel',serif;font-size:12px;color:var(--mod);}
-.slot-cell.fixed{color:var(--text2);}
-.slot-cell.scale{color:var(--teal);}
-
-/* ── BOSS/GOON SPLIT ── */
-.enemy-split{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:16px 0;}
-.enemy-card{border-radius:8px;padding:18px;border:1px solid;}
-.enemy-card.boss{background:var(--red-dim);border-color:rgba(201,64,64,0.3);}
-.enemy-card.goon{background:var(--amber-dim);border-color:rgba(240,165,0,0.25);}
-.enemy-label{font-family:'Cinzel',serif;font-size:13px;font-weight:700;margin-bottom:10px;}
-.enemy-card.boss .enemy-label{color:var(--red);}
-.enemy-card.goon .enemy-label{color:var(--amber);}
-.enemy-row{display:flex;justify-content:space-between;font-size:12px;padding:4px 0;border-bottom:1px solid rgba(255,255,255,0.05);}
-.enemy-row:last-child{border-bottom:none;}
-.enemy-row .k{color:var(--text2);}
-.enemy-row .v{font-weight:600;color:var(--text);}
-
-/* ── HP TABLE ── */
-.hp-table-wrap{margin:16px 0;}
-
-/* ── CD TABLE (difficoltà) ── */
-.cd-bar{display:flex;align-items:center;gap:10px;margin:6px 0;}
-.cd-val{font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:var(--text);min-width:28px;}
-.cd-label{font-size:12px;font-weight:600;min-width:130px;}
-.cd-desc{font-size:12px;color:var(--text2);}
-.cd-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
-
-/* ── CHECKLIST ── */
-.checklist{display:flex;flex-direction:column;gap:4px;margin:16px 0;}
-.check-item{display:flex;align-items:flex-start;gap:10px;padding:8px 12px;background:var(--bg3);border-radius:5px;font-size:13px;}
-.check-icon{font-size:14px;flex-shrink:0;margin-top:1px;}
-.check-text{color:var(--text);}
-.check-note{color:var(--text2);font-size:11px;margin-top:2px;}
-
-/* ── SCARTATI ── */
-.scartato{background:var(--bg3);border-left:3px solid var(--red);border-radius:0 6px 6px 0;padding:12px 16px;margin:10px 0;}
-.scartato-label{font-size:10px;font-weight:700;letter-spacing:.1em;color:var(--red);margin-bottom:4px;}
-
-/* ── INTENZIONE CARDS ── */
-.intent-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:16px 0;}
-.intent-card{background:var(--bg3);border:1px solid var(--border2);border-radius:6px;padding:14px 16px;}
-.intent-title{font-size:12px;font-weight:700;color:var(--teal);margin-bottom:6px;}
-.intent-body{font-size:12.5px;color:var(--text2);line-height:1.5;}
-
+tbody tr:nth-child(even){background:rgba(255,255,255,0.016);}
+tbody td{padding:8px 12px;color:var(--tx);font-size:13px;}
+.tm thead tr{border-top:2px solid var(--mod);}
+.tt thead tr{border-top:2px solid var(--teal);}
+td.ok{color:var(--teal);font-weight:700;}td.warn{color:var(--amber);}td.bad{color:var(--red);}
+td.mn{font-family:'JetBrains Mono',monospace;font-size:11.5px;}
+ 
+/* ── GRIDS ── */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:14px 0;}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:14px 0;}
+.ref-item{background:var(--bg3);border-radius:5px;padding:7px 11px;display:flex;justify-content:space-between;align-items:center;gap:8px;}
+.ref-l{font-size:12px;color:var(--tx2);}
+.ref-v{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--mod);text-align:right;}
+.stat-card{background:var(--bg3);border:1px solid var(--border2);border-radius:8px;padding:14px 16px;}
+.stat-name{font-family:'Cinzel',serif;font-size:13px;font-weight:700;margin-bottom:5px;}
+.stat-name.C{color:var(--corpo);}
+.stat-name.M{color:var(--mente);}
+.stat-name.A{color:var(--anima);}
+.stat-desc{font-size:12px;color:var(--tx2);line-height:1.5;}
+.cond-item{background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:9px 12px;}
+.cond-n{font-size:12px;font-weight:700;margin-bottom:2px;}
+.cond-e{font-size:11.5px;color:var(--tx2);line-height:1.4;}
+.cond-fl{font-size:10px;font-weight:700;letter-spacing:1px;margin:12px 0 5px;font-family:'Cinzel',serif;}
+.intent-card{background:var(--bg3);border:1px solid var(--border2);border-radius:6px;padding:13px 15px;}
+.intent-t{font-size:12px;font-weight:700;color:var(--teal);margin-bottom:5px;}
+.intent-b{font-size:12px;color:var(--tx2);line-height:1.5;}
+.razza-card{background:var(--bg3);border:1px solid var(--border2);border-radius:7px;padding:12px 14px;position:relative;overflow:hidden;}
+.razza-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--mod),transparent);}
+.razza-n{font-family:'Cinzel',serif;font-size:12px;font-weight:700;color:var(--mod);margin-bottom:5px;}
+.razza-b{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:5px;}
+.rbadge{font-size:9.5px;font-weight:700;padding:2px 6px;border-radius:4px;font-family:'JetBrains Mono',monospace;}
+.razza-t{font-size:11px;color:var(--tx2);line-height:1.4;}
+.razza-t strong{color:var(--amber);}
+.ax-card{border-radius:7px;padding:12px;text-align:center;border:1px solid;}
+.ax-card.main{background:var(--mod-dim);border-color:rgba(124,106,247,0.35);}
+.ax-card.base{background:var(--bg3);border-color:var(--border);}
+.ax-n{font-family:'Cinzel',serif;font-size:11px;font-weight:700;margin-bottom:4px;}
+.ax-card.main .ax-n{color:var(--mod);}
+.ax-card.base .ax-n{color:var(--tx2);}
+.ax-f{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--tx);margin-bottom:3px;}
+.ax-d{font-size:9.5px;color:var(--tx2);}
+.en-card{border-radius:8px;padding:16px;border:1px solid;}
+.en-card.boss{background:var(--red-dim);border-color:rgba(201,64,64,0.3);}
+.en-card.goon{background:var(--amber-dim);border-color:rgba(240,165,0,0.25);}
+.en-lbl{font-family:'Cinzel',serif;font-size:12px;font-weight:700;margin-bottom:8px;}
+.en-card.boss .en-lbl{color:var(--red);}
+.en-card.goon .en-lbl{color:var(--amber);}
+.en-row{display:flex;justify-content:space-between;font-size:11.5px;padding:3px 0;border-bottom:1px solid rgba(255,255,255,0.05);}
+.en-row:last-child{border-bottom:none;}
+.en-row .k{color:var(--tx2);}
+.en-row .v{font-weight:600;color:var(--tx);}
+.slot-vis{display:grid;grid-template-columns:repeat(5,1fr);gap:5px;margin:14px 0;}
+.slot-hdr{background:var(--bg4);border-radius:4px 4px 0 0;padding:5px 4px;font-size:9px;font-weight:600;
+  letter-spacing:.05em;text-transform:uppercase;color:var(--tx3);text-align:center;}
+.slot-cell{background:var(--bg3);border:1px solid var(--border);border-radius:4px;padding:7px 4px;text-align:center;font-size:12px;font-weight:600;}
+.sc-grade{background:transparent;border:none;font-family:'Cinzel',serif;font-size:11px;color:var(--mod);}
+.sc-fixed{color:var(--tx2);}
+.sc-pool{color:var(--amber);}
+.cd-bar{display:flex;align-items:center;gap:9px;margin:5px 0;}
+.cd-val{font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:var(--tx);min-width:26px;}
+.cd-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
+.cd-lbl{font-size:12px;font-weight:600;min-width:128px;}
+.cd-d{font-size:11.5px;color:var(--tx2);}
+.check-item{display:flex;align-items:flex-start;gap:9px;padding:7px 11px;background:var(--bg3);border-radius:5px;margin-bottom:3px;}
+.check-t{font-size:12.5px;color:var(--tx);}
+.check-d{font-size:10.5px;color:var(--tx2);margin-top:1px;}
+.scartato{background:var(--bg3);border-left:3px solid var(--red);border-radius:0 5px 5px 0;padding:10px 14px;margin:8px 0;}
+.sct-lbl{font-size:9px;font-weight:700;letter-spacing:.1em;color:var(--red);margin-bottom:3px;}
+ 
+/* ═══════════════════════════════
+   CARTE — sezione dedicata
+═══════════════════════════════ */
+ 
+/* Size slider */
+.card-size-bar{display:flex;align-items:center;gap:12px;margin-bottom:28px;
+  padding:12px 16px;background:var(--bg2);border-radius:8px;border:1px solid var(--border);}
+.card-size-bar label{font-family:'Cinzel',serif;font-size:10px;font-weight:700;letter-spacing:1px;color:var(--tx3);}
+.card-size-bar input[type=range]{flex:1;accent-color:var(--gold);}
+.card-size-bar span{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--gold);min-width:32px;text-align:right;}
+ 
+/* Card anatomy layout */
+.card-wrap{margin-bottom:64px;}
+.card-subtitle{font-family:'Cinzel',serif;font-size:11px;font-weight:700;letter-spacing:2px;
+  text-transform:uppercase;color:var(--tx3);margin-bottom:20px;
+  display:flex;align-items:center;gap:10px;}
+.card-subtitle::after{content:'';flex:1;height:1px;background:var(--border);}
+.card-anatomy{display:flex;gap:36px;align-items:flex-start;flex-wrap:wrap;}
+.card-anatomy.flip{flex-direction:row-reverse;}
+.card-svg-wrap{flex-shrink:0;transition:transform .2s;}
+.card-callouts{flex:1;min-width:260px;display:flex;flex-direction:column;gap:8px;padding-top:16px;}
+.cc{display:flex;align-items:flex-start;gap:10px;padding:9px 13px;
+  background:var(--bg3);border-radius:7px;border:1px solid var(--border);}
+.cc-bubble{width:20px;height:20px;border-radius:50%;border:1.5px solid var(--mod);
+  color:var(--mod);font-size:9px;font-weight:700;
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;margin-top:1px;font-family:'JetBrains Mono',monospace;}
+.cc-body{}
+.cc-t{font-size:11px;font-weight:700;color:var(--tx);letter-spacing:.04em;margin-bottom:1px;}
+.cc-d{font-size:11px;color:var(--tx2);line-height:1.4;}
+ 
 /* ── MOBILE ── */
-@media(max-width:900px){
+@media(max-width:860px){
   .layout{grid-template-columns:1fr;}
   .sidebar{position:static;height:auto;border-right:none;border-bottom:1px solid var(--border);}
-  .main{padding:32px 20px 60px;}
-  .stat-grid,.cond-grid,.enemy-split,.intent-grid{grid-template-columns:1fr;}
+  .main{padding:24px 16px 60px;}
+  .g2,.g3{grid-template-columns:1fr;}
+  .card-anatomy,.card-anatomy.flip{flex-direction:column;}
 }
-
-/* ── SCROLL PROGRESS ── */
-.scroll-bar{position:fixed;top:48px;left:0;right:0;height:2px;background:transparent;z-index:99;}
-.scroll-fill{height:2px;background:var(--mod);width:0%;transition:width .1s;}
-.scroll-fill.dev{background:var(--teal);}
-
-/* ── QUICK REF PILLS ── */
-.ref-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:16px 0;}
-.ref-item{background:var(--bg3);border-radius:5px;padding:8px 12px;display:flex;justify-content:space-between;align-items:center;gap:8px;}
-.ref-label{font-size:12px;color:var(--text2);}
-.ref-val{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--mod);text-align:right;}
-
-/* ── ARMATURA DIAGRAM ── */
-.armor-axes{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:16px 0;}
-.axis-card{border-radius:7px;padding:14px;text-align:center;border:1px solid;}
-.axis-card.main{background:var(--mod-dim);border-color:rgba(124,106,247,0.35);}
-.axis-card.base{background:var(--bg3);border-color:var(--border);}
-.axis-name{font-family:'Cinzel',serif;font-size:12px;font-weight:700;margin-bottom:6px;}
-.axis-card.main .axis-name{color:var(--mod);}
-.axis-card.base .axis-name{color:var(--text2);}
-.axis-formula{font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--text);margin-bottom:4px;}
-.axis-note{font-size:10px;color:var(--text2);}
 </style>
 </head>
 <body>
-
-<!-- TOPBAR -->
+ 
+<div class="scroll-bar"><div id="scroll-fill"></div></div>
+ 
 <div class="topbar">
-  <span class="topbar-title">TTRPG / TCG</span>
-  <span class="topbar-version">v0.1 pre-playtest</span>
-  <div class="part-toggle">
-    <button class="ptbtn active-man" id="btn-man" onclick="setPart('man')">I · Manuale</button>
-    <button class="ptbtn" id="btn-dev" onclick="setPart('dev')">II · Sviluppo</button>
+  <span class="topbar-logo">CoreAndCards</span>
+  <span class="topbar-ver">v0.2 pre-playtest</span>
+  <div class="tab-row">
+    <button class="tab-btn on-man" id="btn-man" onclick="setPart('man')">I · Manuale</button>
+    <button class="tab-btn"        id="btn-card" onclick="setPart('card')">II · Le Carte</button>
+    <button class="tab-btn"        id="btn-dev"  onclick="setPart('dev')">III · Sviluppo</button>
   </div>
 </div>
-
-<!-- SCROLL PROGRESS -->
-<div class="scroll-bar"><div class="scroll-fill" id="scroll-fill"></div></div>
-
+ 
 <div class="layout">
-<!-- SIDEBAR -->
+ 
+<!-- ── SIDEBAR ── -->
 <nav class="sidebar" id="sidebar">
-  <div class="sb-part-label man">Manuale</div>
-  <a class="sb-link man" href="#s1" data-part="man"><span class="sb-section-num">01</span>Il Gioco</a>
-  <a class="sb-link man" href="#s2" data-part="man"><span class="sb-section-num">02</span>Le Carte</a>
-  <a class="sb-link man" href="#s3" data-part="man"><span class="sb-section-num">03</span>Le Caratteristiche</a>
-  <a class="sb-link man" href="#s4" data-part="man"><span class="sb-section-num">04</span>Creazione e Progressione</a>
-  <a class="sb-link man" href="#s5" data-part="man"><span class="sb-section-num">05</span>Slot Attivi</a>
-  <a class="sb-link man" href="#s6" data-part="man"><span class="sb-section-num">06</span>Sistema di Combattimento</a>
-  <a class="sb-link man" href="#s7" data-part="man"><span class="sb-section-num">07</span>Tiri Caratteristica</a>
-  <a class="sb-link man" href="#s8" data-part="man"><span class="sb-section-num">08</span>Il Riposo</a>
-  <a class="sb-link man" href="#s9" data-part="man"><span class="sb-section-num">09</span>L'Armatura</a>
-  <a class="sb-link man" href="#s10" data-part="man"><span class="sb-section-num">10</span>Carte Oggetto</a>
-  <a class="sb-link man" href="#s11" data-part="man"><span class="sb-section-num">11</span>Le Condizioni</a>
-  <a class="sb-link man" href="#s12" data-part="man"><span class="sb-section-num">12</span>Nemici, Boss e Goon</a>
-  <a class="sb-link man" href="#s13" data-part="man"><span class="sb-section-num">13</span>Potenziare gli Oggetti</a>
-  <a class="sb-link man" href="#s14" data-part="man"><span class="sb-section-num">14</span>Riferimento Rapido</a>
-  <a class="sb-link man" href="#s15" data-part="man"><span class="sb-section-num">15</span>Glossario — Parole Chiave</a>
-  <div class="sb-gap"></div>
-  <div class="sb-part-label dev">Sviluppo</div>
-  <a class="sb-link dev" href="#da" data-part="dev"><span class="sb-section-num">A</span>Intenzioni di Design</a>
-  <a class="sb-link dev" href="#db" data-part="dev"><span class="sb-section-num">B</span>Test 1 — Divisore MOD</a>
-  <a class="sb-link dev" href="#dc" data-part="dev"><span class="sb-section-num">C</span>Test 2 — Armatura</a>
-  <a class="sb-link dev" href="#dd" data-part="dev"><span class="sb-section-num">D</span>Test 3 — HP Nemici</a>
-  <a class="sb-link dev" href="#de" data-part="dev"><span class="sb-section-num">E</span>Test 4 — Party Misto</a>
-  <a class="sb-link dev" href="#df" data-part="dev"><span class="sb-section-num">F</span>Test 5 — Boss</a>
-  <a class="sb-link dev" href="#dg" data-part="dev"><span class="sb-section-num">G</span>Test 6 — Scaling Grado</a>
-  <a class="sb-link dev" href="#dh" data-part="dev"><span class="sb-section-num">H</span>Test 7 — Goon</a>
-  <a class="sb-link dev" href="#di" data-part="dev"><span class="sb-section-num">I</span>Sistemi Scartati</a>
-  <a class="sb-link dev" href="#dm" data-part="dev"><span class="sb-section-num">M</span>Da Definire</a>
-  <a class="sb-link dev" href="#dn" data-part="dev"><span class="sb-section-num">N</span>Checklist</a>
+ 
+  <!-- Manuale -->
+  <div class="sb-head col-man" id="sbl-man">Manuale</div>
+  <a class="sb-a" href="#s1"  data-part="man"><span class="sb-n">01</span>Il Gioco</a>
+  <a class="sb-a" href="#s2"  data-part="man"><span class="sb-n">02</span>Le Caratteristiche</a>
+  <a class="sb-a" href="#s3"  data-part="man"><span class="sb-n">03</span>Razza</a>
+  <a class="sb-a" href="#s4"  data-part="man"><span class="sb-n">04</span>Creazione e Progressione</a>
+  <a class="sb-a" href="#s5"  data-part="man"><span class="sb-n">05</span>Slot Attivi</a>
+  <a class="sb-a" href="#s6"  data-part="man"><span class="sb-n">06</span>Combattimento</a>
+  <a class="sb-a" href="#s7"  data-part="man"><span class="sb-n">07</span>Tiri Caratteristica</a>
+  <a class="sb-a" href="#s8"  data-part="man"><span class="sb-n">08</span>Riposo</a>
+  <a class="sb-a" href="#s9"  data-part="man"><span class="sb-n">09</span>L'Armatura</a>
+  <a class="sb-a" href="#s10" data-part="man"><span class="sb-n">10</span>Le Carte Oggetto</a>
+  <a class="sb-a" href="#s11" data-part="man"><span class="sb-n">11</span>Le Condizioni</a>
+  <a class="sb-a" href="#s12" data-part="man"><span class="sb-n">12</span>Nemici e Boss</a>
+  <a class="sb-a" href="#s13" data-part="man"><span class="sb-n">13</span>Potenziare gli Oggetti</a>
+  <a class="sb-a" href="#s14" data-part="man"><span class="sb-n">14</span>Riferimento Rapido</a>
+  <a class="sb-a" href="#s15" data-part="man"><span class="sb-n">15</span>Glossario Parole Chiave</a>
+ 
+  <!-- Carte -->
+  <div class="sb-head col-card" id="sbl-card" style="display:none;margin-top:12px">Le Carte</div>
+  <a class="sb-a" href="#c1" data-part="card" style="display:none"><span class="sb-n">C1</span>Carta Personaggio</a>
+  <a class="sb-a" href="#c2" data-part="card" style="display:none"><span class="sb-n">C2</span>Carta Arma</a>
+  <a class="sb-a" href="#c3" data-part="card" style="display:none"><span class="sb-n">C3</span>Carta Armatura</a>
+  <a class="sb-a" href="#c4" data-part="card" style="display:none"><span class="sb-n">C4</span>Carta Aumento</a>
+  <a class="sb-a" href="#c5" data-part="card" style="display:none"><span class="sb-n">C5</span>Carta Oggetto</a>
+  <a class="sb-a" href="#c6" data-part="card" style="display:none"><span class="sb-n">C6</span>Carta Nemico</a>
+ 
+  <!-- Dev -->
+  <div class="sb-head col-dev" id="sbl-dev" style="display:none;margin-top:12px">Sviluppo</div>
+  <a class="sb-a" href="#da" data-part="dev" style="display:none"><span class="sb-n">A</span>Intenzioni di Design</a>
+  <a class="sb-a" href="#db" data-part="dev" style="display:none"><span class="sb-n">B</span>Test 1 — Divisore MOD</a>
+  <a class="sb-a" href="#dc" data-part="dev" style="display:none"><span class="sb-n">C</span>Test 2 — Armatura</a>
+  <a class="sb-a" href="#dd" data-part="dev" style="display:none"><span class="sb-n">D</span>Test 3 — HP Nemici</a>
+  <a class="sb-a" href="#de" data-part="dev" style="display:none"><span class="sb-n">E</span>Test 4 — Party Misto</a>
+  <a class="sb-a" href="#df" data-part="dev" style="display:none"><span class="sb-n">F</span>Test 5 — Boss</a>
+  <a class="sb-a" href="#dg" data-part="dev" style="display:none"><span class="sb-n">G</span>Test 6 — Scaling</a>
+  <a class="sb-a" href="#dh" data-part="dev" style="display:none"><span class="sb-n">H</span>Test 7 — Goon</a>
+  <a class="sb-a" href="#di" data-part="dev" style="display:none"><span class="sb-n">I</span>Sistemi Scartati</a>
+  <a class="sb-a" href="#dn" data-part="dev" style="display:none"><span class="sb-n">N</span>Checklist</a>
+ 
 </nav>
-
-<!-- MAIN -->
+ 
 <main class="main">
-
-<!-- ═══════════════════ PARTE I ═══════════════════ -->
-<div class="part visible" id="part-man">
-
-<!-- INTRO -->
-<div style="margin-bottom:48px;padding:20px 0 24px;border-bottom:1px solid var(--border);">
-  <div style="font-family:'Cinzel',serif;font-size:28px;font-weight:700;color:var(--text);letter-spacing:.04em;margin-bottom:6px;">Sistema Core</div>
-  <div style="font-size:13px;color:var(--text2);margin-bottom:16px;">Documento di Progetto v0.1 · Pre-playtest · Bozza interna</div>
-  <div class="callout" style="font-size:13.5px;">Questo documento è diviso in due parti. La <strong>Parte I</strong> è il manuale di gioco: spiega le regole, le formule, e come funziona ogni elemento. La <strong>Parte II</strong> raccoglie le intenzioni di design, i test di bilanciamento e le analisi numeriche. Usa il toggle in alto per passare tra le due parti.</div>
+ 
+<!-- ═══════════════ PARTE I — MANUALE ═══════════════ -->
+<div class="part on" id="part-man">
+ 
+<div class="sec" id="s1">
+  <div class="sh man"><span class="sh-n">01</span><span class="sh-t">Il Gioco</span><span class="sh-pip man"></span></div>
+  <p>CoreAndCards è un gioco di ruolo da tavolo con un cuore da gioco di carte. Ogni oggetto che un personaggio può portare — un'arma, un'armatura, un oggetto magico, un aumento cibernetico — è fisicamente rappresentato da una carta. Il mazzo personale di ogni giocatore è il suo equipaggiamento.</p>
+  <p>Invece di segnare su una scheda che il tuo personaggio ha <em>una spada +2 e uno scudo</em>, tieni in mano la carta <strong>Spada</strong> e la carta <strong>Scudo</strong>. Quando la usi in combat, la giochi. Quando la perdi, la togli dal mazzo. Un'esperienza fisica che un normale TTRPG non ha.</p>
+  <p>Le carte sono il livello meccanico — il <em>come si fa</em> — mentre il <em>cosa si fa</em> rimane interamente nelle mani dei giocatori e del master.</p>
 </div>
-
-<!-- S1 -->
-<div class="section" id="s1">
-  <div class="section-card man"><span class="card-num">01</span><span class="card-title">Il Gioco</span><span class="card-pip man"></span></div>
-  <p>Questo è un gioco di ruolo da tavolo con un cuore da gioco di carte. Ogni oggetto che un personaggio può portare con sé — un'arma, un'armatura, un oggetto magico, un aumento cibernetico — è fisicamente rappresentato da una carta. Il mazzo personale di ogni giocatore è il suo equipaggiamento.</p>
-  <p>L'idea di base è semplice: invece di segnare su una scheda che il tuo personaggio ha "una spada +2 e uno scudo", tieni in mano la carta <em>Spada</em> e la carta <em>Scudo</em>. Quando vuoi usarla in combat, la giochi. Quando la perdi o la consumi, la togli dal mazzo. Questo crea un'esperienza fisica e tangibile che un normale TTRPG non ha.</p>
-  <p>Il sistema non sostituisce la narrazione, l'improvvisazione o la libertà che ci si aspetta da un gioco di ruolo. Le carte sono il livello meccanico — il <em>come si fa</em> — mentre il <em>cosa si fa</em> rimane interamente nelle mani dei giocatori e del master.</p>
-</div>
-
-<!-- S2 -->
-<div class="section" id="s2">
-  <div class="section-card man"><span class="card-num">02</span><span class="card-title">Le Carte</span><span class="card-pip man"></span></div>
-  <p>Ci sono quattro tipi di carte nel gioco, ognuno con uno scopo diverso.</p>
-  <p><strong>La Carta Regolamento</strong> è una singola carta di riferimento che ogni giocatore può tenere davanti a sé. Riassume le formule fondamentali. Non è necessaria per giocare una volta che si conosce il sistema, ma è preziosa le prime partite.</p>
-  <p><strong>La Carta Personaggio</strong> è la scheda del PG in formato carta. Per un personaggio creato dal giocatore, ogni panel ha un campo numerico per le caratteristiche. Per un personaggio preesistente la carta usa indicatori visivi al posto di numeri fissi.</p>
-  <p>Gli indicatori visivi usano tre simboli: <strong>→</strong> per un punto di forza secondario, <strong>→→</strong> per la caratteristica principale, nessun simbolo per una caratteristica libera. Accanto alle difese compaiono <strong>↑</strong> (difesa forte) e <strong>↓</strong> (punto debole). Questi indicatori funzionano anche sulle carte NPC e nemici.</p>
-  <div class="example">
-    <span class="example-label">Esempio — Personaggio preesistente</span>
-    <pre>Captain America
-CORPO →→ / MENTE / ANIMA →
-Difesa: Corpo ↑  Mente —  Anima —</pre>
-    <p style="margin-top:10px;font-size:13px;">Le due frecce su Corpo indicano la caratteristica principale. Una freccia su Anima suggerisce investimento secondario. La freccia ↑ su Corpo indica buona resistenza fisica. Il giocatore non è obbligato a seguire gli indicatori — sono un suggerimento narrativo, non un vincolo meccanico.</p>
+ 
+<div class="sec" id="s2">
+  <div class="sh man"><span class="sh-n">02</span><span class="sh-t">Le Caratteristiche</span><span class="sh-pip man"></span></div>
+  <div class="g3">
+    <div class="stat-card"><div class="stat-name C">Corpo</div><div class="stat-desc">Forza, resistenza, velocità. Governa i movimenti in combat, la capacità di carico e i danni fisici.</div></div>
+    <div class="stat-card"><div class="stat-name M">Mente</div><div class="stat-desc">Intelletto, concentrazione, volontà. Magie mentali, resistenza psichica, percezione. Governa la Concentrazione.</div></div>
+    <div class="stat-card"><div class="stat-name A">Anima</div><div class="stat-desc">Carisma, spirito, connessione. Persuasione, manipolazione, magie spirituali.</div></div>
   </div>
-  <p><strong>Le Carte Oggetto</strong> sono la parte TCG del gioco. Ogni oggetto ha un peso indicato sulla carta. Il mazzo può contenere quanti oggetti si vuole, a patto che la somma dei pesi non superi la capacità di trasporto del personaggio.</p>
-  <p><strong>Le Carte Nemico e NPC</strong> sono gestite dal master. Hanno HP espliciti, valori di difesa flat per ogni asse e azioni descritte per esteso — il master legge e gioca, senza calcoli. Usano anch'esse gli indicatori ↑ e ↓ per comunicare i punti deboli ai giocatori in modo narrativo.</p>
-  <p>Ogni carta — oggetto, nemico o NPC — può portare tre informazioni aggiuntive di natura tassonomica. L'<strong>Origine</strong> descrive la fonte o la natura dell'oggetto (es. <em>Tecnologia</em>, <em>Magia</em>, <em>Natura</em>, <em>Artigianato</em>): è un campo testuale libero pensato per il flavor e per le sinergie narrative. I <strong>Tag</strong> sono etichette brevi che categorizzano l'oggetto per tipo, tema o appartenenza (es. <em>Fuoco</em>, <em>Bestia</em>, <em>Meccanico</em>): permettono alle azioni delle carte di referenziare altre carte per categoria. Infine, su nemici e NPC (e opzionalmente sugli oggetti), compaiono <strong>Immunità</strong>, <strong>Resistenze</strong> e <strong>Debolezze</strong>, che indicano rispettivamente i tipi di danno o condizione completamente ignorati, subiti a metà, o subiti con effetto doppio.</p>
-</div>
-
-<!-- S3 -->
-<div class="section" id="s3">
-  <div class="section-card man"><span class="card-num">03</span><span class="card-title">Le Caratteristiche</span><span class="card-pip man"></span></div>
-  <div class="stat-grid">
-    <div class="stat-card" data-stat="C"><div class="stat-name">Corpo</div><div class="stat-desc">Forza fisica, resistenza, velocità. Determina i movimenti in combat e la capacità di sopportare danni fisici.</div></div>
-    <div class="stat-card" data-stat="M"><div class="stat-name">Mente</div><div class="stat-desc">Intelletto, concentrazione, volontà. Magie mentali, resistenza psichica, logica e percezione.</div></div>
-    <div class="stat-card" data-stat="A"><div class="stat-name">Anima</div><div class="stat-desc">Carisma, spirito, connessione. Persuasione, manipolazione, magie spirituali. Spesso l'asse meno difeso dai nemici fisici.</div></div>
-  </div>
-  <p>I valori vanno da 1 a 24. Non esiste un valore "medio" di default: la distribuzione è una scelta del giocatore.</p>
-
+  <p>Valori da 1 a 24. I bonus di razza si sommano alle stat base → <strong>stat finali</strong>, usate in tutti i calcoli.</p>
   <h3>Il Modificatore</h3>
-  <p>Le caratteristiche non si usano direttamente nei calcoli — si usa il loro Modificatore, derivato dividendo per tre (arrotondato per difetto).</p>
-  <div class="formula">MOD = floor( STAT / 3 )</div>
-  <div class="table-wrap"><table class="t-mod">
-    <thead><tr><th>STAT</th><th>1</th><th>2</th><th>3–5</th><th>6–8</th><th>9–11</th><th>12–14</th><th>15–17</th><th>18–20</th><th>21–23</th><th>24</th></tr></thead>
-    <tbody><tr><td>MOD</td><td class="mono">+0</td><td class="mono">+0</td><td class="mono">+1</td><td class="mono">+2</td><td class="mono">+3</td><td class="mono">+4</td><td class="mono">+5</td><td class="mono">+6</td><td class="mono">+7</td><td class="mono">+8</td></tr></tbody>
+  <div class="formula">MOD = floor( STAT_FINALE / 3 )</div>
+  <div class="tw"><table class="tm">
+    <thead><tr><th>STAT</th><th>1–2</th><th>3–5</th><th>6–8</th><th>9–11</th><th>12–14</th><th>15–17</th><th>18–20</th><th>21–23</th><th>24</th></tr></thead>
+    <tbody><tr><td>MOD</td><td class="mn">+0</td><td class="mn">+1</td><td class="mn">+2</td><td class="mn">+3</td><td class="mn">+4</td><td class="mn">+5</td><td class="mn">+6</td><td class="mn">+7</td><td class="mn">+8</td></tr></tbody>
   </table></div>
-  <p>Il MOD scala in step da 3 punti. Raggiungere 6 in Corpo dà MOD +2, raggiungere 12 dà +4, raggiungere 18 dà +6. La progressione è intuitiva da memorizzare.</p>
-
   <h3>Statistiche Derivate</h3>
-  <div class="ref-grid">
-    <div class="ref-item"><span class="ref-label">HP</span><span class="ref-val">Corpo + Mente + Anima</span></div>
-    <div class="ref-item"><span class="ref-label">Velocità (m/turno)</span><span class="ref-val">Corpo</span></div>
-    <div class="ref-item"><span class="ref-label">Iniziativa</span><span class="ref-val">1d12 + MOD(Corpo)</span></div>
-    <div class="ref-item"><span class="ref-label">Capacità Trasporto</span><span class="ref-val">Corpo × 3 kg</span></div>
+  <div class="g2">
+    <div class="ref-item"><span class="ref-l">HP</span><span class="ref-v">Corpo + Mente + Anima (finali)</span></div>
+    <div class="ref-item"><span class="ref-l">Velocità (m/turno)</span><span class="ref-v">Corpo finale</span></div>
+    <div class="ref-item"><span class="ref-l">Iniziativa</span><span class="ref-v">1d12 + MOD(Corpo)</span></div>
+    <div class="ref-item"><span class="ref-l">Capacità Trasporto</span><span class="ref-v">Corpo finale × 3 kg</span></div>
   </div>
-  <p>Gli <strong>HP</strong> sono la somma pura delle tre caratteristiche. Un personaggio 10/1/1 e uno 5/4/3 hanno entrambi 12 HP — la differenza non è nella quantità ma in come li difendono e su quale asse vengono attaccati.</p>
-  <p>La <strong>Capacità di Trasporto</strong> è semplicemente <strong>Corpo × 3 kg</strong>. Un personaggio con Corpo 6 porta 18 kg, uno con Corpo 12 porta 36 kg. Il peso di ogni carta è espresso direttamente in kg — una spada lunga pesa 2 kg, una cotta di maglia 15 kg. La capacità è una risorsa tattica reale: portare un'armatura pesante richiede investimento in Corpo, e oggetti come zaini o impianti di potenziamento fisico possono aumentarla.</p>
-  <div class="table-wrap"><table class="t-mod">
-    <thead><tr><th>Corpo</th><th>Capacità</th><th>Esempio equipaggiamento</th></tr></thead>
+  <div class="tw"><table class="tm">
+    <thead><tr><th>Corpo finale</th><th>Capacità</th><th>Esempio</th></tr></thead>
     <tbody>
-      <tr><td>1–2</td><td class="ok">3–6 kg</td><td>Daga + abiti — nient'altro</td></tr>
+      <tr><td>1–2</td><td class="ok">3–6 kg</td><td>Daga + abiti</td></tr>
       <tr><td>3–5</td><td class="ok">9–15 kg</td><td>Spada + armatura leggera</td></tr>
-      <tr><td>6–8</td><td class="ok">18–24 kg</td><td>Cotta di maglia + spada + qualcosa</td></tr>
+      <tr><td>6–8</td><td class="ok">18–24 kg</td><td>Cotta di maglia + spada</td></tr>
       <tr><td>9–11</td><td class="ok">27–33 kg</td><td>Piastre + spada + oggetti</td></tr>
-      <tr><td>12–17</td><td class="warn">36–51 kg</td><td>Build pesante completa con margine</td></tr>
-      <tr><td>18–24</td><td class="warn">54–72 kg</td><td>Qualsiasi build — spazio abbondante</td></tr>
+      <tr><td>12–17</td><td class="warn">36–51 kg</td><td>Build pesante completa</td></tr>
+      <tr><td>18–24</td><td class="warn">54–72 kg</td><td>Qualsiasi build</td></tr>
     </tbody>
   </table></div>
 </div>
-
-<!-- S4 -->
-<div class="section" id="s4">
-  <div class="section-card man"><span class="card-num">04</span><span class="card-title">Creazione del Personaggio e Progressione</span><span class="card-pip man"></span></div>
-  <h3>Grado 1 — La Partenza</h3>
-  <p>Al Grado 1 il giocatore sceglie come distribuire le caratteristiche tra due opzioni: <strong>12 punti fissi</strong> (minimo 1 per caratteristica, massimo 10 su una singola stat) oppure <strong>3d6</strong> distribuiti liberamente. La scelta fissa garantisce il personaggio esatto che si vuole; il dado può sorprendere.</p>
-  <p>All'inizio il giocatore sceglie anche l'equipaggiamento iniziale: una carta Arma, una carta Aumento e una carta Armatura o Oggetto.</p>
-  <h3>Gradi 2, 3 e 4 — La Progressione</h3>
-  <p>A ogni Grado successivo: +12 punti da distribuire (massimo 24 per caratteristica) e la possibilità di aumentare di un Grado uno degli oggetti già posseduti. La progressione riguarda sia il personaggio sia l'equipaggiamento.</p>
-  <div class="table-wrap"><table class="t-mod">
-    <thead><tr><th>Grado</th><th>Punti</th><th>Massimo per stat</th><th>Bonus</th></tr></thead>
+ 
+<div class="sec" id="s3">
+  <div class="sh man"><span class="sh-n">03</span><span class="sh-t">Razza</span><span class="sh-pip man"></span></div>
+  <p>Ogni personaggio appartiene a una razza che fornisce <strong>3 punti bonus permanenti</strong> alle caratteristiche e un <strong>talento passivo</strong> unico.</p>
+  <h3>Distribuzione Standard — +2 / +1</h3>
+  <p><strong>+2 a una stat, +1 a un'altra diversa.</strong> Razze con specializzazione marcata.</p>
+  <h3>Distribuzione Bilanciata — +1 / +1 / +1</h3>
+  <p><strong>+1 a tutte e tre.</strong> Razze adattabili. Permette un talento raziale alternativo.</p>
+  <div class="callout"><strong>Esempio — Tabaxi (standard):</strong> +2 Corpo, +1 Anima. PG con Corpo 4, Mente 3, Anima 4 → stat finali <strong>Corpo 6, Mente 3, Anima 5</strong>.</div>
+  <h3>Esempi di Razze</h3>
+  <div class="g2">
+    <div class="razza-card"><div class="razza-n">🧬 Tabaxi</div><div class="razza-b"><span class="rbadge" style="background:rgba(46,196,160,0.15);border:1px solid rgba(46,196,160,0.4);color:#2ec4a0">+2 Corpo</span><span class="rbadge" style="background:rgba(201,64,64,0.12);border:1px solid rgba(201,64,64,0.35);color:#c94040">+1 Anima</span></div><div class="razza-t"><strong>Agilità Felina:</strong> +3m di movimento, vantaggio Corpo su arrampicata.</div></div>
+    <div class="razza-card"><div class="razza-n">🧬 Elfo</div><div class="razza-b"><span class="rbadge" style="background:rgba(240,165,0,0.12);border:1px solid rgba(240,165,0,0.35);color:#f0a500">+2 Mente</span><span class="rbadge" style="background:rgba(46,196,160,0.15);border:1px solid rgba(46,196,160,0.4);color:#2ec4a0">+1 Corpo</span></div><div class="razza-t"><strong>Grazia Elfica:</strong> Vantaggio tiri Mente contro condizioni mentali.</div></div>
+    <div class="razza-card"><div class="razza-n">🧬 Nano</div><div class="razza-b"><span class="rbadge" style="background:rgba(46,196,160,0.15);border:1px solid rgba(46,196,160,0.4);color:#2ec4a0">+2 Corpo</span><span class="rbadge" style="background:rgba(240,165,0,0.12);border:1px solid rgba(240,165,0,0.35);color:#f0a500">+1 Mente</span></div><div class="razza-t"><strong>Resistenza Nanica:</strong> Immunità a Intossicato e Avvelenato.</div></div>
+    <div class="razza-card"><div class="razza-n">🧬 Umano</div><div class="razza-b"><span class="rbadge" style="background:rgba(124,106,247,0.12);border:1px solid rgba(124,106,247,0.3);color:#7c6af7">+1 a tutte</span></div><div class="razza-t"><strong>Adattabile (bilanciata):</strong> Scegli un talento aggiuntivo al Grado 1.</div></div>
+    <div class="razza-card"><div class="razza-n">🧬 Orchetto</div><div class="razza-b"><span class="rbadge" style="background:rgba(46,196,160,0.15);border:1px solid rgba(46,196,160,0.4);color:#2ec4a0">+2 Corpo</span><span class="rbadge" style="background:rgba(201,64,64,0.12);border:1px solid rgba(201,64,64,0.35);color:#c94040">+1 Anima</span></div><div class="razza-t"><strong>Tenacia:</strong> Rimani a 1 HP la prima volta che scendi a 0 (una volta per riposo lungo).</div></div>
+    <div class="razza-card"><div class="razza-n">🧬 Tiefling</div><div class="razza-b"><span class="rbadge" style="background:rgba(201,64,64,0.12);border:1px solid rgba(201,64,64,0.35);color:#c94040">+2 Anima</span><span class="rbadge" style="background:rgba(240,165,0,0.12);border:1px solid rgba(240,165,0,0.35);color:#f0a500">+1 Mente</span></div><div class="razza-t"><strong>Eredità Infernale:</strong> +1 danno su azioni Fuoco o Necrotico.</div></div>
+  </div>
+  <div class="callout amber">Le razze sopra sono esempi. Master e giocatori possono creare razze custom con nome, distribuzione, stat e talento liberi.</div>
+</div>
+ 
+<div class="sec" id="s4">
+  <div class="sh man"><span class="sh-n">04</span><span class="sh-t">Creazione del Personaggio e Progressione</span><span class="sh-pip man"></span></div>
+  <h3>Grado 1</h3>
+  <p>Distribuisci <strong>12 punti fissi</strong> (min 1 per stat, max 10 su una singola) oppure tira <strong>3d6</strong> liberi. Poi scegli la razza e l'equipaggiamento iniziale: una carta Arma, una carta Aumento e una carta Armatura o Oggetto.</p>
+  <div class="tw"><table class="tm">
+    <thead><tr><th>Grado</th><th>Punti stat</th><th>Max stat</th><th>Bonus</th></tr></thead>
     <tbody>
-      <tr><td>1</td><td>12 fissi o 3d6</td><td>10</td><td>Equipaggiamento iniziale</td></tr>
-      <tr><td>2</td><td>+12 fissi o +3d6</td><td>24</td><td>Aumenta 1 oggetto di Grado</td></tr>
-      <tr><td>3</td><td>+12 fissi o +3d6</td><td>24</td><td>Aumenta 1 oggetto di Grado</td></tr>
-      <tr><td>4</td><td>+12 fissi o +3d6</td><td>24</td><td>Aumenta 1 oggetto di Grado</td></tr>
+      <tr><td>1</td><td>12 fissi o 3d6</td><td>10</td><td>Razza + Equip. iniziale</td></tr>
+      <tr><td>2</td><td>+12 o +3d6</td><td>24</td><td>Aumenta 1 oggetto di Grado</td></tr>
+      <tr><td>3</td><td>+12 o +3d6</td><td>24</td><td>Aumenta 1 oggetto di Grado</td></tr>
+      <tr><td>4</td><td>+12 o +3d6</td><td>24</td><td>Aumenta 1 oggetto di Grado</td></tr>
     </tbody>
   </table></div>
-  <h3>Quante Cose Può Possedere un Personaggio?</h3>
-  <p>Il numero massimo di oggetti possedibili per categoria è pari al Grado del personaggio. Al Grado 4 si possono avere fino a 4 Armi, 1 sola Armatura, 4 Aumenti e 4 Oggetti nel mazzo totale. Si può possedere e portare una sola Armatura per volta.</p>
 </div>
-
-<!-- S5 -->
-<div class="section" id="s5">
-  <div class="section-card man"><span class="card-num">05</span><span class="card-title">Slot Attivi</span><span class="card-pip man"></span></div>
-  <p>Il mazzo è l'intero inventario. Gli slot attivi sono ciò che il personaggio ha effettivamente in uso — in mano, indosso, pronto all'uso immediato. Arma e Armatura sono sempre fissi a 1. Aumenti e Oggetti scalano con il Grado.</p>
-
+ 
+<div class="sec" id="s5">
+  <div class="sh man"><span class="sh-n">05</span><span class="sh-t">Slot Attivi</span><span class="sh-pip man"></span></div>
+  <p>Il mazzo è l'intero inventario. Gli <strong>slot attivi</strong> sono ciò che il personaggio ha in uso. Arma e Armatura → max 1 ciascuno. Aumenti e Oggetti → pool condiviso di <strong>2 + Grado</strong> slot totali.</p>
   <div class="slot-vis">
-    <div class="slot-hdr"></div>
-    <div class="slot-hdr">Arma</div>
-    <div class="slot-hdr">Armatura</div>
-    <div class="slot-hdr">Aumenti</div>
-    <div class="slot-hdr">Oggetti</div>
-    <div class="slot-cell grade-label">G1</div><div class="slot-cell fixed">1</div><div class="slot-cell fixed">1</div><div class="slot-cell scale">1</div><div class="slot-cell scale">1</div>
-    <div class="slot-cell grade-label">G2</div><div class="slot-cell fixed">1</div><div class="slot-cell fixed">1</div><div class="slot-cell scale">2</div><div class="slot-cell scale">2</div>
-    <div class="slot-cell grade-label">G3</div><div class="slot-cell fixed">1</div><div class="slot-cell fixed">1</div><div class="slot-cell scale">3</div><div class="slot-cell scale">3</div>
-    <div class="slot-cell grade-label">G4</div><div class="slot-cell fixed">1</div><div class="slot-cell fixed">1</div><div class="slot-cell scale">4</div><div class="slot-cell scale">4</div>
+    <div class="slot-hdr"></div><div class="slot-hdr">Arma</div><div class="slot-hdr">Armatura</div>
+    <div class="slot-hdr" style="color:var(--amber)">Pool AO</div>
+    <div class="slot-hdr" style="font-size:8px;color:var(--teal)">Aumenti+Oggetti</div>
+    <div class="slot-cell sc-grade">G1</div><div class="slot-cell sc-fixed">1</div><div class="slot-cell sc-fixed">1</div><div class="slot-cell sc-pool">3</div><div class="slot-cell" style="color:var(--teal);font-size:10px">fino a 3 tot.</div>
+    <div class="slot-cell sc-grade">G2</div><div class="slot-cell sc-fixed">1</div><div class="slot-cell sc-fixed">1</div><div class="slot-cell sc-pool">4</div><div class="slot-cell" style="color:var(--teal);font-size:10px">fino a 4 tot.</div>
+    <div class="slot-cell sc-grade">G3</div><div class="slot-cell sc-fixed">1</div><div class="slot-cell sc-fixed">1</div><div class="slot-cell sc-pool">5</div><div class="slot-cell" style="color:var(--teal);font-size:10px">fino a 5 tot.</div>
+    <div class="slot-cell sc-grade">G4</div><div class="slot-cell sc-fixed">1</div><div class="slot-cell sc-fixed">1</div><div class="slot-cell sc-pool">6</div><div class="slot-cell" style="color:var(--teal);font-size:10px">fino a 6 tot.</div>
   </div>
-  <p>Al Grado 4 il personaggio gestisce fino a 10 slot attivi totali. La separazione tra Aumenti e Oggetti è intenzionale: si può scegliere di investire in Aumenti permanenti (impianti, potenziamenti) o in Oggetti consumabili, creando build molto diverse allo stesso Grado.</p>
-  <h3>Cambiare Equipaggiamento in Combat</h3>
-  <p>Scambiare un oggetto attivo con uno nel mazzo <strong>costa 1 turno intero (6 secondi)</strong>. Vale per armi, anelli, pozioni e tutto ciò che si può usare in pochi secondi. Non vale per armature, impianti corporei o qualsiasi oggetto con tempo di attivazione superiore a 6 secondi — queste scelte si fanno prima dello scontro.</p>
+  <p>Scambiare un oggetto attivo costa <strong>1 turno (6 sec)</strong>. Non vale per armature o impianti.</p>
 </div>
-
-<!-- S6 -->
-<div class="section" id="s6">
-  <div class="section-card man"><span class="card-num">06</span><span class="card-title">Il Sistema di Combattimento</span><span class="card-pip man"></span></div>
+ 
+<div class="sec" id="s6">
+  <div class="sh man"><span class="sh-n">06</span><span class="sh-t">Il Sistema di Combattimento</span><span class="sh-pip man"></span></div>
   <h3>Gli Assi</h3>
-  <p>Ogni attacco avviene su uno dei tre assi — Corpo, Mente o Anima — e sia l'attaccante che il difensore usano la stessa caratteristica per quel calcolo. Un attacco fisico è Corpo contro Corpo. Un attacco mentale è Mente contro Mente. Un attacco spirituale è Anima contro Anima.</p>
-  <p>La scelta dell'asse non è arbitraria: un Mago con Mente 10 che attacca un guerriero su asse Mente (dove il guerriero ha difesa bassa) fa molto più danno che attaccarlo su Corpo. Leggere il nemico e scegliere l'asse giusto è la profondità tattica centrale del sistema.</p>
-
-  <h3>La Formula del Danno</h3>
-  <div class="formula">DANNO = max( 0,  Attacco − Soglia )
-
-Attacco     = Grado_arma × d12 + MOD(stat_attaccante)
-Soglia (PG) = MOD(stat_difensore) + Armatura(asse)
-Soglia (NM) = Difesa_flat[asse]  ← dalla carta nemico</div>
-  <p>Non esiste danno minimo garantito. Se l'attacco non supera la soglia, l'attacco fallisce. Attaccare l'asse sbagliato ha conseguenze reali.</p>
-
-  <h3>I Tipi di Attacco</h3>
-  <div class="table-wrap"><table class="t-mod">
-    <thead><tr><th>Tipo</th><th>Formula</th><th>Costo</th><th>Note</th></tr></thead>
+  <p>Ogni attacco avviene su uno dei tre assi. L'attaccante usa la sua stat; il difensore usa la sua soglia per quell'asse. Scegliere l'asse giusto è la profondità tattica centrale del sistema.</p>
+  <div class="formula">DANNO = max( 0, Attacco − Soglia )
+ 
+Attacco     = Grado_arma × dado + MOD(stat_atk finale)
+Soglia PG   = MOD(stat_def finale) + Armatura[asse]
+Soglia NM   = Difesa_flat[asse]  ← dalla carta nemico</div>
+  <div class="tw"><table class="tm">
+    <thead><tr><th>Tipo</th><th>Formula</th><th>Costo</th></tr></thead>
     <tbody>
-      <tr><td><strong>Leggera d12</strong></td><td class="mono">Grado×d12 + MOD</td><td>1 azione</td><td>Attacco standard. Affidabile, media alta.</td></tr>
-      <tr><td><strong>Leggera d6 + Cond.</strong></td><td class="mono">Grado×d6 + MOD + Cond.</td><td>1 azione</td><td>Meno danno, applica una condizione per Grado turni.</td></tr>
-      <tr><td><strong>Caricata</strong></td><td class="mono">2×Grado×d12 + MOD + Cond.</td><td>2 turni</td><td>Burst per sfondare difese alte. Vulnerabile durante la prep.</td></tr>
-      <tr><td><strong>Senz'arma</strong></td><td class="mono">MOD(stat)</td><td>1 azione</td><td>Solo il bonus, nessun dado. Utile in emergenza.</td></tr>
+      <tr><td><strong style="color:#5890e8">Leggera d12</strong></td><td class="mn">G×d12 + MOD</td><td>1 azione</td></tr>
+      <tr><td><strong style="color:#5890e8">Leggera d6 + Cond.</strong></td><td class="mn">G×d6 + MOD + Cond.</td><td>1 azione</td></tr>
+      <tr><td><strong style="color:#e05050">Caricata</strong></td><td class="mn">2×G×d12 + MOD + Cond.</td><td>2 turni</td></tr>
+      <tr><td><strong style="color:#2ec4a0">Rapida</strong></td><td class="mn">MOD(stat)</td><td>0 azioni</td></tr>
     </tbody>
   </table></div>
-  <p>L'azione <strong>Caricata</strong> è particolarmente utile per personaggi con MOD basso contro nemici ben difesi: concentrando energia in un singolo burst si può superare una soglia che l'attacco normale non raggiungerebbe. Il costo è la vulnerabilità durante il turno di preparazione.</p>
-
-  <h3>Esempio di Combat</h3>
-  <div class="example">
-    <span class="example-label">Party da 4 PG vs Soldato (HP 70, Dif.Corpo=5, Dif.Mente=2, Dif.Anima=3)</span>
-    <div class="table-wrap" style="margin-top:10px;"><table>
-      <thead><tr><th>PG</th><th>Stat atk</th><th>Attacco medio</th><th>Soglia NM</th><th>Danno medio</th></tr></thead>
-      <tbody>
-        <tr><td>Guerriero</td><td>Corpo 10 (+3)</td><td class="mono">6.5+3=9.5</td><td class="mono">5</td><td class="ok">4.5/turno</td></tr>
-        <tr><td>Mago</td><td>Mente 10 (+3)</td><td class="mono">6.5+3=9.5</td><td class="mono">2</td><td class="ok">7.5/turno ↑</td></tr>
-        <tr><td>Bardo</td><td>Anima 5 (+1)</td><td class="mono">6.5+1=7.5</td><td class="mono">3</td><td class="ok">4.5/turno</td></tr>
-        <tr><td>Ladro</td><td>Corpo 7 (+2)</td><td class="mono">6.5+2=8.5</td><td class="mono">5</td><td class="ok">3.5/turno</td></tr>
-      </tbody>
-    </table></div>
-    <p style="margin-top:10px;font-size:13px;">DPR totale party: ~20 HP/round. Il soldato dura ~3.5 round. Il Mago fa più danno attaccando l'asse debole (Mente=2 invece di Corpo=5).</p>
+</div>
+ 
+<div class="sec" id="s7">
+  <div class="sh man"><span class="sh-n">07</span><span class="sh-t">Tiri Caratteristica Fuori dal Combat</span><span class="sh-pip man"></span></div>
+  <div class="formula">Risultato = 1d12 + MOD(caratteristica)
+Successo se Risultato ≥ CD   |   1 nat. = fallimento critico   |   12 nat. = successo critico</div>
+  <div style="margin:12px 0">
+    <div class="cd-bar"><span class="cd-val">5</span><span class="cd-dot" style="background:#2ec4a0"></span><span class="cd-lbl" style="color:#2ec4a0">Molto facile</span><span class="cd-d">Quasi chiunque con un minimo di impegno</span></div>
+    <div class="cd-bar"><span class="cd-val">7</span><span class="cd-dot" style="background:#5bc4a0"></span><span class="cd-lbl" style="color:#5bc4a0">Facile</span><span class="cd-d">La maggior parte delle persone competenti</span></div>
+    <div class="cd-bar"><span class="cd-val">10</span><span class="cd-dot" style="background:#f0a500"></span><span class="cd-lbl" style="color:#f0a500">Moderata</span><span class="cd-d">Richiede abilità specifica</span></div>
+    <div class="cd-bar"><span class="cd-val">12</span><span class="cd-dot" style="background:#e07030"></span><span class="cd-lbl" style="color:#e07030">Difficile</span><span class="cd-d">Solo personaggi specializzati</span></div>
+    <div class="cd-bar"><span class="cd-val">15</span><span class="cd-dot" style="background:#c94040"></span><span class="cd-lbl" style="color:#c94040">Molto difficile</span><span class="cd-d">Al limite delle capacità ordinarie</span></div>
+    <div class="cd-bar"><span class="cd-val">17</span><span class="cd-dot" style="background:#7c6af7"></span><span class="cd-lbl" style="color:#7c6af7">Eroica</span><span class="cd-d">Solo i migliori, con fortuna</span></div>
+    <div class="cd-bar"><span class="cd-val">19+</span><span class="cd-dot" style="background:#5040a0"></span><span class="cd-lbl" style="color:#8060d0">Quasi impossibile</span><span class="cd-d">Praticamente irraggiungibile senza magia</span></div>
   </div>
 </div>
-
-<!-- S7 -->
-<div class="section" id="s7">
-  <div class="section-card man"><span class="card-num">07</span><span class="card-title">Tiri Caratteristica Fuori dal Combat</span><span class="card-pip man"></span></div>
-  <p>Quando il master chiede di tentare qualcosa di incerto fuori dal combattimento — arrampicarsi, convincere una guardia, ricordare un rituale — il giocatore tira 1d12, aggiunge il MOD della caratteristica più rilevante, e confronta con una Classe Difficoltà (CD) stabilita dal master.</p>
-  <div class="formula">Risultato = 1d12 + MOD(caratteristica_rilevante)
-Successo se Risultato ≥ CD</div>
-  <p>Un <strong>1 naturale</strong> è sempre fallimento critico, indipendentemente da qualsiasi bonus. Un <strong>12 naturale</strong> è sempre successo critico. Il risultato teorico massimo è 20 (12 + MOD +8), praticamente irraggiungibile.</p>
-  <h3>Tabella delle Difficoltà</h3>
-  <div style="margin:16px 0;">
-    <div class="cd-bar"><span class="cd-val">5</span><span class="cd-dot" style="background:#2ec4a0"></span><span class="cd-label" style="color:var(--teal)">Molto facile</span><span class="cd-desc">Quasi chiunque con un minimo di impegno</span></div>
-    <div class="cd-bar"><span class="cd-val">7</span><span class="cd-dot" style="background:#5bc4a0"></span><span class="cd-label" style="color:#5bc4a0">Facile</span><span class="cd-desc">La maggior parte delle persone competenti</span></div>
-    <div class="cd-bar"><span class="cd-val">10</span><span class="cd-dot" style="background:#f0a500"></span><span class="cd-label" style="color:var(--amber)">Moderata</span><span class="cd-desc">Richiede abilità o esperienza specifica</span></div>
-    <div class="cd-bar"><span class="cd-val">12</span><span class="cd-dot" style="background:#e07030"></span><span class="cd-label" style="color:#e07030">Difficile</span><span class="cd-desc">Solo personaggi specializzati o con stat elevate</span></div>
-    <div class="cd-bar"><span class="cd-val">15</span><span class="cd-dot" style="background:#c94040"></span><span class="cd-label" style="color:var(--red)">Molto difficile</span><span class="cd-desc">Al limite delle capacità umane ordinarie</span></div>
-    <div class="cd-bar"><span class="cd-val">17</span><span class="cd-dot" style="background:#7c6af7"></span><span class="cd-label" style="color:var(--mod)">Eroica</span><span class="cd-desc">Solo i migliori, con un colpo di fortuna</span></div>
-    <div class="cd-bar"><span class="cd-val">19+</span><span class="cd-dot" style="background:#5040a0"></span><span class="cd-label" style="color:#8060d0">Quasi impossibile</span><span class="cd-desc">Praticamente irraggiungibile senza magia</span></div>
-  </div>
-  <div class="example">
-    <span class="example-label">Esempio</span>
-    <p>Un personaggio con Mente 9 (MOD +3) tenta di decifrare un testo antico (CD 12). Tira 1d12 e ottiene 8. Totale: 8 + 3 = 11. Manca di un punto. Il master descrive che capisce il senso generale ma non i dettagli critici.</p>
-  </div>
-  <h3>Quale Caratteristica Si Usa</h3>
-  <p><strong>Corpo</strong> per sforzi fisici, resistenza, velocità. <strong>Mente</strong> per memoria, logica, percezione, tecnica. <strong>Anima</strong> per persuasione, inganno, intimidazione, empatia. La caratteristica è sempre scelta dal master in base alla situazione — non esiste una lista fissa.</p>
-</div>
-
-<!-- S8 -->
-<div class="section" id="s8">
-  <div class="section-card man"><span class="card-num">08</span><span class="card-title">Il Riposo</span><span class="card-pip man"></span></div>
-  <h3>Riposo Corto</h3>
-  <p>Dura circa un'ora. Richiede sicurezza e assenza di attività intense. Durante un riposo corto il personaggio può spendere fino a <strong>Grado × d12 dadi vita</strong> per recuperare HP — tira i dadi e somma il risultato agli HP correnti, senza superare il massimo.</p>
-  <p>Il riposo corto rimuove la condizione <strong>Esausto</strong> e recupera gli utilizzi limitati di oggetti che lo specificano. Non recupera tutto — ogni carta specifica quando e come si recupera.</p>
-  <h3>Riposo Lungo</h3>
-  <p>Almeno 8 ore di sonno o attività leggera. Al termine recupera tutti gli HP e tutti gli utilizzi di tutti gli oggetti che lo prevedono. Massimo 1 riposo lungo per 24 ore. Le situazioni di pericolo o stress interrompono il riposo.</p>
-  <div class="table-wrap"><table class="t-mod">
+ 
+<div class="sec" id="s8">
+  <div class="sh man"><span class="sh-n">08</span><span class="sh-t">Il Riposo</span><span class="sh-pip man"></span></div>
+  <div class="tw"><table class="tm">
     <thead><tr><th>Tipo</th><th>Durata</th><th>HP recuperati</th><th>Altro</th></tr></thead>
     <tbody>
-      <tr><td><strong>Corto</strong></td><td>~1 ora</td><td>Spendi Grado×d12 dadi vita</td><td>Rimuove Esausto, recupera utilizzi "riposo corto"</td></tr>
+      <tr><td><strong>Corto</strong></td><td>~1 ora</td><td>Spendi Grado×d12 dadi vita</td><td>Rimuove Esausto, recupera utilizzi "rec.Corto"</td></tr>
       <tr><td><strong>Lungo</strong></td><td>~8 ore</td><td>Tutti gli HP</td><td>Tutti gli utilizzi di tutti gli oggetti</td></tr>
     </tbody>
   </table></div>
 </div>
-
-<!-- S9 -->
-<div class="section" id="s9">
-  <div class="section-card man"><span class="card-num">09</span><span class="card-title">L'Armatura</span><span class="card-pip man"></span></div>
-  <p>L'armatura non è un valore unico — protegge un asse in modo principale e fornisce protezione base sugli altri. Ogni carta armatura specifica il suo asse principale.</p>
-  <div class="armor-axes">
-    <div class="axis-card main"><div class="axis-name">Asse Principale ★</div><div class="axis-formula">Grado × 3</div><div class="axis-note">La caratteristica specificata dalla carta</div></div>
-    <div class="axis-card base"><div class="axis-name">Assi Secondari</div><div class="axis-formula">Grado</div><div class="axis-note">Le altre due caratteristiche</div></div>
-    <div class="axis-card base"><div class="axis-name">Senza Armatura</div><div class="axis-formula">Grado PG</div><div class="axis-note">Protezione base su tutti gli assi</div></div>
+ 
+<div class="sec" id="s9">
+  <div class="sh man"><span class="sh-n">09</span><span class="sh-t">L'Armatura</span><span class="sh-pip man"></span></div>
+  <div class="g3">
+    <div class="ax-card main"><div class="ax-n">Asse Principale ★</div><div class="ax-f">Grado × 3</div><div class="ax-d">La stat specificata dalla carta</div></div>
+    <div class="ax-card base"><div class="ax-n">Assi Secondari</div><div class="ax-f">Grado</div><div class="ax-d">Le altre due caratteristiche</div></div>
+    <div class="ax-card base"><div class="ax-n">Senza Armatura</div><div class="ax-f">Grado PG</div><div class="ax-d">Protezione base su tutti gli assi</div></div>
   </div>
-  <p>Nessun asse è mai completamente scoperto. Anche senza carta armatura il personaggio ha protezione pari al suo Grado su tutti gli assi — esperienza e riflessi del combattente.</p>
-  <div class="example">
-    <span class="example-label">Guerriero Grado 2 con Armatura Corpo G2</span>
-    <div class="ref-grid" style="margin-top:10px;">
-      <div class="ref-item"><span class="ref-label">Soglia Corpo (★)</span><span class="ref-val" style="color:var(--mod)">MOD + 6</span></div>
-      <div class="ref-item"><span class="ref-label">Soglia Mente (base)</span><span class="ref-val">MOD + 2</span></div>
-      <div class="ref-item"><span class="ref-label">Soglia Anima (base)</span><span class="ref-val">MOD + 2</span></div>
-      <div class="ref-item"><span class="ref-label">Senza armatura</span><span class="ref-val">MOD + 2 (tutti)</span></div>
-    </div>
+  <p>Nessun asse è mai completamente scoperto — anche senza armatura si ha protezione pari al Grado su tutti gli assi.</p>
+</div>
+ 
+<div class="sec" id="s10">
+  <div class="sh man"><span class="sh-n">10</span><span class="sh-t">Le Carte Oggetto</span><span class="sh-pip man"></span></div>
+  <p>Ogni carta oggetto contiene: <strong>Tipologia</strong>, <strong>Grado</strong> (1–4), <strong>Rarità</strong>, <strong>Peso</strong>, <strong>Tempo di Attivazione</strong>, <strong>Origine</strong>, <strong>Tag</strong> e <strong>Azioni</strong>. Le carte sono spiegate visivamente nella sezione <em>Le Carte</em>.</p>
+  <p><strong>Origine</strong> — fonte dell'oggetto (Tecnologia, Magia Arcana, Natura). Per sinergie narrative tra carte.</p>
+  <p><strong>Tag</strong> — etichette brevi (#Fuoco, #Meccanico). Le azioni possono scalare con il numero di carte attive che condividono un tag: <em>"Per ogni [Fuoco] attivo: +1 al danno."</em></p>
+  <p><strong>IRD</strong> — Immunità (danno annullato, condizioni bloccate), Resistenza (danno dimezzato, condizioni normali), Debolezza (danno raddoppiato + condizioni automatiche anche se non specificate sull'azione).</p>
+</div>
+ 
+<div class="sec" id="s11">
+  <div class="sh man"><span class="sh-n">11</span><span class="sh-t">Le Condizioni</span><span class="sh-pip man"></span></div>
+  <p>Le condizioni si applicano <strong>solo quando un'azione lo specifica</strong> — oppure automaticamente quando il bersaglio è <strong>debole</strong> a quel tipo di danno.</p>
+  <h3>Tipi di Azione — Colori Standardizzati</h3>
+  <div class="g2">
+    <div class="cond-item" style="border-left:3px solid #6b7280"><div class="cond-n" style="color:#6b7280">Passiva</div><div class="cond-e">Effetto permanente. Non richiede azione.</div></div>
+    <div class="cond-item" style="border-left:3px solid #2ec4a0"><div class="cond-n" style="color:#2ec4a0">Rapida</div><div class="cond-e">Non consuma l'azione del turno. Formula: MOD(Asse).</div></div>
+    <div class="cond-item" style="border-left:3px solid #5890e8"><div class="cond-n" style="color:#5890e8">Leggera</div><div class="cond-e">Richiede 1 azione. G×d12+MOD o G×d6+MOD+Cond.</div></div>
+    <div class="cond-item" style="border-left:3px solid #e05050"><div class="cond-n" style="color:#e05050">Caricata</div><div class="cond-e">1 turno preparazione + 1 esecuzione. 2G×d12+MOD.</div></div>
+    <div class="cond-item" style="border-left:3px solid #a070e8"><div class="cond-n" style="color:#a070e8">Reazione</div><div class="cond-e">Fuori turno in risposta a evento specificato. Non consuma azione.</div></div>
+    <div class="cond-item" style="border-left:3px solid #f0a500"><div class="cond-n" style="color:#f0a500">Concentrazione</div><div class="cond-e">Max 1 attiva. Se subisci danno: 1d12+MOD(migliore) vs 6+danno subito.</div></div>
+  </div>
+  <h3>Condizioni per Famiglia</h3>
+  <div class="cond-fl" style="color:#e05050">DANNO CONTINUO</div>
+  <div class="g2">
+    <div class="cond-item" style="border-left:3px solid #e05050"><div class="cond-n" style="color:#e05050">Sanguinante</div><div class="cond-e">1 HP/turno. Bendarsi (1 az.) o cura. Fonte: Tagliente.</div></div>
+    <div class="cond-item" style="border-left:3px solid #e05050"><div class="cond-n" style="color:#e05050">Intossicato</div><div class="cond-e">1d4 HP/turno. Antidoto o riposo lungo.</div></div>
+    <div class="cond-item" style="border-left:3px solid #e05050"><div class="cond-n" style="color:#e05050">Avvelenato</div><div class="cond-e">1d4 HP/turno + −MOD(Corpo) a tutto. Fonte: Veleno.</div></div>
+    <div class="cond-item" style="border-left:3px solid #e05050"><div class="cond-n" style="color:#e05050">Infuocato</div><div class="cond-e">1d4 HP da Fuoco/turno. Spegnersi (1 az.) o acqua. Fonte: Fuoco.</div></div>
+    <div class="cond-item" style="border-left:3px solid #e05050"><div class="cond-n" style="color:#e05050">Corroso</div><div class="cond-e">Soglia dell'asse ridotta di Grado attaccante. Pulire (1 az.). Fonte: Acido.</div></div>
+  </div>
+  <div class="cond-fl" style="color:#f0a500">CONTROLLO FISICO</div>
+  <div class="g2">
+    <div class="cond-item" style="border-left:3px solid #f0a500"><div class="cond-n" style="color:#f0a500">Afferrato</div><div class="cond-e">Vantaggio per chi attacca. Tiro Corpo vs Corpo per liberarsi.</div></div>
+    <div class="cond-item" style="border-left:3px solid #f0a500"><div class="cond-n" style="color:#f0a500">Prono</div><div class="cond-e">Movimento dimezzato. 1 azione per rialzarsi.</div></div>
+    <div class="cond-item" style="border-left:3px solid #f0a500"><div class="cond-n" style="color:#f0a500">Intrappolato</div><div class="cond-e">Immobile. Vantaggio per chi attacca. Tiro Corpo per liberarsi.</div></div>
+    <div class="cond-item" style="border-left:3px solid #f0a500"><div class="cond-n" style="color:#f0a500">Pietrificato</div><div class="cond-e">Fallimento automatico tiri su Corpo. Immobile.</div></div>
+  </div>
+  <div class="cond-fl" style="color:#9996aa">PERDITA TURNO</div>
+  <div class="g2">
+    <div class="cond-item" style="border-left:3px solid #9996aa"><div class="cond-n" style="color:#9996aa">Stordito</div><div class="cond-e">Svantaggio a Mente e Anima.</div></div>
+    <div class="cond-item" style="border-left:3px solid #9996aa"><div class="cond-n" style="color:#9996aa">Paralizzato</div><div class="cond-e">Perde il turno. Svantaggio a tutto.</div></div>
+    <div class="cond-item" style="border-left:3px solid #9996aa"><div class="cond-n" style="color:#9996aa">Incapacitato</div><div class="cond-e">Perde il turno. Non può muoversi né agire.</div></div>
+    <div class="cond-item" style="border-left:3px solid #9996aa"><div class="cond-n" style="color:#9996aa">Privo di Sensi</div><div class="cond-e">A terra. Non agisce. Svantaggio a tutto.</div></div>
+  </div>
+  <div class="cond-fl" style="color:#6b7280">SENSORIALE</div>
+  <div class="g2">
+    <div class="cond-item" style="border-left:3px solid #6b7280"><div class="cond-n" style="color:#6b7280">Accecato</div><div class="cond-e">Svantaggio a Corpo e Mente.</div></div>
+    <div class="cond-item" style="border-left:3px solid #6b7280"><div class="cond-n" style="color:#6b7280">Assordato</div><div class="cond-e">Svantaggio su Mente e Anima.</div></div>
+  </div>
+  <div class="cond-fl" style="color:#a070e8">MENTALE</div>
+  <div class="g2">
+    <div class="cond-item" style="border-left:3px solid #a070e8"><div class="cond-n" style="color:#a070e8">Spaventato</div><div class="cond-e">Non può avvicinarsi alla fonte. Svantaggio a Mente e Anima.</div></div>
+    <div class="cond-item" style="border-left:3px solid #a070e8"><div class="cond-n" style="color:#a070e8">Affascinato</div><div class="cond-e">Non agisce contro il bersaglio. Tiro per liberarsi.</div></div>
+    <div class="cond-item" style="border-left:3px solid #a070e8"><div class="cond-n" style="color:#a070e8">Esausto</div><div class="cond-e">Svantaggio a tutto fino a riposo corto.</div></div>
+  </div>
+  <div class="cond-fl" style="color:#5890e8">AMBIENTE</div>
+  <div class="g2">
+    <div class="cond-item" style="border-left:3px solid #5890e8"><div class="cond-n" style="color:#5890e8">Congelato</div><div class="cond-e">Movimento 0. Svantaggio a Corpo. Calore o 1 az. per rompersi il ghiaccio.</div></div>
+    <div class="cond-item" style="border-left:3px solid #2ec4a0"><div class="cond-n" style="color:#2ec4a0">Invisibile</div><div class="cond-e">Vantaggio a Corpo. Svantaggio per chi attacca senza percepirlo.</div></div>
   </div>
 </div>
-
-<!-- S10 -->
-<div class="section" id="s10">
-  <div class="section-card man"><span class="card-num">10</span><span class="card-title">Le Carte Oggetto</span><span class="card-pip man"></span></div>
-  <p>Ogni carta oggetto contiene sempre le stesse informazioni. <strong>Tipologia</strong> (Arma/Armatura/Aumento/Oggetto), <strong>Grado</strong> (1–4), <strong>Rarità</strong> (Comune → Artefatto), <strong>Peso</strong>, <strong>Tempo di Attivazione</strong> e <strong>Azioni</strong>.</p>
-  <p>Il <strong>Tempo di Attivazione</strong> separa ciò che si può cambiare in combat da ciò che non si può: armi e oggetti semplici costano 1 azione (6 sec) e si possono scambiare. Armature e impianti richiedono minuti o ore.</p>
-  <div class="table-wrap"><table class="t-mod">
-    <thead><tr><th>Tipo</th><th>Minimo</th><th>Se raro</th></tr></thead>
+ 
+<div class="sec" id="s12">
+  <div class="sh man"><span class="sh-n">12</span><span class="sh-t">Nemici, Boss e Goon</span><span class="sh-pip man"></span></div>
+  <p>I nemici <strong>non seguono le formule dei PG</strong>. Ogni carta è self-contained: HP espliciti, difesa flat per asse, azioni descritte.</p>
+  <div class="g2">
+    <div class="en-card boss"><div class="en-lbl">Boss</div>
+      <div class="en-row"><span class="k">HP</span><span class="v">Alti — 3–8 round</span></div>
+      <div class="en-row"><span class="k">Azioni/round</span><span class="v">2+ (pressione costante)</span></div>
+      <div class="en-row"><span class="k">Azioni Leggendarie</span><span class="v">Reazioni dopo ogni PG</span></div>
+    </div>
+    <div class="en-card goon"><div class="en-lbl">Goon</div>
+      <div class="en-row"><span class="k">HP</span><span class="v">Bassi — 1–2 colpi KO</span></div>
+      <div class="en-row"><span class="k">Azioni/round</span><span class="v">1 (come un PG)</span></div>
+      <div class="en-row"><span class="k">Numero</span><span class="v">~2 per PG nel party</span></div>
+    </div>
+  </div>
+  <div class="tw"><table class="tm">
+    <thead><tr><th>Tipo</th><th>Grado</th><th>HP (party 4)</th><th>Round target</th></tr></thead>
     <tbody>
-      <tr><td><strong>Arma</strong></td><td>1 azione Leggera (d12 o d6+Cond)</td><td>Rapide con bonus, Passive, azioni extra</td></tr>
-      <tr><td><strong>Armatura</strong></td><td>Passiva: asse protetto e valore</td><td>Rapida reattiva, Passiva bonus</td></tr>
-      <tr><td><strong>Aumento</strong></td><td>Passiva o Rapida</td><td>Boost permanenti al MOD, azioni extra</td></tr>
-      <tr><td><strong>Oggetto</strong></td><td>Passiva o Rapida (no danno di solito)</td><td>Può fare danno se molto raro</td></tr>
+      <tr><td>Minion</td><td>½</td><td class="ok">~15</td><td>≤1</td></tr>
+      <tr><td>Soldato</td><td>½</td><td class="ok">~25</td><td>1–2</td></tr>
+      <tr><td>Standard</td><td>1</td><td class="ok">70–80</td><td>3–5 ✓</td></tr>
+      <tr><td>Elite</td><td>1+</td><td class="warn">~100</td><td>5–7</td></tr>
+      <tr><td>Boss</td><td>2</td><td class="warn">~160</td><td>5–8</td></tr>
+      <tr><td>Boss finale</td><td>4</td><td class="bad">~450</td><td>8–12</td></tr>
     </tbody>
   </table></div>
-  <div class="table-wrap" style="margin-top:16px;"><table class="t-mod">
-    <thead><tr><th>Tipo Azione</th><th>Descrizione</th></tr></thead>
-    <tbody>
-      <tr><td><strong>Passiva</strong></td><td>Effetto permanente o per N turni. Non richiede azione.</td></tr>
-      <tr><td><strong>Rapida</strong></td><td>Attivazione istantanea. Non consuma azione nel turno.</td></tr>
-      <tr><td><strong>Leggera</strong></td><td>Richiede 1 azione per essere eseguita.</td></tr>
-      <tr><td><strong>Caricata</strong></td><td>1 turno di preparazione + 1 turno di esecuzione.</td></tr>
-    </tbody>
-  </table></div>
-
-  <h3>Origine, Tag e Interazioni</h3>
-  <p>Ogni carta può portare tre campi di classificazione che non modificano le formule ma abilitano sinergie testuali tra carte.</p>
-  <p><strong>Origine</strong> è un campo libero che descrive la fonte o la natura dell'oggetto — <em>Tecnologia</em>, <em>Magia Arcana</em>, <em>Natura</em>, <em>Artigianato Nanico</em>. Serve per il flavor e per costruire coerenza narrativa nel mazzo. Un'azione può referenziare l'Origine: <em>"Se la tua Arma ha Origine Tecnologia, questa Rapida non consuma azione."</em></p>
-  <p><strong>Tag</strong> sono etichette brevi che categorizzano l'oggetto per tipo o tema — <em>Fuoco</em>, <em>Bestia</em>, <em>Meccanico</em>, <em>Ombra</em>. Più carte possono condividere lo stesso tag, e le azioni possono contare quante carte attive condividono un tag per produrre effetti scalanti: <em>"Per ogni carta attiva con tag [Fuoco]: +1 al danno."</em></p>
-  <p><strong>Immunità, Resistenze e Debolezze</strong> sono tre liste opzionali che compaiono soprattutto sulle carte Nemico e NPC, ma possono comparire anche su oggetti che modificano il profilo difensivo di chi li equipaggia. Un'<strong>Immunità</strong> annulla completamente i danni o l'effetto di quel tipo. Una <strong>Resistenza</strong> dimezza i danni subiti di quel tipo (arrotondati per difetto). Una <strong>Debolezza</strong> raddoppia i danni subiti di quel tipo. Questi attributi vengono comunicati dal master quando pertinenti — i PG possono scoprirli in gioco tramite osservazione o prove di Mente.</p>
-  <div class="example">
-    <span class="example-label">Esempio — Golem di Pietra</span>
-    <pre>Origine: Magia Antica  |  Tag: Costrutto, Terra
-Immunità: Veleno, Psichico, Freddo
-Resistenze: Contundente, Tagliente, Perforante
-Debolezze: Acido, Forza</pre>
-    <p style="margin-top:10px;font-size:13px;">Un PG che usa un'arma da Tagliente fa metà danno. Uno che usa un oggetto con tag [Acido] sfrutta la debolezza. Il master non anticipa queste informazioni — i giocatori le scoprono col tempo.</p>
-  </div>
+  <p>Scalatura: <code>HP_effettivi = HP_carta × N_PG / 4</code></p>
 </div>
-
-<!-- S11 -->
-<div class="section" id="s11">
-  <div class="section-card man"><span class="card-num">11</span><span class="card-title">Le Condizioni</span><span class="card-pip man"></span></div>
-  <p>Le condizioni sono stati alterati applicati quando un'azione lo specifica esplicitamente. Alcune carte possono specificare condizioni <strong>per asse</strong> — varianti mirate che operano solo su una caratteristica specifica (es. "Accecato [Mente]" applica svantaggio solo alle prove di Mente). Il testo della carta è sempre la fonte autoritativa.</p>
-
-  <h3>Regola IRD e Condizioni</h3>
-  <p>Le <strong>Immunità, Resistenze e Debolezze</strong> di un bersaglio interagiscono con le condizioni nel modo seguente. Se il bersaglio è <strong>immune</strong> al tipo di danno, non subisce né danno né condizioni da quella fonte. Se è <strong>resistente</strong>, subisce danno dimezzato ma le condizioni specificate sull'azione si applicano normalmente. Se è <strong>debole</strong>, subisce danno raddoppiato e <em>qualsiasi condizione associabile a quel tipo di danno si applica automaticamente</em> — anche se l'azione non la specifica.</p>
-
-  <h3>Tipi di Azione</h3>
-  <p>Ogni azione su una carta è classificata in uno dei seguenti tipi, ognuno con un colore standardizzato per facilitare la lettura rapida.</p>
-  <div class="cond-grid">
-    <div class="cond-item" style="border-left:3px solid #6b7280">
-      <div class="cond-name" style="color:#6b7280">Passiva</div>
-      <div class="cond-effect">Effetto permanente attivo finché la carta è equipaggiata. Non richiede azione.</div>
-    </div>
-    <div class="cond-item" style="border-left:3px solid #2ec4a0">
-      <div class="cond-name" style="color:#2ec4a0">Rapida</div>
-      <div class="cond-effect">Si esegue senza consumare l'azione del turno. Formula: MOD(Asse).</div>
-    </div>
-    <div class="cond-item" style="border-left:3px solid #5890e8">
-      <div class="cond-name" style="color:#5890e8">Leggera</div>
-      <div class="cond-effect">Richiede 1 azione. Formula: G×d12+MOD o G×d6+MOD+Condizione.</div>
-    </div>
-    <div class="cond-item" style="border-left:3px solid #e05050">
-      <div class="cond-name" style="color:#e05050">Caricata</div>
-      <div class="cond-effect">1 turno preparazione + 1 esecuzione. Formula: 2G×d12+MOD+Condizione.</div>
-    </div>
-    <div class="cond-item" style="border-left:3px solid #a070e8">
-      <div class="cond-name" style="color:#a070e8">Reazione</div>
-      <div class="cond-effect">Si esegue fuori turno in risposta a un evento specificato sulla carta. Non consuma l'azione del turno.</div>
-    </div>
-    <div class="cond-item" style="border-left:3px solid #f0a500">
-      <div class="cond-name" style="color:#f0a500">Concentrazione</div>
-      <div class="cond-effect">Non puoi avere due azioni in Concentrazione attive. Se subisci danno: tira 1d12 + MOD(Mente o Anima, la più alta) contro 6 + danno subito post-soglia. Se fallisci, la Concentrazione si spezza.</div>
-    </div>
-  </div>
-
-  <h3>Condizioni</h3>
-  <p>Le condizioni sono raggruppate per famiglia meccanica. Più condizioni dello stesso tipo su uno stesso bersaglio non si sommano — si usa la peggiore.</p>
-
-  <p style="font-size:12px;font-weight:700;color:#e05050;margin:12px 0 6px;letter-spacing:1px;font-family:'Cinzel',serif">DANNO CONTINUO</p>
-  <div class="cond-grid">
-    <div class="cond-item" style="border-left:3px solid #e05050">
-      <div class="cond-name" style="color:#e05050">Sanguinante</div>
-      <div class="cond-effect">Perde 1 HP a inizio turno. Si rimuove con un'azione (bendarsi) o con cura. Fonte: danno Tagliente specificato sulla carta.</div>
-    </div>
-    <div class="cond-item" style="border-left:3px solid #e05050">
-      <div class="cond-name" style="color:#e05050">Intossicato</div>
-      <div class="cond-effect">Perde 1d4 HP a inizio turno. Danno da sostanza tossica generica — non specificatamente veleno. Si rimuove con antidoto o riposo lungo.</div>
-    </div>
-    <div class="cond-item" style="border-left:3px solid #e05050">
-      <div class="cond-name" style="color:#e05050">Avvelenato</div>
-      <div class="cond-effect">Perde 1d4 HP a inizio turno e ha −MOD(Corpo) a tutti i tiri finché dura. Fonte: tipo danno Veleno specificato sulla carta. Si rimuove con antidoto o riposo lungo.</div>
-    </div>
-    <div class="cond-item" style="border-left:3px solid #e05050">
-      <div class="cond-name" style="color:#e05050">Infuocato</div>
-      <div class="cond-effect">Perde 1d4 HP da Fuoco a inizio turno. Si rimuove spendendo 1 azione per spegnersi o con acqua/freddo. Fonte: tipo danno Fuoco specificato sulla carta.</div>
-    </div>
-    <div class="cond-item" style="border-left:3px solid #e05050">
-      <div class="cond-name" style="color:#e05050">Corroso</div>
-      <div class="cond-effect">La soglia difensiva dell'asse colpito è ridotta di un valore pari al Grado dell'attaccante. Si rimuove spendendo 1 azione per pulire l'armatura. Fonte: tipo danno Acido specificato sulla carta.</div>
-    </div>
-  </div>
-
-  <p style="font-size:12px;font-weight:700;color:#f0a500;margin:12px 0 6px;letter-spacing:1px;font-family:'Cinzel',serif">CONTROLLO FISICO</p>
-  <div class="cond-grid">
-    <div class="cond-item" style="border-left:3px solid #f0a500">
-      <div class="cond-name" style="color:#f0a500">Afferrato</div>
-      <div class="cond-effect">Chi lo attacca ha vantaggio. Tiro Corpo vs Corpo per liberarsi.</div>
-    </div>
-    <div class="cond-item" style="border-left:3px solid #f0a500">
-      <div class="cond-name" style="color:#f0a500">Prono</div>
-      <div class="cond-effect">Movimento dimezzato. Costa 1 azione rialzarsi.</div>
-    </div>
-    <div class="cond-item" style="border-left:3px solid #f0a500">
-      <div class="cond-name" style="color:#f0a500">Intrappolato</div>
-      <div class="cond-effect">Non si muove. Chi attacca ha vantaggio. Tiro Corpo per liberarsi.</div>
-    </div>
-    <div class="cond-item" style="border-left:3px solid #f0a500">
-      <div class="cond-name" style="color:#f0a500">Pietrificato</div>
-      <div class="cond-effect">Fallimento automatico ai tiri su Corpo. Non si muove.</div>
-    </div>
-  </div>
-
-  <p style="font-size:12px;font-weight:700;color:#9996aa;margin:12px 0 6px;letter-spacing:1px;font-family:'Cinzel',serif">PERDITA TURNO / AZIONE</p>
-  <div class="cond-grid">
-    <div class="cond-item" style="border-left:3px solid #9996aa">
-      <div class="cond-name" style="color:#9996aa">Stordito</div>
-      <div class="cond-effect">Svantaggio a Mente e Anima.</div>
-    </div>
-    <div class="cond-item" style="border-left:3px solid #9996aa">
-      <div class="cond-name" style="color:#9996aa">Paralizzato</div>
-      <div class="cond-effect">Perde il turno. Svantaggio a tutto.</div>
-    </div>
-    <div class="cond-item" style="border-left:3px solid #9996aa">
-      <div class="cond-name" style="color:#9996aa">Incapacitato</div>
-      <div class="cond-effect">Perde il turno. Non può muoversi né agire.</div>
-    </div>
-    <div class="cond-item" style="border-left:3px solid #9996aa">
-      <div class="cond-name" style="color:#9996aa">Privo di Sensi</div>
-      <div class="cond-effect">A terra, non agisce, subisce svantaggio a tutto.</div>
-    </div>
-  </div>
-
-  <p style="font-size:12px;font-weight:700;color:#6b7280;margin:12px 0 6px;letter-spacing:1px;font-family:'Cinzel',serif">ALTERAZIONE SENSORIALE</p>
-  <div class="cond-grid">
-    <div class="cond-item" style="border-left:3px solid #6b7280">
-      <div class="cond-name" style="color:#6b7280">Accecato</div>
-      <div class="cond-effect">Svantaggio a Corpo e Mente. Non può usare azioni che richiedano visione.</div>
-    </div>
-    <div class="cond-item" style="border-left:3px solid #6b7280">
-      <div class="cond-name" style="color:#6b7280">Assordato</div>
-      <div class="cond-effect">Svantaggio su Mente e Anima. Non percepisce suoni.</div>
-    </div>
-  </div>
-
-  <p style="font-size:12px;font-weight:700;color:#a070e8;margin:12px 0 6px;letter-spacing:1px;font-family:'Cinzel',serif">ALTERAZIONE MENTALE</p>
-  <div class="cond-grid">
-    <div class="cond-item" style="border-left:3px solid #a070e8">
-      <div class="cond-name" style="color:#a070e8">Spaventato</div>
-      <div class="cond-effect">Non può avvicinarsi o attaccare la fonte. Svantaggio a Mente e Anima.</div>
-    </div>
-    <div class="cond-item" style="border-left:3px solid #a070e8">
-      <div class="cond-name" style="color:#a070e8">Affascinato</div>
-      <div class="cond-effect">Non può agire contro il bersaglio. Svantaggio a Mente/Anima contro di esso. Tiro per liberarsi.</div>
-    </div>
-    <div class="cond-item" style="border-left:3px solid #a070e8">
-      <div class="cond-name" style="color:#a070e8">Esausto</div>
-      <div class="cond-effect">Svantaggio a tutto fino a riposo corto.</div>
-    </div>
-  </div>
-
-  <p style="font-size:12px;font-weight:700;color:#5890e8;margin:12px 0 6px;letter-spacing:1px;font-family:'Cinzel',serif">AMBIENTE</p>
-  <div class="cond-grid">
-    <div class="cond-item" style="border-left:3px solid #5890e8">
-      <div class="cond-name" style="color:#5890e8">Congelato</div>
-      <div class="cond-effect">Movimento ridotto a 0. Svantaggio a Corpo. Si rimuove con calore o spendendo 1 azione per rompersi il ghiaccio.</div>
-    </div>
-    <div class="cond-item" style="border-left:3px solid #2ec4a0">
-      <div class="cond-name" style="color:#2ec4a0">Invisibile</div>
-      <div class="cond-effect">Vantaggio a Corpo. Svantaggio per chi lo attacca senza poterlo percepire.</div>
-    </div>
-  </div>
-</div>
-
-<!-- S12 -->
-<div class="section" id="s12">
-  <div class="section-card man"><span class="card-num">12</span><span class="card-title">Nemici, Boss e Goon</span><span class="card-pip man"></span></div>
-  <p>La differenza più importante tra PG e nemici: i nemici <strong>non seguono le stesse formule dei PG</strong>. Ogni carta nemico è self-contained: HP espliciti, difesa flat per asse, azioni descritte. Il master legge e gioca, senza calcoli. Lo stesso vale per gli NPC alleati.</p>
-  <p>Le carte nemico includono sempre anche <strong>Origine</strong>, <strong>Tag</strong> e, dove rilevante, <strong>Immunità</strong>, <strong>Resistenze</strong> e <strong>Debolezze</strong> ai tipi di danno e alle condizioni. Queste informazioni guidano il design del nemico e possono essere scoperte dai PG durante il gioco — non vengono anticipate dal master a meno che non sia narrativamente giustificato.</p>
-  <div class="enemy-split">
-    <div class="enemy-card boss">
-      <div class="enemy-label">Boss</div>
-      <div class="enemy-row"><span class="k">HP</span><span class="v">Alti — dura 3–5 round</span></div>
-      <div class="enemy-row"><span class="k">Azioni/round</span><span class="v">2+ (pressione costante)</span></div>
-      <div class="enemy-row"><span class="k">Azioni Leggendarie</span><span class="v">Reazioni dopo ogni PG</span></div>
-      <div class="enemy-row"><span class="k">Numero</span><span class="v">1 da solo vs party</span></div>
-    </div>
-    <div class="enemy-card goon">
-      <div class="enemy-label">Goon</div>
-      <div class="enemy-row"><span class="k">HP</span><span class="v">Bassi — 1–2 colpi per KO</span></div>
-      <div class="enemy-row"><span class="k">Azioni/round</span><span class="v">1 (come un PG)</span></div>
-      <div class="enemy-row"><span class="k">Forza</span><span class="v">Il numero — sopraffazione</span></div>
-      <div class="enemy-row"><span class="k">Numero</span><span class="v">2 per PG nel party</span></div>
-    </div>
-  </div>
-  <p>Le <strong>Azioni Leggendarie</strong> dei Boss si attivano come reazione alla fine del turno di ogni PG — non nel turno del Boss. Un Boss con tre Azioni Leggendarie agisce potenzialmente quattro volte per round in un party da quattro. Le reazioni sono azioni limitate e specifiche: applicare una condizione, spostarsi, attivare una difesa — non l'attacco completo. Oltre alle reazioni, i Boss possono avere Passive leggendarie permanenti.</p>
-  <h3>Calibrare gli HP dei Nemici</h3>
-  <p>HP target = DPR_party × round_desiderati. Per scalare: <code>HP_effettivi = HP_carta × N_PG / 4</code>.</p>
-  <div class="table-wrap"><table class="t-mod">
-    <thead><tr><th>Tipo</th><th>Grado</th><th>HP (party 4)</th><th>Round target</th><th>Note</th></tr></thead>
-    <tbody>
-      <tr><td>Minion</td><td>½</td><td class="ok">~15</td><td>≤1</td><td>One-shot, nessuna difesa speciale</td></tr>
-      <tr><td>Soldato</td><td>½</td><td class="ok">~25</td><td>1–2</td><td>Muore in 2 colpi</td></tr>
-      <tr><td>Nemico standard</td><td>1</td><td class="ok">70–80</td><td>3–5 ✓</td><td>Sfida bilanciata</td></tr>
-      <tr><td>Elite</td><td>1+</td><td class="warn">~100</td><td>5–7</td><td>Stat superiori al party</td></tr>
-      <tr><td>Boss</td><td>2</td><td class="warn">~160</td><td>5–8</td><td>2 azioni/round, leggendarie</td></tr>
-      <tr><td>Boss finale</td><td>4</td><td class="bad">~450</td><td>8–12</td><td>3 azioni/round, sfida epica</td></tr>
-    </tbody>
-  </table></div>
-</div>
-
-<!-- S13 -->
-<div class="section" id="s13">
-  <div class="section-card man"><span class="card-num">13</span><span class="card-title">Potenziare gli Oggetti</span><span class="card-pip man"></span></div>
-  <div class="formula">Costo    = Grado_destinazione × 2.000 Monete Oro
-Tempo    = Grado_destinazione giorni
+ 
+<div class="sec" id="s13">
+  <div class="sh man"><span class="sh-n">13</span><span class="sh-t">Potenziare gli Oggetti</span><span class="sh-pip man"></span></div>
+  <div class="formula">Costo = Grado_destinazione × 2.000 Monete Oro
+Tempo = Grado_destinazione giorni
 Requisito: Grado_PG ≥ Grado_destinazione</div>
-  <div class="table-wrap"><table class="t-mod">
+  <div class="tw"><table class="tm">
     <thead><tr><th>Da → A</th><th>Costo MO</th><th>Tempo</th><th>Req. PG</th></tr></thead>
     <tbody>
       <tr><td>G1 → G2</td><td>4.000</td><td>2 giorni</td><td>Grado 2+</td></tr>
@@ -726,330 +534,628 @@ Requisito: Grado_PG ≥ Grado_destinazione</div>
     </tbody>
   </table></div>
 </div>
-
-<!-- S14 -->
-<div class="section" id="s14">
-  <div class="section-card man"><span class="card-num">14</span><span class="card-title">Riferimento Rapido</span><span class="card-pip man"></span></div>
-  <div class="ref-grid">
-    <div class="ref-item"><span class="ref-label">MOD</span><span class="ref-val">floor(STAT / 3)</span></div>
-    <div class="ref-item"><span class="ref-label">HP</span><span class="ref-val">Corpo + Mente + Anima</span></div>
-    <div class="ref-item"><span class="ref-label">Velocità</span><span class="ref-val">Corpo m/turno</span></div>
-    <div class="ref-item"><span class="ref-label">Iniziativa</span><span class="ref-val">1d12 + MOD(Corpo)</span></div>
-    <div class="ref-item"><span class="ref-label">Attacco d12</span><span class="ref-val">G×d12 + MOD(atk)</span></div>
-    <div class="ref-item"><span class="ref-label">Attacco d6+Cond</span><span class="ref-val">G×d6 + MOD + Cond</span></div>
-    <div class="ref-item"><span class="ref-label">Attacco Caricato</span><span class="ref-val">2×G×d12 + MOD + Cond</span></div>
-    <div class="ref-item"><span class="ref-label">Attacco Senz'arma</span><span class="ref-val">MOD(atk)</span></div>
-    <div class="ref-item"><span class="ref-label">Soglia PG — princ.</span><span class="ref-val">MOD + Grado×3</span></div>
-    <div class="ref-item"><span class="ref-label">Soglia PG — sec.</span><span class="ref-val">MOD + Grado</span></div>
-    <div class="ref-item"><span class="ref-label">Soglia PG — no armor</span><span class="ref-val">MOD + Grado PG</span></div>
-    <div class="ref-item"><span class="ref-label">Soglia Nemico</span><span class="ref-val">Dif.flat[asse] (carta)</span></div>
-    <div class="ref-item"><span class="ref-label">Danno</span><span class="ref-val">max(0, Attacco − Soglia)</span></div>
-    <div class="ref-item"><span class="ref-label">HP Nemico scalato</span><span class="ref-val">HP × N_PG / 4</span></div>
-    <div class="ref-item"><span class="ref-label">Trasporto</span><span class="ref-val">Corpo × 3 kg</span></div>
-    <div class="ref-item"><span class="ref-label">Riposo corto HP</span><span class="ref-val">Spendi Grado×d12</span></div>
-    <div class="ref-item"><span class="ref-label">Potenziamento</span><span class="ref-val">G_dest × 2000 MO + giorni</span></div>
-    <div class="ref-item"><span class="ref-label">Tiro caratteristica</span><span class="ref-val">1d12 + MOD vs CD</span></div>
-  </div>
-</div><!-- S15 -->
-<div class="section" id="s15">
-  <div class="section-card man"><span class="card-num">15</span><span class="card-title">Glossario — Parole Chiave</span><span class="card-pip man"></span></div>
-  <p>Alcune parole appaiono nel testo delle carte con un significato meccanico preciso e standardizzato. Quando una carta usa una di queste parole chiave, si applica sempre la definizione qui sotto — il testo della carta non ha bisogno di riscriverla per esteso. In caso di conflitto tra testo della carta e parola chiave, il testo ha sempre la precedenza.</p>
-
-  <h3>Modificatori al Calcolo del Danno</h3>
-  <div class="cond-grid">
-    <div class="cond-item">
-      <div class="cond-name">Perforante</div>
-      <div class="cond-effect">Ignora la soglia difensiva del bersaglio (sia MOD che armatura). Il danno si applica direttamente agli HP. Il MOD dell'asse dell'attaccante si usa normalmente nella formula.</div>
-    </div>
-    <div class="cond-item">
-      <div class="cond-name">Dimezzante</div>
-      <div class="cond-effect">La soglia del bersaglio conta la metà (arrotondato per difetto) per questa azione. Non azzera la soglia, ma la riduce sensibilmente.</div>
-    </div>
-    <div class="cond-item">
-      <div class="cond-name">Penetrante N</div>
-      <div class="cond-effect">Riduce la soglia del bersaglio di N per questa azione. Via di mezzo tra nessun modificatore e Dimezzante. Il valore N è specificato sulla carta.</div>
-    </div>
-    <div class="cond-item">
-      <div class="cond-name">Sacrificio N</div>
-      <div class="cond-effect">Questa azione costa N HP al lanciatore invece di consumare un utilizzo. Non richiede slot utilizzi — si usa sempre finché il personaggio ha abbastanza HP.</div>
-    </div>
-  </div>
-
-  <h3>Modificatori alla Durata e all'Area</h3>
-  <div class="cond-grid">
-    <div class="cond-item">
-      <div class="cond-name">Persistente N</div>
-      <div class="cond-effect">L'effetto dura N turni dopo l'esecuzione, anche se la carta viene disattivata. Il valore N è specificato sulla carta.</div>
-    </div>
-    <div class="cond-item">
-      <div class="cond-name">Istantanea</div>
-      <div class="cond-effect">L'effetto avviene e finisce nello stesso momento. Non può essere interrotto, contrastato o rimosso da reazioni. Usato per cure immediate o buff istantanei.</div>
-    </div>
-    <div class="cond-item">
-      <div class="cond-name">Zona N</div>
-      <div class="cond-effect">Colpisce tutti i bersagli (amici inclusi, salvo diversa indicazione) entro N metri dal punto di impatto. Il valore N è specificato sulla carta.</div>
-    </div>
-    <div class="cond-item">
-      <div class="cond-name">Eco</div>
-      <div class="cond-effect">Se questa azione colpisce un bersaglio già affetto da una condizione specificata sulla carta, l'azione si ripete automaticamente una seconda volta sullo stesso bersaglio.</div>
-    </div>
-  </div>
-
-  <h3>Modificatori di Sinergia</h3>
-  <div class="cond-grid">
-    <div class="cond-item">
-      <div class="cond-name">Risonante [Tag]</div>
-      <div class="cond-effect">Questa azione scala con il numero di carte attive che condividono il Tag specificato. La formula di scaling è indicata sulla carta (es. "+1 dado per ogni [Fuoco] attivo").</div>
-    </div>
-    <div class="cond-item">
-      <div class="cond-name">Sinergia [Tag]</div>
-      <div class="cond-effect">Questa carta ha un effetto aggiuntivo se nel mazzo attivo è presente almeno un'altra carta con il Tag specificato. L'effetto è descritto sulla carta.</div>
-    </div>
-  </div>
-
-  <h3>Parole Chiave sulle Carte</h3>
-  <div class="cond-grid">
-    <div class="cond-item">
-      <div class="cond-name">Unica</div>
-      <div class="cond-effect">Non puoi possedere più di una copia di questa carta, indipendentemente dal Grado o dagli slot disponibili.</div>
-    </div>
-    <div class="cond-item">
-      <div class="cond-name">Legata</div>
-      <div class="cond-effect">Questa carta è legata al personaggio che la ottiene. Non può essere trasferita, venduta o scambiata. Può essere potenziata normalmente.</div>
-    </div>
-    <div class="cond-item">
-      <div class="cond-name">Fragile</div>
-      <div class="cond-effect">Se il bersaglio di questa carta ottiene un risultato naturale di 12 contro di essa, la carta viene distrutta e rimossa dal mazzo. Il master decide quando una carta Fragile è a rischio.</div>
-    </div>
+ 
+<div class="sec" id="s14">
+  <div class="sh man"><span class="sh-n">14</span><span class="sh-t">Riferimento Rapido</span><span class="sh-pip man"></span></div>
+  <div class="g2">
+    <div class="ref-item"><span class="ref-l">MOD</span><span class="ref-v">floor(STAT / 3)</span></div>
+    <div class="ref-item"><span class="ref-l">HP</span><span class="ref-v">C + M + A (finali)</span></div>
+    <div class="ref-item"><span class="ref-l">Velocità</span><span class="ref-v">Corpo finale m/t</span></div>
+    <div class="ref-item"><span class="ref-l">Iniziativa</span><span class="ref-v">1d12 + MOD(Corpo)</span></div>
+    <div class="ref-item"><span class="ref-l">Capacità</span><span class="ref-v">Corpo × 3 kg</span></div>
+    <div class="ref-item"><span class="ref-l">Attacco d12</span><span class="ref-v">G×d12 + MOD</span></div>
+    <div class="ref-item"><span class="ref-l">Attacco d6+Cond</span><span class="ref-v">G×d6 + MOD + Cond</span></div>
+    <div class="ref-item"><span class="ref-l">Caricato</span><span class="ref-v">2×G×d12 + MOD</span></div>
+    <div class="ref-item"><span class="ref-l">Rapido</span><span class="ref-v">MOD(stat)</span></div>
+    <div class="ref-item"><span class="ref-l">Soglia — princ.</span><span class="ref-v">MOD + Grado_arm × 3</span></div>
+    <div class="ref-item"><span class="ref-l">Soglia — sec.</span><span class="ref-v">MOD + Grado_arm</span></div>
+    <div class="ref-item"><span class="ref-l">Soglia — no armor</span><span class="ref-v">MOD + Grado PG</span></div>
+    <div class="ref-item"><span class="ref-l">Danno</span><span class="ref-v">max(0, Atk − Soglia)</span></div>
+    <div class="ref-item"><span class="ref-l">HP Nemico scalato</span><span class="ref-v">HP × N_PG / 4</span></div>
+    <div class="ref-item"><span class="ref-l">Slot AO</span><span class="ref-v">pool 2 + Grado PG</span></div>
+    <div class="ref-item"><span class="ref-l">Concentrazione</span><span class="ref-v">1d12+MOD vs 6+danno</span></div>
+    <div class="ref-item"><span class="ref-l">Riposo corto</span><span class="ref-v">Grado×d12 dadi vita</span></div>
+    <div class="ref-item"><span class="ref-l">Tiro caratteristica</span><span class="ref-v">1d12 + MOD vs CD</span></div>
+    <div class="ref-item"><span class="ref-l">Potenziamento</span><span class="ref-v">G_dest × 2000 MO</span></div>
   </div>
 </div>
-
+ 
+<div class="sec" id="s15">
+  <div class="sh man"><span class="sh-n">15</span><span class="sh-t">Glossario — Parole Chiave</span><span class="sh-pip man"></span></div>
+  <p>Quando una carta usa queste parole chiave si applica la definizione standard. Il testo della carta ha sempre la precedenza.</p>
+  <h3>Modificatori al Danno</h3>
+  <div class="g2">
+    <div class="cond-item"><div class="cond-n" style="color:var(--mod)">Perforante</div><div class="cond-e">Ignora la soglia difensiva (MOD + armatura). Danno diretto agli HP.</div></div>
+    <div class="cond-item"><div class="cond-n" style="color:var(--mod)">Dimezzante</div><div class="cond-e">Soglia del bersaglio conta la metà (giù) per questa azione.</div></div>
+    <div class="cond-item"><div class="cond-n" style="color:var(--mod)">Penetrante N</div><div class="cond-e">Riduce la soglia di N per questa azione. N specificato sulla carta.</div></div>
+    <div class="cond-item"><div class="cond-n" style="color:var(--mod)">Sacrificio N</div><div class="cond-e">Costa N HP al lanciatore invece di un utilizzo.</div></div>
+  </div>
+  <h3>Durata, Area e Sinergie</h3>
+  <div class="g2">
+    <div class="cond-item"><div class="cond-n" style="color:var(--mod)">Persistente N</div><div class="cond-e">L'effetto dura N turni anche se la carta è disattivata.</div></div>
+    <div class="cond-item"><div class="cond-n" style="color:var(--mod)">Istantanea</div><div class="cond-e">Avviene e finisce nello stesso momento. Non interrompibile.</div></div>
+    <div class="cond-item"><div class="cond-n" style="color:var(--mod)">Zona N</div><div class="cond-e">Colpisce tutti entro N metri (amici inclusi salvo indicazione).</div></div>
+    <div class="cond-item"><div class="cond-n" style="color:var(--mod)">Eco</div><div class="cond-e">Se colpisce un bersaglio già affetto dalla condizione specificata, si ripete.</div></div>
+    <div class="cond-item"><div class="cond-n" style="color:var(--mod)">Risonante [Tag]</div><div class="cond-e">Scala con il numero di carte attive che condividono il Tag.</div></div>
+    <div class="cond-item"><div class="cond-n" style="color:var(--mod)">Sinergia [Tag]</div><div class="cond-e">Effetto extra se nel mazzo attivo c'è almeno un'altra carta con quel Tag.</div></div>
+    <div class="cond-item"><div class="cond-n" style="color:var(--mod)">Unica</div><div class="cond-e">Non puoi possedere più di una copia.</div></div>
+    <div class="cond-item"><div class="cond-n" style="color:var(--mod)">Legata</div><div class="cond-e">Legata al personaggio che la ottiene. Non trasferibile.</div></div>
+    <div class="cond-item"><div class="cond-n" style="color:var(--mod)">Fragile</div><div class="cond-e">Se il bersaglio ottiene un 12 naturale contro di essa, viene distrutta.</div></div>
+  </div>
+</div>
+ 
 </div><!-- /part-man -->
-
-<!-- ═══════════════════ PARTE II ═══════════════════ -->
-<div class="part" id="part-dev">
-
-<div style="margin-bottom:48px;padding:20px 0 24px;border-bottom:1px solid var(--border);">
-  <div style="font-family:'Cinzel',serif;font-size:28px;font-weight:700;color:var(--teal);letter-spacing:.04em;margin-bottom:6px;">Sviluppo &amp; Test</div>
-  <div style="font-size:13px;color:var(--text2);">Intenzioni di design · Test numerici pre-playtest · Analisi di bilanciamento</div>
+ 
+ 
+<!-- ═══════════════ PARTE II — LE CARTE ═══════════════ -->
+<div class="part" id="part-card">
+ 
+<!-- SIZE SLIDER -->
+<div class="card-size-bar">
+  <label>DIMENSIONE CARTE</label>
+  <input type="range" id="card-scale" min="60" max="200" value="100" oninput="scaleCards(this.value)"/>
+  <span id="card-scale-val">100%</span>
 </div>
-
-<!-- DA -->
-<div class="section" id="da">
-  <div class="section-card dev"><span class="card-num">A</span><span class="card-title">Intenzioni di Design</span><span class="card-pip dev"></span></div>
-  <div class="intent-grid">
-    <div class="intent-card"><div class="intent-title">Semplicità al tavolo</div><div class="intent-body">Ogni calcolo deve essere risolvibile mentalmente. Formula del danno = una sottrazione. MOD = divisione per 3. Soglie nemici = valori flat sulla carta.</div></div>
-    <div class="intent-card"><div class="intent-title">Profondità strategica</div><div class="intent-body">Scegliere su quale asse attaccare deve contare. Un Mago su asse Mente fa molto più danno al guerriero fisico che su Corpo. Leggere il nemico è il gameplay.</div></div>
-    <div class="intent-card"><div class="intent-title">Il dado conta sempre</div><div class="intent-body">MOD massimo = +8. Dado a Grado 4 = 4–48. Il dado rimane il fattore principale anche ai livelli massimi — nessun bonus fisso lo schiaccia.</div></div>
-    <div class="intent-card"><div class="intent-title">Carte come oggetti fisici</div><div class="intent-body">Tenere in mano le carte, scegliere il mazzo prima di uscire, scambiare un'arma con un compagno — interazioni fisiche che un TTRPG classico non ha.</div></div>
-    <div class="intent-card"><div class="intent-title">Party cooperativo</div><div class="intent-body">Il bilanciamento usa il party da 4 come unità di misura. Un nemico G1 è calibrato per 4 persone che lavorano insieme. La cooperazione è il cuore del sistema.</div></div>
-    <div class="intent-card"><div class="intent-title">Progressione leggibile</div><div class="intent-body">Ogni Grado aggiunge qualcosa di concreto: punti stat, oggetti, slot. La crescita deve essere sentita senza diventare gestione contabile.</div></div>
+ 
+<div class="sec" id="c0">
+  <div class="sh card"><span class="sh-n">🃏</span><span class="sh-t">Anatomia delle Carte</span><span class="sh-pip card"></span></div>
+  <p>Ogni carta segue una struttura visiva standard. I numeri indicano le sezioni. Usa lo slider per ingrandire o rimpicciolire le carte.</p>
+</div>
+ 
+<!-- C1 CARTA PERSONAGGIO -->
+<div class="sec card-wrap" id="c1">
+  <div class="card-subtitle">C1 · Carta Personaggio</div>
+  <div class="card-anatomy">
+    <div class="card-svg-wrap" id="svg-c1">
+      <svg viewBox="0 0 220 308" width="220" height="308" style="border-radius:11px;display:block;filter:drop-shadow(0 6px 24px rgba(0,0,0,0.55))">
+        <rect x="1" y="1" width="218" height="306" rx="11" fill="#131318" stroke="#7c6af7" stroke-width="2"/>
+        <polygon points="174,1 219,1 219,43" fill="#48c88a" opacity="0.92"/>
+        <rect x="1" y="1" width="218" height="55" rx="11" fill="rgba(124,106,247,0.18)"/>
+        <rect x="1" y="47" width="218" height="8" fill="#131318"/>
+        <!-- ① nome e tipo -->
+        <circle cx="10" cy="10" r="7" fill="none" stroke="#7c6af7" stroke-width="1.2"/>
+        <text x="10" y="13.5" fill="#7c6af7" font-size="8" font-family="'JetBrains Mono',monospace" font-weight="700" text-anchor="middle">1</text>
+        <text x="20" y="21" fill="#7c6af7" font-size="11.5" font-family="'Cinzel',serif" font-weight="700">Lyra Sunthorn</text>
+        <rect x="20" y="27" width="56" height="13" rx="3" fill="rgba(124,106,247,0.18)" stroke="rgba(124,106,247,0.4)" stroke-width="0.8"/>
+        <text x="48" y="36" fill="#7c6af7" font-size="7" font-family="'JetBrains Mono',monospace" font-weight="600" text-anchor="middle">PERSONAGGIO</text>
+        <rect x="177" y="27" width="30" height="13" rx="3" fill="rgba(124,106,247,0.15)" stroke="rgba(124,106,247,0.3)" stroke-width="0.8"/>
+        <text x="192" y="36" fill="#7c6af7" font-size="9" font-family="'Cinzel',serif" font-weight="700" text-anchor="middle">G2</text>
+        <!-- ② rarità angolo -->
+        <text x="205" y="10" fill="#48c88a" font-size="8" font-family="'JetBrains Mono',monospace" font-weight="700">②</text>
+        <!-- ③ arte + razza -->
+        <rect x="1" y="55" width="218" height="66" fill="#0c0c10"/>
+        <text x="109" y="92" fill="#7c6af7" font-size="30" text-anchor="middle" opacity="0.1" font-family="serif">🧝</text>
+        <circle cx="10" cy="64" r="6" fill="none" stroke="#e8a030" stroke-width="1.2"/>
+        <text x="10" y="67.5" fill="#e8a030" font-size="7" font-family="'JetBrains Mono',monospace" font-weight="700" text-anchor="middle">3</text>
+        <rect x="1" y="121" width="218" height="18" fill="rgba(124,106,247,0.06)"/>
+        <text x="13" y="133" fill="#7c6af7" font-size="8" font-family="'Cinzel',serif" font-weight="700">🧬 Elfo</text>
+        <text x="60" y="133" fill="#2ec4a0" font-size="7.5" font-family="'JetBrains Mono',monospace" font-weight="700">+2 CORPO</text>
+        <text x="118" y="133" fill="#f0a500" font-size="7.5" font-family="'JetBrains Mono',monospace" font-weight="700">+1 MENTE</text>
+        <!-- ④ stat -->
+        <line x1="1" y1="139" x2="219" y2="139" stroke="rgba(255,255,255,0.07)" stroke-width="0.8"/>
+        <circle cx="10" cy="148" r="6" fill="none" stroke="#2ec4a0" stroke-width="1.2"/>
+        <text x="10" y="151.5" fill="#2ec4a0" font-size="7" font-family="'JetBrains Mono',monospace" font-weight="700" text-anchor="middle">4</text>
+        <text x="36" y="151" fill="#2ec4a0" font-size="6.5" font-family="'Cinzel',serif" font-weight="700" text-anchor="middle" letter-spacing="0.8">CORPO</text>
+        <text x="36" y="165" fill="#2ec4a0" font-size="18" font-family="'JetBrains Mono',monospace" font-weight="900" text-anchor="middle">8</text>
+        <text x="36" y="177" fill="#7c6af7" font-size="9" font-family="'JetBrains Mono',monospace" text-anchor="middle">+2</text>
+        <text x="109" y="151" fill="#f0a500" font-size="6.5" font-family="'Cinzel',serif" font-weight="700" text-anchor="middle" letter-spacing="0.8">MENTE</text>
+        <text x="109" y="165" fill="#f0a500" font-size="18" font-family="'JetBrains Mono',monospace" font-weight="900" text-anchor="middle">5</text>
+        <text x="109" y="177" fill="#7c6af7" font-size="9" font-family="'JetBrains Mono',monospace" text-anchor="middle">+1</text>
+        <text x="182" y="151" fill="#c94040" font-size="6.5" font-family="'Cinzel',serif" font-weight="700" text-anchor="middle" letter-spacing="0.8">ANIMA</text>
+        <text x="182" y="165" fill="#c94040" font-size="18" font-family="'JetBrains Mono',monospace" font-weight="900" text-anchor="middle">5</text>
+        <text x="182" y="177" fill="#7c6af7" font-size="9" font-family="'JetBrains Mono',monospace" text-anchor="middle">+1</text>
+        <!-- ⑤ derivati -->
+        <line x1="1" y1="182" x2="219" y2="182" stroke="rgba(255,255,255,0.07)" stroke-width="0.8"/>
+        <circle cx="10" cy="191" r="6" fill="none" stroke="#f0a500" stroke-width="1.2"/>
+        <text x="10" y="194.5" fill="#f0a500" font-size="7" font-family="'JetBrains Mono',monospace" font-weight="700" text-anchor="middle">5</text>
+        <text x="20" y="194" fill="#55536a" font-size="7" font-family="'JetBrains Mono',monospace">HP</text>
+        <text x="34" y="194" fill="#e8e4d8" font-size="8.5" font-family="'JetBrains Mono',monospace" font-weight="700">18</text>
+        <text x="64" y="194" fill="#55536a" font-size="7" font-family="'JetBrains Mono',monospace">VEL</text>
+        <text x="80" y="194" fill="#e8e4d8" font-size="8.5" font-family="'JetBrains Mono',monospace" font-weight="700">8m</text>
+        <text x="110" y="194" fill="#55536a" font-size="7" font-family="'JetBrains Mono',monospace">CAP</text>
+        <text x="128" y="194" fill="#e8e4d8" font-size="8.5" font-family="'JetBrains Mono',monospace" font-weight="700">24kg</text>
+        <!-- ⑥ soglie -->
+        <text x="13" y="208" fill="#55536a" font-size="6.5" font-family="'Cinzel',serif" letter-spacing="1">SOGLIE DIFESA</text>
+        <circle cx="118" cy="204" r="6" fill="none" stroke="#c94040" stroke-width="1.2"/>
+        <text x="118" y="207.5" fill="#c94040" font-size="7" font-family="'JetBrains Mono',monospace" font-weight="700" text-anchor="middle">6</text>
+        <line x1="13" y1="211" x2="206" y2="211" stroke="rgba(255,255,255,0.05)" stroke-width="0.5"/>
+        <rect x="13" y="215" width="58" height="36" rx="5" fill="rgba(46,196,160,0.13)" stroke="rgba(46,196,160,0.4)" stroke-width="0.8"/>
+        <text x="42" y="226" fill="#2ec4a0" font-size="6.5" font-family="'Cinzel',serif" text-anchor="middle">CORPO ★</text>
+        <text x="42" y="242" fill="#2ec4a0" font-size="15" font-family="'JetBrains Mono',monospace" font-weight="900" text-anchor="middle">11</text>
+        <rect x="80" y="215" width="54" height="36" rx="5" fill="#1a1a26" stroke="rgba(255,255,255,0.07)" stroke-width="0.5"/>
+        <text x="107" y="226" fill="#f0a500" font-size="6.5" font-family="'Cinzel',serif" text-anchor="middle">MENTE</text>
+        <text x="107" y="242" fill="#f0a500" font-size="15" font-family="'JetBrains Mono',monospace" font-weight="900" text-anchor="middle">3</text>
+        <rect x="143" y="215" width="54" height="36" rx="5" fill="#1a1a26" stroke="rgba(255,255,255,0.07)" stroke-width="0.5"/>
+        <text x="170" y="226" fill="#c94040" font-size="6.5" font-family="'Cinzel',serif" text-anchor="middle">ANIMA</text>
+        <text x="170" y="242" fill="#c94040" font-size="15" font-family="'JetBrains Mono',monospace" font-weight="900" text-anchor="middle">3</text>
+        <!-- ⑦ talento -->
+        <circle cx="10" cy="259" r="6" fill="none" stroke="#e8a030" stroke-width="1.2"/>
+        <text x="10" y="262.5" fill="#e8a030" font-size="7" font-family="'JetBrains Mono',monospace" font-weight="700" text-anchor="middle">7</text>
+        <rect x="20" y="254" width="196" height="16" rx="4" fill="#0c0c10" stroke="rgba(124,106,247,0.18)" stroke-width="0.8"/>
+        <text x="28" y="264" fill="#f0a500" font-size="7" font-family="'Cinzel',serif" font-weight="700">⭐ Grazia Elfica:</text>
+        <text x="105" y="264" fill="#9490a0" font-size="7" font-family="'JetBrains Mono',monospace">+3m · vant. Mente</text>
+        <!-- footer -->
+        <line x1="1" y1="277" x2="219" y2="277" stroke="rgba(255,255,255,0.07)" stroke-width="0.8"/>
+        <text x="55" y="291" fill="#48c88a" font-size="8" font-family="'Cinzel',serif" font-weight="700" text-anchor="middle">Non Comune</text>
+        <text x="55" y="300" fill="#55536a" font-size="6.5" font-family="'JetBrains Mono',monospace" text-anchor="middle">Rarità</text>
+        <line x1="109" y1="280" x2="109" y2="305" stroke="rgba(255,255,255,0.07)" stroke-width="0.8"/>
+        <text x="164" y="291" fill="#e8e4d8" font-size="8" font-family="'Cinzel',serif" font-weight="700" text-anchor="middle">Grado 2</text>
+        <text x="164" y="300" fill="#55536a" font-size="6.5" font-family="'JetBrains Mono',monospace" text-anchor="middle">Progressione</text>
+      </svg>
+    </div>
+    <div class="card-callouts">
+      <div class="cc"><div class="cc-bubble">1</div><div class="cc-body"><div class="cc-t">Nome e Tipo</div><div class="cc-d">Nome del personaggio e badge "PERSONAGGIO". Il Grado (G1–G4) in viola — scala tutte le formule di danno e protezione.</div></div></div>
+      <div class="cc"><div class="cc-bubble" style="border-color:var(--gold);color:var(--gold)">2</div><div class="cc-body"><div class="cc-t">Rarità (angolo)</div><div class="cc-d">Triangolo colorato nell'angolo in alto a destra. Grigio = Comune, Verde = Non Comune, Blu = Rara, Viola = Molto Rara, Oro = Leggendaria, Rosso = Artefatto.</div></div></div>
+      <div class="cc"><div class="cc-bubble" style="border-color:var(--gold);color:var(--gold)">3</div><div class="cc-body"><div class="cc-t">Arte e Banda Razza</div><div class="cc-d">Area illustrazione. La banda colorata sotto mostra nome razza e i bonus stat (+2/+1 standard o +1/+1/+1 bilanciata).</div></div></div>
+      <div class="cc"><div class="cc-bubble" style="border-color:var(--corpo);color:var(--corpo)">4</div><div class="cc-body"><div class="cc-t">Caratteristiche e MOD</div><div class="cc-d">Corpo, Mente, Anima con valore finale (base + bonus razza). Il badge viola sotto è il Modificatore (STAT / 3) usato in tutte le formule.</div></div></div>
+      <div class="cc"><div class="cc-bubble" style="border-color:var(--mente);color:var(--mente)">5</div><div class="cc-body"><div class="cc-t">Statistiche Derivate</div><div class="cc-d">HP = somma delle stat finali. Velocità = Corpo finale m/turno. Capacità = Corpo × 3 kg.</div></div></div>
+      <div class="cc"><div class="cc-bubble" style="border-color:var(--anima);color:var(--anima)">6</div><div class="cc-body"><div class="cc-t">Soglie Difesa</div><div class="cc-d">Le tre soglie per asse. L'asse principale dell'armatura è evidenziato con ★ e vale MOD + Grado_arm × 3. Gli altri assi valgono MOD + Grado_arm.</div></div></div>
+      <div class="cc"><div class="cc-bubble" style="border-color:var(--gold);color:var(--gold)">7</div><div class="cc-body"><div class="cc-t">Talento Raziale</div><div class="cc-d">Il talento passivo della razza. Sempre attivo, non richiede azione. Non occupa slot nel mazzo.</div></div></div>
+    </div>
   </div>
 </div>
-
-<!-- DB -->
-<div class="section" id="db">
-  <div class="section-card dev"><span class="card-num">B</span><span class="card-title">Test 1 — Scelta del Divisore MOD</span><span class="card-pip dev"></span></div>
-  <p><strong>Problema:</strong> Il sistema originale usava ÷4, scelto arbitrariamente. Su stat 1–24 produce MOD da +0 a +6 — accettabile ma piatto. La differenza tra stat 6 e stat 24 è solo 5 punti. La domanda era se quel gap fosse abbastanza significativo.</p>
-  <div class="table-wrap"><table class="t-teal">
-    <thead><tr><th>Divisore</th><th>MOD min</th><th>MOD max</th><th>a stat 6</th><th>a stat 12</th><th>a stat 24</th><th>Giudizio</th></tr></thead>
+ 
+<!-- C2 CARTA ARMA -->
+<div class="sec card-wrap" id="c2">
+  <div class="card-subtitle">C2 · Carta Arma</div>
+  <div class="card-anatomy flip">
+    <div class="card-svg-wrap" id="svg-c2">
+      <svg viewBox="0 0 220 308" width="220" height="308" style="border-radius:11px;display:block;filter:drop-shadow(0 6px 24px rgba(0,0,0,0.55))">
+        <rect x="1" y="1" width="218" height="306" rx="11" fill="#131318" stroke="#c94040" stroke-width="2"/>
+        <polygon points="174,1 219,1 219,43" fill="#5890e8" opacity="0.92"/>
+        <rect x="1" y="1" width="218" height="54" rx="11" fill="rgba(201,64,64,0.16)"/>
+        <rect x="1" y="46" width="218" height="8" fill="#131318"/>
+        <!-- ① header -->
+        <circle cx="10" cy="10" r="6" fill="none" stroke="#c94040" stroke-width="1.2"/>
+        <text x="10" y="13.5" fill="#c94040" font-size="7" font-family="'JetBrains Mono',monospace" font-weight="700" text-anchor="middle">1</text>
+        <text x="20" y="21" fill="#c94040" font-size="11.5" font-family="'Cinzel',serif" font-weight="700">Lama del Vuoto</text>
+        <rect x="20" y="27" width="40" height="13" rx="3" fill="rgba(201,64,64,0.16)" stroke="rgba(201,64,64,0.4)" stroke-width="0.8"/>
+        <text x="40" y="36" fill="#c94040" font-size="7" font-family="'JetBrains Mono',monospace" font-weight="600" text-anchor="middle">⚔️ ARMA</text>
+        <text x="70" y="36" fill="#55536a" font-size="7.5" font-family="'JetBrains Mono',monospace">2kg · Mischia</text>
+        <rect x="177" y="27" width="30" height="13" rx="3" fill="rgba(124,106,247,0.15)" stroke="rgba(124,106,247,0.3)" stroke-width="0.8"/>
+        <text x="192" y="36" fill="#7c6af7" font-size="9" font-family="'Cinzel',serif" font-weight="700" text-anchor="middle">G2</text>
+        <!-- ② arte + tag + origine -->
+        <rect x="1" y="54" width="218" height="60" fill="#0c0c10"/>
+        <text x="109" y="87" fill="#c94040" font-size="28" text-anchor="middle" opacity="0.1" font-family="serif">⚔️</text>
+        <circle cx="10" cy="62" r="6" fill="none" stroke="#c94040" stroke-width="1.2"/>
+        <text x="10" y="65.5" fill="#c94040" font-size="7" font-family="'JetBrains Mono',monospace" font-weight="700" text-anchor="middle">2</text>
+        <rect x="13" y="118" width="42" height="12" rx="5" fill="rgba(0,0,0,0.45)" stroke="rgba(255,255,255,0.09)" stroke-width="0.5"/>
+        <text x="34" y="126" fill="#55536a" font-size="7" font-family="'JetBrains Mono',monospace" text-anchor="middle">#Ombra</text>
+        <rect x="60" y="118" width="36" height="12" rx="5" fill="rgba(0,0,0,0.45)" stroke="rgba(255,255,255,0.09)" stroke-width="0.5"/>
+        <text x="78" y="126" fill="#55536a" font-size="7" font-family="'JetBrains Mono',monospace" text-anchor="middle">#Lama</text>
+        <text x="206" y="126" fill="#55536a" font-size="6.5" font-family="'JetBrains Mono',monospace" text-anchor="end">MAGIA ARCANA</text>
+        <!-- ③ lore -->
+        <circle cx="10" cy="136" r="6" fill="none" stroke="#c94040" stroke-width="1.2"/>
+        <text x="10" y="139.5" fill="#c94040" font-size="7" font-family="'JetBrains Mono',monospace" font-weight="700" text-anchor="middle">3</text>
+        <rect x="20" y="131" width="196" height="24" rx="3" fill="rgba(201,64,64,0.06)"/>
+        <line x1="20" y1="131" x2="20" y2="155" stroke="#c94040" stroke-width="2"/>
+        <text x="26" y="142" fill="#55536a" font-size="7.5" font-family="'JetBrains Mono',monospace" font-style="italic">Forgiata tra i piani. I colpi fanno</text>
+        <text x="26" y="152" fill="#55536a" font-size="7.5" font-family="'JetBrains Mono',monospace" font-style="italic">male anche dove non toccano.</text>
+        <!-- ④ badge azione -->
+        <circle cx="10" cy="165" r="6" fill="none" stroke="#5890e8" stroke-width="1.2"/>
+        <text x="10" y="168.5" fill="#5890e8" font-size="7" font-family="'JetBrains Mono',monospace" font-weight="700" text-anchor="middle">4</text>
+        <rect x="20" y="159" width="198" height="34" rx="5" fill="#1a1a26" stroke="rgba(255,255,255,0.07)" stroke-width="0.8"/>
+        <line x1="20" y1="159" x2="20" y2="193" stroke="#5890e8" stroke-width="2.5"/>
+        <rect x="24" y="163" width="33" height="11" rx="2" fill="rgba(88,144,232,0.15)" stroke="rgba(88,144,232,0.35)" stroke-width="0.5"/>
+        <text x="40.5" y="171" fill="#5890e8" font-size="6.5" font-family="'JetBrains Mono',monospace" font-weight="700" text-anchor="middle">LEGGERA</text>
+        <text x="62" y="171" fill="#2ec4a0" font-size="7.5" font-family="'JetBrains Mono',monospace">COR</text>
+        <text x="216" y="171" fill="#e8e4d8" font-size="9" font-family="'JetBrains Mono',monospace" font-weight="700" text-anchor="end">2d12+MOD</text>
+        <!-- ⑤ effetto -->
+        <circle cx="30" cy="182" r="5" fill="none" stroke="#f0a500" stroke-width="1"/>
+        <text x="30" y="185" fill="#f0a500" font-size="6" font-family="'JetBrains Mono',monospace" font-weight="700" text-anchor="middle">5</text>
+        <text x="40" y="182" fill="#9490a0" font-size="8" font-family="'JetBrains Mono',monospace">Fendente oscuro.</text>
+        <rect x="124" y="177" width="48" height="11" rx="2" fill="rgba(160,112,232,0.12)" stroke="rgba(160,112,232,0.3)" stroke-width="0.5"/>
+        <text x="148" y="185" fill="#a070e8" font-size="7" font-family="'JetBrains Mono',monospace" text-anchor="middle">Necrotico</text>
+        <!-- ⑥ utilizzi azione 2 -->
+        <rect x="20" y="197" width="198" height="38" rx="5" fill="#1a1a26" stroke="rgba(255,255,255,0.07)" stroke-width="0.8"/>
+        <line x1="20" y1="197" x2="20" y2="235" stroke="#5890e8" stroke-width="2.5"/>
+        <rect x="24" y="201" width="33" height="11" rx="2" fill="rgba(88,144,232,0.15)" stroke="rgba(88,144,232,0.35)" stroke-width="0.5"/>
+        <text x="40.5" y="209" fill="#5890e8" font-size="6.5" font-family="'JetBrains Mono',monospace" font-weight="700" text-anchor="middle">LEGGERA</text>
+        <text x="62" y="209" fill="#f0a500" font-size="7.5" font-family="'JetBrains Mono',monospace">MEN</text>
+        <text x="216" y="209" fill="#e8e4d8" font-size="9" font-family="'JetBrains Mono',monospace" font-weight="700" text-anchor="end">2d6+MOD</text>
+        <text x="24" y="220" fill="#9490a0" font-size="8" font-family="'JetBrains Mono',monospace">Tocco psichico → Spaventato 2t</text>
+        <circle cx="10" cy="229" r="6" fill="none" stroke="#c94040" stroke-width="1.2"/>
+        <text x="10" y="232.5" fill="#c94040" font-size="7" font-family="'JetBrains Mono',monospace" font-weight="700" text-anchor="middle">6</text>
+        <circle cx="24" cy="230" r="3.2" fill="#c94040"/>
+        <circle cx="33" cy="230" r="3.2" fill="#c94040"/>
+        <circle cx="42" cy="230" r="3.2" fill="transparent" stroke="#c94040" stroke-width="0.8" opacity="0.4"/>
+        <text x="50" y="233" fill="#55536a" font-size="7" font-family="'JetBrains Mono',monospace">rec.Lungo</text>
+        <!-- ⑦ footer -->
+        <line x1="1" y1="242" x2="219" y2="242" stroke="rgba(255,255,255,0.07)" stroke-width="0.8"/>
+        <circle cx="10" cy="251" r="6" fill="none" stroke="#55536a" stroke-width="1.2"/>
+        <text x="10" y="254.5" fill="#55536a" font-size="7" font-family="'JetBrains Mono',monospace" font-weight="700" text-anchor="middle">7</text>
+        <text x="40" y="257" fill="#5890e8" font-size="8.5" font-family="'Cinzel',serif" font-weight="700" text-anchor="middle">Rara</text>
+        <text x="40" y="266" fill="#55536a" font-size="6.5" font-family="'JetBrains Mono',monospace" text-anchor="middle">Rarità</text>
+        <line x1="80" y1="245" x2="80" y2="270" stroke="rgba(255,255,255,0.07)" stroke-width="0.8"/>
+        <text x="110" y="257" fill="#e8e4d8" font-size="8.5" font-family="'Cinzel',serif" font-weight="700" text-anchor="middle">2 kg</text>
+        <text x="110" y="266" fill="#55536a" font-size="6.5" font-family="'JetBrains Mono',monospace" text-anchor="middle">Peso</text>
+        <line x1="140" y1="245" x2="140" y2="270" stroke="rgba(255,255,255,0.07)" stroke-width="0.8"/>
+        <text x="180" y="257" fill="#e8e4d8" font-size="8.5" font-family="'Cinzel',serif" font-weight="700" text-anchor="middle">1 azione</text>
+        <text x="180" y="266" fill="#55536a" font-size="6.5" font-family="'JetBrains Mono',monospace" text-anchor="middle">Attivazione</text>
+      </svg>
+    </div>
+    <div class="card-callouts">
+      <div class="cc"><div class="cc-bubble" style="border-color:#c94040;color:#c94040">1</div><div class="cc-body"><div class="cc-t">Nome, Tipo e Metadati</div><div class="cc-d">Nome carta, badge ⚔️ ARMA, peso in kg, portata (Contatto / Mischia / N metri). Grado G1–G4 in viola.</div></div></div>
+      <div class="cc"><div class="cc-bubble" style="border-color:#c94040;color:#c94040">2</div><div class="cc-body"><div class="cc-t">Arte, Tag e Origine</div><div class="cc-d">Area arte. I Tag (#Ombra, #Lama) permettono sinergie tra carte. L'Origine (Magia Arcana, Tecnologia…) è flavor e riferimento narrativo.</div></div></div>
+      <div class="cc"><div class="cc-bubble" style="border-color:#c94040;color:#c94040">3</div><div class="cc-body"><div class="cc-t">Lore</div><div class="cc-d">Testo narrativo in corsivo con bordo laterale colorato. Flavor puro — nessun effetto meccanico.</div></div></div>
+      <div class="cc"><div class="cc-bubble" style="border-color:#5890e8;color:#5890e8">4</div><div class="cc-body"><div class="cc-t">Badge Tipo Azione + Formula</div><div class="cc-d">Colore standardizzato: Leggera = blu, Caricata = rosso, Rapida = teal, Passiva = grigio, Reazione = viola, Concentrazione = ambra. Poi asse (COR/MEN/ANI) e formula dado.</div></div></div>
+      <div class="cc"><div class="cc-bubble" style="border-color:#f0a500;color:#f0a500">5</div><div class="cc-body"><div class="cc-t">Effetto e Condizione</div><div class="cc-d">Descrizione dell'effetto. Chip colorati per tipo danno (rosso scuro) e condizione applicata (colore della famiglia della condizione).</div></div></div>
+      <div class="cc"><div class="cc-bubble" style="border-color:#c94040;color:#c94040">6</div><div class="cc-body"><div class="cc-t">Utilizzi ◉◉◯</div><div class="cc-d">Puntini pieni = usi rimasti. Puntini vuoti = usati. Recupero: rec.Corto (1 ora), rec.Lungo (8 ore) o Consumo (definitivo).</div></div></div>
+      <div class="cc"><div class="cc-bubble" style="border-color:#55536a;color:#9490a0">7</div><div class="cc-body"><div class="cc-t">Footer</div><div class="cc-d">Rarità, Peso in kg, Tempo di Attivazione. Le armi si equipaggiano in 1 azione (6 sec) in combat.</div></div></div>
+    </div>
+  </div>
+</div>
+ 
+<!-- C3 CARTA ARMATURA -->
+<div class="sec card-wrap" id="c3">
+  <div class="card-subtitle">C3 · Carta Armatura</div>
+  <div class="card-anatomy">
+    <div class="card-svg-wrap" id="svg-c3">
+      <svg viewBox="0 0 220 280" width="220" height="280" style="border-radius:11px;display:block;filter:drop-shadow(0 6px 24px rgba(0,0,0,0.55))">
+        <rect x="1" y="1" width="218" height="278" rx="11" fill="#131318" stroke="#5890e8" stroke-width="2"/>
+        <polygon points="174,1 219,1 219,43" fill="#48c88a" opacity="0.92"/>
+        <rect x="1" y="1" width="218" height="52" rx="11" fill="rgba(88,144,232,0.16)"/>
+        <rect x="1" y="44" width="218" height="8" fill="#131318"/>
+        <text x="14" y="20" fill="#5890e8" font-size="11.5" font-family="'Cinzel',serif" font-weight="700">Cotta di Maglia</text>
+        <rect x="14" y="26" width="52" height="13" rx="3" fill="rgba(88,144,232,0.16)" stroke="rgba(88,144,232,0.4)" stroke-width="0.8"/>
+        <text x="40" y="35" fill="#5890e8" font-size="7" font-family="'JetBrains Mono',monospace" font-weight="600" text-anchor="middle">🛡 ARMATURA</text>
+        <text x="76" y="35" fill="#55536a" font-size="7.5" font-family="'JetBrains Mono',monospace">15kg</text>
+        <rect x="177" y="26" width="30" height="13" rx="3" fill="rgba(124,106,247,0.15)" stroke="rgba(124,106,247,0.3)" stroke-width="0.8"/>
+        <text x="192" y="35" fill="#7c6af7" font-size="9" font-family="'Cinzel',serif" font-weight="700" text-anchor="middle">G2</text>
+        <rect x="1" y="52" width="218" height="58" fill="#0c0c10"/>
+        <text x="109" y="84" fill="#5890e8" font-size="28" text-anchor="middle" opacity="0.1" font-family="serif">🛡</text>
+        <rect x="14" y="113" width="46" height="12" rx="5" fill="rgba(0,0,0,0.45)" stroke="rgba(255,255,255,0.09)" stroke-width="0.5"/>
+        <text x="37" y="121" fill="#55536a" font-size="7" font-family="'JetBrains Mono',monospace" text-anchor="middle">#Metallo</text>
+        <rect x="66" y="113" width="56" height="12" rx="5" fill="rgba(0,0,0,0.45)" stroke="rgba(255,255,255,0.09)" stroke-width="0.5"/>
+        <text x="94" y="121" fill="#55536a" font-size="7" font-family="'JetBrains Mono',monospace" text-anchor="middle">#Flessibile</text>
+        <text x="206" y="121" fill="#55536a" font-size="6.5" font-family="'JetBrains Mono',monospace" text-anchor="end">ARTIGIANATO</text>
+        <!-- Azione passiva -->
+        <rect x="14" y="128" width="192" height="24" rx="5" fill="#1a1a26" stroke="rgba(255,255,255,0.07)" stroke-width="0.8"/>
+        <line x1="14" y1="128" x2="14" y2="152" stroke="#6b7280" stroke-width="2.5"/>
+        <rect x="18" y="132" width="30" height="11" rx="2" fill="rgba(107,114,128,0.2)" stroke="rgba(107,114,128,0.35)" stroke-width="0.5"/>
+        <text x="33" y="140" fill="#6b7280" font-size="6.5" font-family="'JetBrains Mono',monospace" font-weight="700" text-anchor="middle">PASSIVA</text>
+        <text x="18" y="149" fill="#9490a0" font-size="8" font-family="'JetBrains Mono',monospace">Asse: Corpo. Grado×3 su Corpo, Grado sugli altri.</text>
+        <!-- Soglie — sezione speciale -->
+        <text x="14" y="164" fill="#55536a" font-size="6.5" font-family="'Cinzel',serif" letter-spacing="1">PROTEZIONE</text>
+        <circle cx="96" cy="161" r="6" fill="none" stroke="#5890e8" stroke-width="1.2"/>
+        <text x="96" y="164.5" fill="#5890e8" font-size="7" font-family="'JetBrains Mono',monospace" font-weight="700" text-anchor="middle">★</text>
+        <line x1="14" y1="167" x2="206" y2="167" stroke="rgba(255,255,255,0.05)" stroke-width="0.5"/>
+        <rect x="14" y="171" width="60" height="38" rx="5" fill="rgba(88,144,232,0.14)" stroke="rgba(88,144,232,0.4)" stroke-width="0.8"/>
+        <text x="44" y="183" fill="#5890e8" font-size="6.5" font-family="'Cinzel',serif" text-anchor="middle">CORPO ★</text>
+        <text x="44" y="200" fill="#5890e8" font-size="17" font-family="'JetBrains Mono',monospace" font-weight="900" text-anchor="middle">+6</text>
+        <rect x="82" y="171" width="56" height="38" rx="5" fill="#1a1a26" stroke="rgba(255,255,255,0.07)" stroke-width="0.5"/>
+        <text x="110" y="183" fill="#f0a500" font-size="6.5" font-family="'Cinzel',serif" text-anchor="middle">MENTE</text>
+        <text x="110" y="200" fill="#f0a500" font-size="17" font-family="'JetBrains Mono',monospace" font-weight="900" text-anchor="middle">+2</text>
+        <rect x="146" y="171" width="54" height="38" rx="5" fill="#1a1a26" stroke="rgba(255,255,255,0.07)" stroke-width="0.5"/>
+        <text x="173" y="183" fill="#c94040" font-size="6.5" font-family="'Cinzel',serif" text-anchor="middle">ANIMA</text>
+        <text x="173" y="200" fill="#c94040" font-size="17" font-family="'JetBrains Mono',monospace" font-weight="900" text-anchor="middle">+2</text>
+        <!-- footer -->
+        <line x1="1" y1="216" x2="219" y2="216" stroke="rgba(255,255,255,0.07)" stroke-width="0.8"/>
+        <text x="38" y="231" fill="#48c88a" font-size="8.5" font-family="'Cinzel',serif" font-weight="700" text-anchor="middle">Non Comune</text>
+        <text x="38" y="240" fill="#55536a" font-size="6.5" font-family="'JetBrains Mono',monospace" text-anchor="middle">Rarità</text>
+        <line x1="78" y1="219" x2="78" y2="244" stroke="rgba(255,255,255,0.07)" stroke-width="0.8"/>
+        <text x="110" y="231" fill="#e8e4d8" font-size="8.5" font-family="'Cinzel',serif" font-weight="700" text-anchor="middle">15 kg</text>
+        <text x="110" y="240" fill="#55536a" font-size="6.5" font-family="'JetBrains Mono',monospace" text-anchor="middle">Peso</text>
+        <line x1="142" y1="219" x2="142" y2="244" stroke="rgba(255,255,255,0.07)" stroke-width="0.8"/>
+        <text x="181" y="231" fill="#e8e4d8" font-size="8.5" font-family="'Cinzel',serif" font-weight="700" text-anchor="middle">10 minuti</text>
+        <text x="181" y="240" fill="#55536a" font-size="6.5" font-family="'JetBrains Mono',monospace" text-anchor="middle">Attivazione</text>
+      </svg>
+    </div>
+    <div class="card-callouts">
+      <div class="cc"><div class="cc-bubble" style="border-color:#5890e8;color:#5890e8">A</div><div class="cc-body"><div class="cc-t">Azione Passiva</div><div class="cc-d">Le armature hanno sempre una Passiva che dichiara l'asse principale protetto e la formula di protezione.</div></div></div>
+      <div class="cc"><div class="cc-bubble" style="border-color:#5890e8;color:#5890e8">★</div><div class="cc-body"><div class="cc-t">Griglia Protezione</div><div class="cc-d">Sezione unica delle armature. Asse principale ★ = Grado × 3. Assi secondari = Grado. La differenza dipende da dove è concentrata la protezione.</div></div></div>
+      <div class="cc"><div class="cc-bubble" style="border-color:#55536a;color:#9490a0">T</div><div class="cc-body"><div class="cc-t">Tempo di Attivazione</div><div class="cc-d">Le armature richiedono minuti o ore per indossarsi. Non si cambiano in combat — questa scelta va fatta prima dello scontro.</div></div></div>
+    </div>
+  </div>
+</div>
+ 
+<!-- C6 CARTA NEMICO -->
+<div class="sec card-wrap" id="c6">
+  <div class="card-subtitle">C6 · Carta Nemico / NPC</div>
+  <div class="card-anatomy flip">
+    <div class="card-svg-wrap" id="svg-c6">
+      <svg viewBox="0 0 220 308" width="220" height="308" style="border-radius:11px;display:block;filter:drop-shadow(0 6px 24px rgba(0,0,0,0.55))">
+        <rect x="1" y="1" width="218" height="306" rx="11" fill="#131318" stroke="#e05050" stroke-width="2"/>
+        <polygon points="174,1 219,1 219,43" fill="#e8a030" opacity="0.92"/>
+        <rect x="1" y="1" width="218" height="52" rx="11" fill="rgba(224,80,80,0.16)"/>
+        <rect x="1" y="44" width="218" height="8" fill="#131318"/>
+        <!-- header -->
+        <circle cx="10" cy="10" r="6" fill="none" stroke="#e05050" stroke-width="1.2"/>
+        <text x="10" y="13.5" fill="#e05050" font-size="7" font-family="'JetBrains Mono',monospace" font-weight="700" text-anchor="middle">1</text>
+        <text x="20" y="21" fill="#e05050" font-size="11.5" font-family="'Cinzel',serif" font-weight="700">Golem di Pietra</text>
+        <rect x="20" y="26" width="56" height="13" rx="3" fill="rgba(224,80,80,0.16)" stroke="rgba(224,80,80,0.4)" stroke-width="0.8"/>
+        <text x="48" y="35" fill="#e05050" font-size="7" font-family="'JetBrains Mono',monospace" font-weight="600" text-anchor="middle">NEMICO G2</text>
+        <rect x="177" y="26" width="38" height="13" rx="3" fill="rgba(232,160,48,0.2)" stroke="rgba(232,160,48,0.4)" stroke-width="0.8"/>
+        <text x="196" y="35" fill="#e8a030" font-size="8" font-family="'Cinzel',serif" font-weight="700" text-anchor="middle">BOSS</text>
+        <!-- arte -->
+        <rect x="1" y="52" width="218" height="55" fill="#0c0c10"/>
+        <text x="109" y="84" fill="#e05050" font-size="26" text-anchor="middle" opacity="0.1" font-family="serif">🪨</text>
+        <!-- tags -->
+        <rect x="14" y="111" width="54" height="12" rx="5" fill="rgba(0,0,0,0.45)" stroke="rgba(255,255,255,0.09)" stroke-width="0.5"/>
+        <text x="41" y="119" fill="#55536a" font-size="7" font-family="'JetBrains Mono',monospace" text-anchor="middle">#Costrutto</text>
+        <rect x="74" y="111" width="36" height="12" rx="5" fill="rgba(0,0,0,0.45)" stroke="rgba(255,255,255,0.09)" stroke-width="0.5"/>
+        <text x="92" y="119" fill="#55536a" font-size="7" font-family="'JetBrains Mono',monospace" text-anchor="middle">#Terra</text>
+        <text x="206" y="119" fill="#55536a" font-size="6.5" font-family="'JetBrains Mono',monospace" text-anchor="end">MAGIA ANTICA</text>
+        <!-- ② HP + stat flat -->
+        <circle cx="10" cy="130" r="6" fill="none" stroke="#e05050" stroke-width="1.2"/>
+        <text x="10" y="133.5" fill="#e05050" font-size="7" font-family="'JetBrains Mono',monospace" font-weight="700" text-anchor="middle">2</text>
+        <rect x="20" y="124" width="196" height="40" rx="5" fill="#0c0c10" stroke="rgba(255,255,255,0.07)" stroke-width="0.8"/>
+        <text x="28" y="136" fill="#55536a" font-size="6.5" font-family="'Cinzel',serif" letter-spacing="0.8">HP</text>
+        <text x="42" y="136" fill="#e05050" font-size="9.5" font-family="'JetBrains Mono',monospace" font-weight="700">160</text>
+        <text x="76" y="136" fill="#2ec4a0" font-size="6.5" font-family="'Cinzel',serif" text-anchor="middle">CORPO</text>
+        <text x="76" y="148" fill="#2ec4a0" font-size="13" font-family="'JetBrains Mono',monospace" font-weight="900" text-anchor="middle">8</text>
+        <text x="120" y="136" fill="#f0a500" font-size="6.5" font-family="'Cinzel',serif" text-anchor="middle">MENTE</text>
+        <text x="120" y="148" fill="#f0a500" font-size="13" font-family="'JetBrains Mono',monospace" font-weight="900" text-anchor="middle">3</text>
+        <text x="164" y="136" fill="#c94040" font-size="6.5" font-family="'Cinzel',serif" text-anchor="middle">ANIMA</text>
+        <text x="164" y="148" fill="#c94040" font-size="13" font-family="'JetBrains Mono',monospace" font-weight="900" text-anchor="middle">2</text>
+        <!-- ③ difese flat -->
+        <circle cx="10" cy="157" r="6" fill="none" stroke="#e05050" stroke-width="1.2"/>
+        <text x="10" y="160.5" fill="#e05050" font-size="7" font-family="'JetBrains Mono',monospace" font-weight="700" text-anchor="middle">3</text>
+        <text x="28" y="157" fill="#55536a" font-size="6.5" font-family="'Cinzel',serif" letter-spacing="0.8">DIFESE</text>
+        <text x="68" y="157" fill="#2ec4a0" font-size="9" font-family="'JetBrains Mono',monospace" font-weight="700">C:6</text>
+        <text x="100" y="157" fill="#f0a500" font-size="9" font-family="'JetBrains Mono',monospace" font-weight="700">M:2</text>
+        <text x="132" y="157" fill="#c94040" font-size="9" font-family="'JetBrains Mono',monospace" font-weight="700">A:1</text>
+        <!-- ④ IRD -->
+        <circle cx="10" cy="172" r="6" fill="none" stroke="#48c88a" stroke-width="1.2"/>
+        <text x="10" y="175.5" fill="#48c88a" font-size="7" font-family="'JetBrains Mono',monospace" font-weight="700" text-anchor="middle">4</text>
+        <rect x="20" y="165" width="196" height="40" rx="5" fill="rgba(0,0,0,0.18)" stroke="rgba(255,255,255,0.05)" stroke-width="0.5"/>
+        <text x="26" y="177" fill="#48c88a" font-size="7" font-family="'JetBrains Mono',monospace" font-weight="700">IMM</text>
+        <rect x="46" y="170" width="36" height="11" rx="2" fill="rgba(72,200,138,0.1)" stroke="rgba(72,200,138,0.25)" stroke-width="0.5"/>
+        <text x="64" y="178" fill="#48c88a" font-size="7" font-family="'JetBrains Mono',monospace" text-anchor="middle">Veleno</text>
+        <rect x="88" y="170" width="42" height="11" rx="2" fill="rgba(72,200,138,0.1)" stroke="rgba(72,200,138,0.25)" stroke-width="0.5"/>
+        <text x="109" y="178" fill="#48c88a" font-size="7" font-family="'JetBrains Mono',monospace" text-anchor="middle">Psichico</text>
+        <rect x="136" y="170" width="36" height="11" rx="2" fill="rgba(72,200,138,0.1)" stroke="rgba(72,200,138,0.25)" stroke-width="0.5"/>
+        <text x="154" y="178" fill="#48c88a" font-size="7" font-family="'JetBrains Mono',monospace" text-anchor="middle">Freddo</text>
+        <text x="26" y="193" fill="#e05050" font-size="7" font-family="'JetBrains Mono',monospace" font-weight="700">DEB</text>
+        <rect x="46" y="186" width="32" height="11" rx="2" fill="rgba(224,80,80,0.1)" stroke="rgba(224,80,80,0.25)" stroke-width="0.5"/>
+        <text x="62" y="194" fill="#e05050" font-size="7" font-family="'JetBrains Mono',monospace" text-anchor="middle">Acido</text>
+        <rect x="84" y="186" width="32" height="11" rx="2" fill="rgba(224,80,80,0.1)" stroke="rgba(224,80,80,0.25)" stroke-width="0.5"/>
+        <text x="100" y="194" fill="#e05050" font-size="7" font-family="'JetBrains Mono',monospace" text-anchor="middle">Forza</text>
+        <!-- ⑤ azione caricata -->
+        <circle cx="10" cy="214" r="6" fill="none" stroke="#e05050" stroke-width="1.2"/>
+        <text x="10" y="217.5" fill="#e05050" font-size="7" font-family="'JetBrains Mono',monospace" font-weight="700" text-anchor="middle">5</text>
+        <rect x="20" y="208" width="196" height="24" rx="5" fill="#1a1a26" stroke="rgba(255,255,255,0.07)" stroke-width="0.8"/>
+        <line x1="20" y1="208" x2="20" y2="232" stroke="#e05050" stroke-width="2.5"/>
+        <rect x="24" y="212" width="35" height="11" rx="2" fill="rgba(224,80,80,0.15)" stroke="rgba(224,80,80,0.35)" stroke-width="0.5"/>
+        <text x="41.5" y="220" fill="#e05050" font-size="6.5" font-family="'JetBrains Mono',monospace" font-weight="700" text-anchor="middle">CARICATA</text>
+        <text x="216" y="220" fill="#e8e4d8" font-size="9" font-family="'JetBrains Mono',monospace" font-weight="700" text-anchor="end">2×G×d12</text>
+        <text x="24" y="229" fill="#9490a0" font-size="8" font-family="'JetBrains Mono',monospace">Pugno di roccia. Contundente.</text>
+        <!-- azione leggendaria -->
+        <rect x="20" y="236" width="196" height="24" rx="5" fill="#1a1a26" stroke="rgba(255,255,255,0.07)" stroke-width="0.8"/>
+        <line x1="20" y1="236" x2="20" y2="260" stroke="#a070e8" stroke-width="2.5"/>
+        <rect x="24" y="240" width="35" height="11" rx="2" fill="rgba(160,112,232,0.15)" stroke="rgba(160,112,232,0.35)" stroke-width="0.5"/>
+        <text x="41.5" y="248" fill="#a070e8" font-size="6.5" font-family="'JetBrains Mono',monospace" font-weight="700" text-anchor="middle">REAZIONE</text>
+        <text x="216" y="248" fill="#e8e4d8" font-size="9" font-family="'JetBrains Mono',monospace" font-weight="700" text-anchor="end">Leggendaria</text>
+        <text x="24" y="257" fill="#9490a0" font-size="8" font-family="'JetBrains Mono',monospace">Risponde al turno di ogni PG.</text>
+        <!-- footer -->
+        <line x1="1" y1="267" x2="219" y2="267" stroke="rgba(255,255,255,0.07)" stroke-width="0.8"/>
+        <text x="44" y="281" fill="#e8a030" font-size="8.5" font-family="'Cinzel',serif" font-weight="700" text-anchor="middle">Leggendaria</text>
+        <text x="44" y="290" fill="#55536a" font-size="6.5" font-family="'JetBrains Mono',monospace" text-anchor="middle">Rarità</text>
+        <line x1="88" y1="270" x2="88" y2="295" stroke="rgba(255,255,255,0.07)" stroke-width="0.8"/>
+        <text x="154" y="281" fill="#e8e4d8" font-size="8.5" font-family="'Cinzel',serif" font-weight="700" text-anchor="middle">Boss · 2 az. + Legg.</text>
+        <text x="154" y="290" fill="#55536a" font-size="6.5" font-family="'JetBrains Mono',monospace" text-anchor="middle">Struttura</text>
+      </svg>
+    </div>
+    <div class="card-callouts">
+      <div class="cc"><div class="cc-bubble" style="border-color:#e05050;color:#e05050">1</div><div class="cc-body"><div class="cc-t">HP Espliciti e Struttura Boss/Goon</div><div class="cc-d">I nemici non calcolano HP con le formule dei PG — li hanno scritti sulla carta. I Boss hanno azioni Leggendarie. Scalatura: HP × N_PG / 4.</div></div></div>
+      <div class="cc"><div class="cc-bubble" style="border-color:#e05050;color:#e05050">2</div><div class="cc-body"><div class="cc-t">Stat Visive (flavor)</div><div class="cc-d">Le stat sui nemici sono indicative — per flavor e guida narrativa. Il numero che conta meccanicamente sono le difese flat sotto.</div></div></div>
+      <div class="cc"><div class="cc-bubble" style="border-color:#e05050;color:#e05050">3</div><div class="cc-body"><div class="cc-t">Difese Flat per Asse</div><div class="cc-d">C:X M:X A:X — valori di difesa piatti per ogni asse. Il master li legge direttamente, zero calcoli al tavolo.</div></div></div>
+      <div class="cc"><div class="cc-bubble" style="border-color:#48c88a;color:#48c88a">4</div><div class="cc-body"><div class="cc-t">IMM / RES / DEB</div><div class="cc-d">Immunità (verde) = danno annullato + condizioni bloccate. Resistenza (viola) = danno dimezzato. Debolezza (rosso) = danno doppio + condizioni automatiche anche se non specificate sull'azione.</div></div></div>
+      <div class="cc"><div class="cc-bubble" style="border-color:#e05050;color:#e05050">5</div><div class="cc-body"><div class="cc-t">Azioni e Azioni Leggendarie</div><div class="cc-d">Le Azioni Leggendarie (Reazione) si attivano alla fine del turno di ogni PG — non nel loro turno. Un Boss G4 con party da 4 agisce 4 volte in un round.</div></div></div>
+    </div>
+  </div>
+</div>
+ 
+<!-- C4+C5 mini -->
+<div class="sec" id="c4" style="margin-bottom:16px">
+  <div class="card-subtitle">C4 · Carta Aumento</div>
+  <div class="callout" style="font-size:13px"><strong>Aumento = potenziamento permanente.</strong> Impianti, modifiche corporee, rituali. Hanno quasi sempre una <strong>Passiva sempre attiva</strong> (+1 MOD, resistenze, bonus a movimento) e un tempo di attivazione lungo (chirurgia, rituale). Occupano il pool AO insieme agli Oggetti. Non si cambiano in combat.</div>
+</div>
+<div class="sec" id="c5">
+  <div class="card-subtitle">C5 · Carta Oggetto</div>
+  <div class="callout" style="font-size:13px"><strong>Oggetto = tutto il resto.</strong> Pozioni, grimori, strumenti, componenti. Quasi sempre con utilizzi limitati (◉◉◯). Un utilizzo a Consumo (◉) non si recupera — la carta rimane nel mazzo vuota finché non viene "ricaricata" narrativamente. La parola chiave <strong>Istantanea</strong> indica che l'effetto non può essere contrastato da reazioni nemiche.</div>
+</div>
+ 
+</div><!-- /part-card -->
+ 
+ 
+<!-- ═══════════════ PARTE III — SVILUPPO ═══════════════ -->
+<div class="part" id="part-dev">
+<div style="margin-bottom:44px;padding-bottom:22px;border-bottom:1px solid var(--border)">
+  <div style="font-family:'Cinzel',serif;font-size:26px;font-weight:700;color:var(--teal);letter-spacing:.03em;margin-bottom:5px">Sviluppo &amp; Test</div>
+  <div style="font-size:13px;color:var(--tx2)">Intenzioni di design · Test numerici pre-playtest · Analisi di bilanciamento</div>
+</div>
+ 
+<div class="sec" id="da">
+  <div class="sh dev"><span class="sh-n">A</span><span class="sh-t">Intenzioni di Design</span><span class="sh-pip dev"></span></div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0">
+    <div class="intent-card"><div class="intent-t">Semplicità al tavolo</div><div class="intent-b">Ogni calcolo mentale. Danno = una sottrazione. MOD = divisione per 3. Soglie nemici = valori flat sulla carta.</div></div>
+    <div class="intent-card"><div class="intent-t">Profondità strategica</div><div class="intent-b">Scegliere su quale asse attaccare deve contare. Un Mago su asse Mente fa molto più danno al guerriero che su Corpo.</div></div>
+    <div class="intent-card"><div class="intent-t">Il dado conta sempre</div><div class="intent-b">MOD massimo = +8. Dado a G4 = 4–48. Il dado rimane il fattore principale ai livelli massimi.</div></div>
+    <div class="intent-card"><div class="intent-t">Carte come oggetti fisici</div><div class="intent-b">Tenere in mano le carte, scegliere il mazzo prima di partire, scambiare con un compagno — interazioni fisiche uniche.</div></div>
+    <div class="intent-card"><div class="intent-t">Party cooperativo</div><div class="intent-b">Bilanciamento su party da 4. Un nemico G1 è calibrato per 4 persone che lavorano insieme.</div></div>
+    <div class="intent-card"><div class="intent-t">Progressione leggibile</div><div class="intent-b">Ogni Grado aggiunge qualcosa di concreto: punti, oggetti, slot. La crescita deve essere sentita.</div></div>
+  </div>
+</div>
+ 
+<div class="sec" id="db">
+  <div class="sh dev"><span class="sh-n">B</span><span class="sh-t">Test 1 — Scelta del Divisore MOD</span><span class="sh-pip dev"></span></div>
+  <div class="tw"><table class="tt">
+    <thead><tr><th>Divisore</th><th>MOD min</th><th>MOD max</th><th>a stat 6</th><th>a stat 24</th><th>Giudizio</th></tr></thead>
     <tbody>
-      <tr><td>÷2</td><td>+0</td><td>+12</td><td>+3</td><td>+6</td><td>+12</td><td class="bad">MOD schiaccia il dado</td></tr>
-      <tr><td><strong>÷3</strong></td><td><strong>+0</strong></td><td><strong>+8</strong></td><td><strong>+2</strong></td><td><strong>+4</strong></td><td><strong>+8</strong></td><td class="ok">✓ Ottimale</td></tr>
-      <tr><td>÷4</td><td>+0</td><td>+6</td><td>+1</td><td>+3</td><td>+6</td><td class="warn">Accettabile ma piatto</td></tr>
-      <tr><td>÷5</td><td>+0</td><td>+4</td><td>+1</td><td>+2</td><td>+4</td><td class="bad">Stat quasi irrilevanti</td></tr>
-      <tr><td>÷6</td><td>+0</td><td>+4</td><td>+1</td><td>+2</td><td>+4</td><td class="bad">Come ÷5</td></tr>
+      <tr><td>÷2</td><td>+0</td><td>+12</td><td>+3</td><td>+12</td><td class="bad">MOD schiaccia il dado</td></tr>
+      <tr><td><strong>÷3</strong></td><td><strong>+0</strong></td><td><strong>+8</strong></td><td><strong>+2</strong></td><td><strong>+8</strong></td><td class="ok">✓ Ottimale</td></tr>
+      <tr><td>÷4</td><td>+0</td><td>+6</td><td>+1</td><td>+6</td><td class="warn">Accettabile ma piatto</td></tr>
+      <tr><td>÷5+</td><td>+0</td><td>+4</td><td>+1</td><td>+4</td><td class="bad">Stat quasi irrilevanti</td></tr>
     </tbody>
   </table></div>
-  <p><strong>Risultato:</strong> ÷3 selezionato. Produce soglie naturali ogni 3 punti stat (3, 6, 9, 12…) intuitive da memorizzare. La differenza tra stat 6 (+2) e stat 18 (+6) è 4 punti — abbastanza da sentirsi in ogni round.</p>
 </div>
-
-<!-- DC -->
-<div class="section" id="dc">
-  <div class="section-card dev"><span class="card-num">C</span><span class="card-title">Test 2 — Moltiplicatore Armatura</span><span class="card-pip dev"></span></div>
-  <p><strong>Problema:</strong> L'armatura deve essere un vantaggio reale senza essere obbligatoria. Chi sceglie di non equipaggiare un'armatura in favore di oggetti difensivi alternativi deve poter sopravvivere a uno scontro normale.</p>
-  <div class="table-wrap"><table class="t-teal">
-    <thead><tr><th>Mult.</th><th>Soglia con G1</th><th>Soglia senza</th><th>Round con armor</th><th>Round senza</th><th>Giudizio</th></tr></thead>
+ 
+<div class="sec" id="dc">
+  <div class="sh dev"><span class="sh-n">C</span><span class="sh-t">Test 2 — Moltiplicatore Armatura</span><span class="sh-pip dev"></span></div>
+  <div class="tw"><table class="tt">
+    <thead><tr><th>Molt.</th><th>Round con armor</th><th>Round senza</th><th>Giudizio</th></tr></thead>
     <tbody>
-      <tr><td>×2</td><td>MOD+2</td><td>MOD</td><td>2–3r</td><td>1–2r</td><td class="bad">Troppo letale senza</td></tr>
-      <tr><td><strong>×3</strong></td><td><strong>MOD+3</strong></td><td><strong>MOD</strong></td><td class="ok"><strong>3–5r ✓</strong></td><td class="ok"><strong>2–3r</strong></td><td class="ok">✓ Ottimale</td></tr>
-      <tr><td>×4</td><td>MOD+4</td><td>MOD</td><td>5–8r</td><td>3–5r</td><td class="warn">Armor quasi obbligatoria</td></tr>
-      <tr><td>×5</td><td>MOD+5</td><td>MOD</td><td>7–12r</td><td>4–6r</td><td class="bad">Troppo lento</td></tr>
+      <tr><td>×2</td><td>2–3r</td><td>1–2r</td><td class="bad">Troppo letale senza</td></tr>
+      <tr><td><strong>×3</strong></td><td class="ok"><strong>3–5r ✓</strong></td><td class="ok"><strong>2–3r</strong></td><td class="ok">✓ Ottimale</td></tr>
+      <tr><td>×4</td><td>5–8r</td><td>3–5r</td><td class="warn">Armor quasi obbligatoria</td></tr>
     </tbody>
   </table></div>
-  <p><strong>Risultato:</strong> ×3 selezionato. Senza armatura lo scontro dura 2–3 round (rapido, non letale). Con armatura 3–5 round. Un oggetto alternativo con +2 alla soglia può parzialmente compensare — le build creative sono supportate.</p>
 </div>
-
-<!-- DD -->
-<div class="section" id="dd">
-  <div class="section-card dev"><span class="card-num">D</span><span class="card-title">Test 3 — Il Problema degli HP dei Nemici</span><span class="card-pip dev"></span></div>
-  <p><strong>Problema critico:</strong> Con HP = Corpo + Mente + Anima (come i PG), i nemici morivano in meno di un round contro un party da 4. Il DPR di quattro PG sommati è 15–30 HP/round; un nemico con stat 6/2/2 ha solo 10 HP.</p>
-  <div class="callout amber">Il DPR del party è moltiplicato ×4. La formula HP = C+M+A è calibrata per duelli 1v1, non per un party cooperativo da 4.</div>
-  <div class="table-wrap" style="margin-top:16px;"><table class="t-teal">
+ 
+<div class="sec" id="dd">
+  <div class="sh dev"><span class="sh-n">D</span><span class="sh-t">Test 3 — HP dei Nemici</span><span class="sh-pip dev"></span></div>
+  <p>Con HP = C+M+A come i PG, i nemici morivano in meno di un round contro un party da 4. DPR del party è moltiplicato ×4.</p>
+  <div class="tw"><table class="tt">
     <thead><tr><th>Soluzione</th><th>Pro</th><th>Contro</th><th>Adottata?</th></tr></thead>
     <tbody>
       <tr><td>HP × N_PG</td><td>Semplice</td><td>Goblin con 40 HP non sembra un goblin</td><td class="bad">No</td></tr>
-      <tr><td>HP = Grado×stat×k</td><td>Scala con grado</td><td>k è arbitrario e difficile da ricordare</td><td class="bad">No</td></tr>
-      <tr><td><strong>HP espliciti sulla carta</strong></td><td>Controllo totale</td><td>Richiede lavoro di design per ogni carta</td><td class="ok">✓ Sì</td></tr>
+      <tr><td><strong>HP espliciti sulla carta</strong></td><td>Controllo totale</td><td>Richiede design per ogni carta</td><td class="ok">✓ Sì</td></tr>
     </tbody>
   </table></div>
-  <p><strong>Risultato:</strong> HP espliciti sulla carta. La formula consigliata per il designer: <code>HP = DPR_party_Grado × round_target</code>. Scalatura: <code>HP_effettivi = HP_carta × N_PG / 4</code>.</p>
 </div>
-
-<!-- DE -->
-<div class="section" id="de">
-  <div class="section-card dev"><span class="card-num">E</span><span class="card-title">Test 4 — Party Misto e Assi</span><span class="card-pip dev"></span></div>
-  <p><strong>Setup:</strong> Party da 4 con build diverse vs nemici con stat eterogenee. Obiettivo: verificare che la varietà degli assi crei decisioni tattiche reali.</p>
-  <div class="table-wrap"><table class="t-teal">
-    <thead><tr><th>PG</th><th>Stat atk</th><th>vs Soldato (Dif.C=5)</th><th>vs Lich (Dif.M=2)</th><th>vs Banshee (Dif.A=3)</th></tr></thead>
+ 
+<div class="sec" id="de">
+  <div class="sh dev"><span class="sh-n">E</span><span class="sh-t">Test 4 — Party Misto e Assi</span><span class="sh-pip dev"></span></div>
+  <div class="tw"><table class="tt">
+    <thead><tr><th>PG</th><th>vs Soldato (C=5)</th><th>vs Lich (M=2)</th><th>vs Banshee (A=3)</th></tr></thead>
     <tbody>
-      <tr><td>Guerriero</td><td>Corpo 10 (+3)</td><td class="ok">4.5 dmg</td><td>5.5 (Dif.C=4)</td><td>6.5 (Dif.C=3)</td></tr>
-      <tr><td>Mago</td><td>Mente 10 (+3)</td><td>7.5 (Dif.M=2)</td><td class="warn">3.5 (Dif.M=6)</td><td class="ok">8.5 (Dif.M=1) ↑</td></tr>
-      <tr><td>Bardo</td><td>Anima 5 (+1)</td><td>5.5 (Dif.A=3)</td><td class="ok">6.5 (Dif.A=1)</td><td class="warn">3.5 (Dif.A=4)</td></tr>
-      <tr><td>Ladro</td><td>Corpo 7 (+2)</td><td class="ok">3.5 dmg</td><td>4.5 (Dif.C=4)</td><td>5.5 (Dif.C=3)</td></tr>
+      <tr><td>Guerriero Corpo 10</td><td class="ok">4.5</td><td>5.5</td><td>6.5</td></tr>
+      <tr><td>Mago Mente 10</td><td>7.5 (M=2)</td><td class="warn">3.5 (M=6)</td><td class="ok">8.5 ↑</td></tr>
+      <tr><td>Bardo Anima 5</td><td>5.5</td><td class="ok">6.5</td><td class="warn">3.5</td></tr>
     </tbody>
   </table></div>
-  <p><strong>Risultato:</strong> Il Mago è devastante contro la Banshee (8.5) ma penalizzato contro il Lich sulla sua stessa stat (3.5). Il sistema crea decisioni tattiche reali: ogni PG ha la sua nicchia e il party deve coordinarsi per massimizzare il danno totale.</p>
 </div>
-
-<!-- DF -->
-<div class="section" id="df">
-  <div class="section-card dev"><span class="card-num">F</span><span class="card-title">Test 5 — Boss con Azioni Multiple</span><span class="card-pip dev"></span></div>
-  <p><strong>Premessa:</strong> Un Boss con solo più HP è noioso — è un sacco da boxe più grande. Le azioni multiple creano un tipo di pressione diverso.</p>
-  <div class="table-wrap"><table class="t-teal">
-    <thead><tr><th>Configurazione</th><th>HP Boss</th><th>Round KO party→boss</th><th>Danno boss in quei round</th><th>Esito</th></tr></thead>
+ 
+<div class="sec" id="df">
+  <div class="sh dev"><span class="sh-n">F</span><span class="sh-t">Test 5 — Boss con Azioni Multiple</span><span class="sh-pip dev"></span></div>
+  <div class="tw"><table class="tt">
+    <thead><tr><th>Config</th><th>HP Boss</th><th>Danno Boss in 5r</th><th>Esito</th></tr></thead>
     <tbody>
-      <tr><td>1 azione/round</td><td>80</td><td>~5r</td><td>~22 HP totali</td><td class="warn">Nessun PG in pericolo reale</td></tr>
-      <tr><td><strong>2 azioni/round</strong></td><td>80</td><td>~5r</td><td class="ok">~45 HP concentrati</td><td class="ok">PG focus KO in 1–2r — scelte reali</td></tr>
+      <tr><td>1 azione/round</td><td>80</td><td>~22 HP tot</td><td class="warn">Nessun PG in pericolo reale</td></tr>
+      <tr><td><strong>2 azioni/round</strong></td><td>80</td><td class="ok">~45 HP concentrati</td><td class="ok">Focus KO — scelte reali</td></tr>
     </tbody>
   </table></div>
-  <p><strong>Risultato:</strong> Con 2 azioni il Boss costringe il party a decidere: chi cura il PG in pericolo? Si continua ad attaccare o si protegge il compagno? Lo scontro diventa gestione delle risorse. Standard: 2 azioni per Boss G2, 3 per Boss finali.</p>
 </div>
-
-<!-- DG -->
-<div class="section" id="dg">
-  <div class="section-card dev"><span class="card-num">G</span><span class="card-title">Test 6 — Scaling da Grado 1 a Grado 4</span><span class="card-pip dev"></span></div>
-  <p><strong>Setup:</strong> Party 4 PG con Corpo 6 fisso (MOD +2). Arma e armatura scalano con il Grado. Nemico con HP = 70 × Grado.</p>
-  <div class="table-wrap"><table class="t-teal">
-    <thead><tr><th>Grado</th><th>Atk avg</th><th>Soglia NM</th><th>DPR party</th><th>HP NM</th><th>Round KO NM</th><th>Danno NM/r</th><th>Round KO PG</th></tr></thead>
+ 
+<div class="sec" id="dg">
+  <div class="sh dev"><span class="sh-n">G</span><span class="sh-t">Test 6 — Scaling G1→G4</span><span class="sh-pip dev"></span></div>
+  <div class="tw"><table class="tt">
+    <thead><tr><th>Grado</th><th>Atk avg</th><th>DPR party</th><th>HP NM</th><th>Round KO</th></tr></thead>
     <tbody>
-      <tr><td>1</td><td class="mono">8.5</td><td class="mono">3</td><td class="mono">~22</td><td>70</td><td class="ok">~3.2r ✓</td><td class="mono">~7</td><td>~1.7r</td></tr>
-      <tr><td>2</td><td class="mono">15.0</td><td class="mono">6</td><td class="mono">~36</td><td>140</td><td class="ok">~3.9r ✓</td><td class="mono">~14</td><td class="warn">~0.9r</td></tr>
-      <tr><td>3</td><td class="mono">21.5</td><td class="mono">9</td><td class="mono">~50</td><td>210</td><td class="ok">~4.2r ✓</td><td class="mono">~21</td><td class="bad">~0.6r</td></tr>
-      <tr><td>4</td><td class="mono">28.0</td><td class="mono">12</td><td class="mono">~64</td><td>280</td><td class="ok">~4.4r ✓</td><td class="mono">~28</td><td class="bad">~0.4r</td></tr>
+      <tr><td>1</td><td class="mn">8.5</td><td class="mn">~22</td><td>70</td><td class="ok">~3.2r ✓</td></tr>
+      <tr><td>2</td><td class="mn">15.0</td><td class="mn">~36</td><td>140</td><td class="ok">~3.9r ✓</td></tr>
+      <tr><td>3</td><td class="mn">21.5</td><td class="mn">~50</td><td>210</td><td class="ok">~4.2r ✓</td></tr>
+      <tr><td>4</td><td class="mn">28.0</td><td class="mn">~64</td><td>280</td><td class="ok">~4.4r ✓</td></tr>
     </tbody>
   </table></div>
-  <p><strong>Risultato:</strong> I round KO rimangono stabili a 3–5 a tutti i Gradi. Il problema emergente: ai Gradi alti il nemico diventa molto più letale per i PG. Questo è in parte intenzionale — Grado alto deve sembrare pericoloso — ma conferma che i PG devono investire i 48 punti aggiuntivi, non ignorarli.</p>
 </div>
-
-<!-- DH -->
-<div class="section" id="dh">
-  <div class="section-card dev"><span class="card-num">H</span><span class="card-title">Test 7 — Goon: Quanti e Quanto Forti</span><span class="card-pip dev"></span></div>
-  <p><strong>Setup:</strong> 8 Goon (2 per PG) contro party da 4 PG di Grado 1.</p>
-  <p>Il problema dei Goon non è sopravvivere a lungo — è fare abbastanza danno collettivo. 8 Goon che fanno 2–3 HP per round producono DPR collettivo di 16–24, paragonabile a un Boss G2. La differenza: il party può eliminarli uno alla volta, il Boss deve essere abbattuto tutto insieme.</p>
-  <div class="table-wrap"><table class="t-teal">
+ 
+<div class="sec" id="dh">
+  <div class="sh dev"><span class="sh-n">H</span><span class="sh-t">Test 7 — Goon</span><span class="sh-pip dev"></span></div>
+  <div class="tw"><table class="tt">
     <thead><tr><th>HP Goon</th><th>DPR PG</th><th>Colpi per KO</th><th>Giudizio</th></tr></thead>
     <tbody>
       <tr><td>15</td><td>5</td><td>3</td><td class="bad">Troppo resistente</td></tr>
-      <tr><td>15</td><td>7–8</td><td>2</td><td class="warn">Borderline accettabile</td></tr>
-      <tr><td>10</td><td>7</td><td>1–2</td><td class="ok">✓ Target</td></tr>
+      <tr><td>10</td><td>7</td><td>1–2</td><td class="ok">✓ Target — muore in fretta, fa paura in branco</td></tr>
     </tbody>
   </table></div>
-  <p><strong>Risultato:</strong> La ratio 2 Goon per PG funziona quando calibrati per morire in 1–2 colpi. Goon che resistono di più non sono più spaventosi — sono solo rallentamenti.</p>
 </div>
-
-<!-- DI -->
-<div class="section" id="di">
-  <div class="section-card dev"><span class="card-num">I</span><span class="card-title">Sistemi Scartati</span><span class="card-pip dev"></span></div>
-  <div class="scartato"><div class="scartato-label">Scartato — Sistema STAT diretta</div>Usare la STAT direttamente invece del MOD. Produce scaling esplosivo: a Corpo 20, attacco medio a G4 supera 110. I combattimenti ad alto livello diventano istant-kill.</div>
-  <div class="scartato"><div class="scartato-label">Scartato — Difesa Residua come formula</div>Ogni nemico aveva soglia minima = floor(MOD_primario/2) su tutti gli assi. Scartato perché la soluzione corretta è di design: ogni carta deve avere Dif.flat &gt; 0 su ogni asse. La formula era una patch, non una soluzione.</div>
-  <div class="scartato"><div class="scartato-label">Scartato — Moltiplicatore armatura ×4</div>Rendeva l'armatura quasi obbligatoria. Senza armatura ogni attacco era devastante. Scartato in favore di ×3.</div>
+ 
+<div class="sec" id="di">
+  <div class="sh dev"><span class="sh-n">I</span><span class="sh-t">Sistemi Scartati</span><span class="sh-pip dev"></span></div>
+  <div class="scartato"><div class="sct-lbl">STAT DIRETTA INVECE DI MOD</div>A Corpo 20, attacco medio a G4 supera 110. Istant-kill ai livelli alti.</div>
+  <div class="scartato"><div class="sct-lbl">DIFESA RESIDUA COME FORMULA</div>Soglia minima = floor(MOD/2) su tutti gli assi. Era una patch. Soluzione corretta: design per ogni carta.</div>
+  <div class="scartato"><div class="sct-lbl">MOLTIPLICATORE ARMATURA ×4</div>Rendeva l'armatura quasi obbligatoria. Scartato in favore di ×3.</div>
 </div>
-
-<!-- DM -->
-<div class="section" id="dm">
-  <div class="section-card dev"><span class="card-num">M</span><span class="card-title">Da Definire in Futuro</span><span class="card-pip dev"></span></div>
-  <div class="callout" style="font-size:13.5px;"><strong>Carta Difesa Senz'arma / Combattimento Naturale.</strong> Una carta base che descrive l'attacco o la difesa naturale del personaggio — calci, pugni, arti marziali, poteri corporei. Permetterebbe archetipi di lottatori e monaci senza dover equipaggiare oggetti in quegli slot. Segue le stesse regole degli oggetti normali ed è potenziabile. <em>Rimandata alla fase di design delle carte specifiche.</em></div>
+ 
+<div class="sec" id="dn">
+  <div class="sh dev"><span class="sh-n">N</span><span class="sh-t">Checklist Pre-Playtest</span><span class="sh-pip dev"></span></div>
+  <div class="check-item"><span>✅</span><div><div class="check-t">Divisore MOD (÷3)</div><div class="check-d">Confermato da simulazione</div></div></div>
+  <div class="check-item"><span>✅</span><div><div class="check-t">Moltiplicatore armatura (×3)</div><div class="check-d">Confermato da simulazione</div></div></div>
+  <div class="check-item"><span>✅</span><div><div class="check-t">HP nemici espliciti sulla carta</div><div class="check-d">Adottato e verificato</div></div></div>
+  <div class="check-item"><span>✅</span><div><div class="check-t">Boss/Goon — 2 azioni Boss, 2 Goon per PG</div><div class="check-d">Verificato</div></div></div>
+  <div class="check-item"><span>✅</span><div><div class="check-t">Durata scontro 3–5 round a Grado 1</div><div class="check-d">Verificata con party misto</div></div></div>
+  <div class="check-item"><span>✅</span><div><div class="check-t">Scaling G1→G4 stabile</div><div class="check-d">Round KO stabile 3–5 a tutti i Gradi</div></div></div>
+  <div class="check-item"><span>✅</span><div><div class="check-t">Slot AO — pool condiviso 2+Grado</div><div class="check-d">Definito e verificato</div></div></div>
+  <div class="check-item"><span>✅</span><div><div class="check-t">Sistema Razza (+2/+1 o +1/+1/+1 + talento)</div><div class="check-d">Definito con esempi</div></div></div>
+  <div class="check-item"><span>✅</span><div><div class="check-t">Condizioni per famiglia con colore standard</div><div class="check-d">Standardizzate</div></div></div>
+  <div class="check-item"><span>✅</span><div><div class="check-t">Parole chiave standardizzate</div><div class="check-d">Glossario definito</div></div></div>
+  <div class="check-item"><span>⚠️</span><div><div class="check-t">Primo set carte di test</div><div class="check-d">4 PG + nemici base — da creare</div></div></div>
+  <div class="check-item"><span>⏳</span><div><div class="check-t">Prima sessione di playtest reale</div><div class="check-d">In attesa</div></div></div>
 </div>
-
-<!-- DN -->
-<div class="section" id="dn">
-  <div class="section-card dev"><span class="card-num">N</span><span class="card-title">Checklist Pre-Playtest</span><span class="card-pip dev"></span></div>
-  <div class="checklist">
-    <div class="check-item"><span class="check-icon">✅</span><div><div class="check-text">Divisore MOD (÷3)</div><div class="check-note">Confermato da simulazione</div></div></div>
-    <div class="check-item"><span class="check-icon">✅</span><div><div class="check-text">Moltiplicatore armatura (×3)</div><div class="check-note">Confermato da simulazione</div></div></div>
-    <div class="check-item"><span class="check-icon">✅</span><div><div class="check-text">Armatura per asse (Grado×3 / Grado)</div><div class="check-note">Regola definita e verificata</div></div></div>
-    <div class="check-item"><span class="check-icon">✅</span><div><div class="check-text">HP nemici espliciti sulla carta</div><div class="check-note">Adottato e verificato</div></div></div>
-    <div class="check-item"><span class="check-icon">✅</span><div><div class="check-text">Struttura Boss / Goon</div><div class="check-note">2 azioni Boss, 2 Goon per PG</div></div></div>
-    <div class="check-item"><span class="check-icon">✅</span><div><div class="check-text">Azioni Leggendarie come Reazioni</div><div class="check-note">Integrate nella sezione Boss</div></div></div>
-    <div class="check-item"><span class="check-icon">✅</span><div><div class="check-text">Durata scontro 3–5 round a Grado 1</div><div class="check-note">Verificata con party misto</div></div></div>
-    <div class="check-item"><span class="check-icon">✅</span><div><div class="check-text">Scaling Grado 1→4 stabile</div><div class="check-note">HP nemico ×Grado, stabile a tutti i livelli</div></div></div>
-    <div class="check-item"><span class="check-icon">✅</span><div><div class="check-text">Capacità di trasporto</div><div class="check-note">Formula definita — C da calibrare post-playtest</div></div></div>
-    <div class="check-item"><span class="check-icon">✅</span><div><div class="check-text">Tiri caratteristica fuori combat</div><div class="check-note">1d12+MOD vs CD, tabella difficoltà</div></div></div>
-    <div class="check-item"><span class="check-icon">✅</span><div><div class="check-text">Riposo corto / lungo</div><div class="check-note">Riposo corto = Grado×d12 dadi vita</div></div></div>
-    <div class="check-item"><span class="check-icon">✅</span><div><div class="check-text">Slot attivi — Aumenti e Oggetti separati</div><div class="check-note">Entrambi scalano = Grado del personaggio</div></div></div>
-    <div class="check-item"><span class="check-icon">✅</span><div><div class="check-text">Indicatori visivi su tutte le carte</div><div class="check-note">↑ ↓ → →→ su carte prefatte, NPC, nemici</div></div></div>
-    <div class="check-item"><span class="check-icon">✅</span><div><div class="check-text">Condizioni per asse</div><div class="check-note">Delegate al testo delle carte singole</div></div></div>
-    <div class="check-item"><span class="check-icon">✅</span><div><div class="check-text">Capacità di trasporto</div><div class="check-note">Corpo × 3 kg — pesi carte in kg reali</div></div></div>
-    <div class="check-item"><span class="check-icon">⚠️</span><div><div class="check-text">Primo set carte di test</div><div class="check-note">4 PG + nemici base — da creare</div></div></div>
-    <div class="check-item"><span class="check-icon">⏳</span><div><div class="check-text">Prima sessione di playtest reale</div><div class="check-note">In attesa</div></div></div>
-  </div>
-</div>
-
+ 
 </div><!-- /part-dev -->
-
+ 
 </main>
-</div>
-
+</div><!-- /layout -->
+ 
 <script>
-// ── PART TOGGLE ──────────────────────────────────────────────
 let curPart = 'man';
-function setPart(p){
+ 
+function setPart(p) {
   curPart = p;
-  document.getElementById('part-man').classList.toggle('visible', p==='man');
-  document.getElementById('part-dev').classList.toggle('visible', p==='dev');
-  document.getElementById('btn-man').className = 'ptbtn' + (p==='man'?' active-man':'');
-  document.getElementById('btn-dev').className = 'ptbtn' + (p==='dev'?' active-dev':'');
+  ['man','card','dev'].forEach(x => {
+    document.getElementById('part-' + x).classList.toggle('on', x === p);
+    document.getElementById('btn-' + x).className = 'tab-btn' + (x === p ? ' on-' + x : '');
+  });
   const fill = document.getElementById('scroll-fill');
-  fill.className = 'scroll-fill' + (p==='dev'?' dev':'');
-  updateActiveLinks();
-  window.scrollTo(0,0);
+  fill.style.background = p === 'dev' ? 'var(--teal)' : p === 'card' ? 'var(--gold)' : 'var(--mod)';
+  // sidebar
+  ['man','card','dev'].forEach(x => {
+    const head = document.getElementById('sbl-' + x);
+    if (head) head.style.display = (x === p) ? 'flex' : 'none';
+    document.querySelectorAll(`.sb-a[data-part="${x}"]`).forEach(a => {
+      a.style.display = (x === p) ? 'block' : 'none';
+    });
+  });
+  updateActive();
+  window.scrollTo(0, 0);
 }
-
-// ── SCROLL PROGRESS ──────────────────────────────────────────
-window.addEventListener('scroll', ()=>{
+ 
+// Scroll progress
+window.addEventListener('scroll', () => {
   const el = document.documentElement;
   const pct = el.scrollTop / (el.scrollHeight - el.clientHeight) * 100;
-  document.getElementById('scroll-fill').style.width = Math.min(100,pct) + '%';
-  updateActiveLinks();
-}, {passive:true});
-
-// ── ACTIVE SIDEBAR LINKS ─────────────────────────────────────
-function updateActiveLinks(){
-  const sections = document.querySelectorAll('.section');
+  document.getElementById('scroll-fill').style.width = Math.min(100, pct) + '%';
+  updateActive();
+}, { passive: true });
+ 
+// Active sidebar
+function updateActive() {
+  const sections = document.querySelectorAll('.sec');
   let active = null;
-  sections.forEach(s => {
-    const rect = s.getBoundingClientRect();
-    if(rect.top <= 120) active = s.id;
-  });
-  document.querySelectorAll('.sb-link').forEach(a => {
+  sections.forEach(s => { if (s.getBoundingClientRect().top <= 120) active = s.id; });
+  document.querySelectorAll('.sb-a').forEach(a => {
     const href = a.getAttribute('href').slice(1);
-    const part = a.dataset.part;
-    const isActive = href === active && part === curPart;
-    a.classList.toggle('active', isActive);
+    const active_class = 'col-' + a.dataset.part;
+    if (href === active && a.dataset.part === curPart) {
+      a.classList.add('cur', active_class);
+    } else {
+      a.classList.remove('cur', 'col-man', 'col-card', 'col-dev');
+    }
   });
 }
-
-// ── SMOOTH SCROLL FOR SIDEBAR LINKS ──────────────────────────
-document.querySelectorAll('.sb-link').forEach(a => {
-  a.addEventListener('click', e => {
-    const part = a.dataset.part;
-    if(part !== curPart) setPart(part);
+ 
+// Card size slider
+function scaleCards(val) {
+  const scale = val / 100;
+  document.getElementById('card-scale-val').textContent = val + '%';
+  document.querySelectorAll('.card-svg-wrap').forEach(el => {
+    el.style.transform = `scale(${scale})`;
+    el.style.transformOrigin = 'top left';
+    // Adjust wrapper height so layout doesn't collapse
+    const svg = el.querySelector('svg');
+    if (svg) {
+      const h = parseFloat(svg.getAttribute('height')) * scale;
+      const w = parseFloat(svg.getAttribute('width')) * scale;
+      el.style.height = h + 'px';
+      el.style.width  = w + 'px';
+    }
   });
-});
-
-// init
-updateActiveLinks();
+}
+ 
+updateActive();
 </script>
 </body>
 </html>
