@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>CoreAndCards — Carta Nemico</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Outfit:wght@300;400;600;800&family=JetBrains+Mono:wght@400;700&family=Uncial+Antiqua&display=swap" rel="stylesheet"/>
+<style>
+
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:#0e0e0e;color:#ccc;font-family:'Outfit',sans-serif;display:flex;flex-direction:column;height:100vh;overflow:hidden;}
+.top-bar{background:#080808;border-bottom:1px solid #1e1e1e;padding:0 18px;height:44px;display:flex;align-items:center;gap:12px;flex-shrink:0;}
+.top-bar h1{font-family:'Cinzel',serif;font-size:12px;font-weight:700;letter-spacing:2px;}
+.badge{font-size:9px;color:#2a2a2a;border:1px solid #1e1e1e;border-radius:3px;padding:1px 5px;font-family:'JetBrains Mono',monospace;}
+.btn-dl{margin-left:auto;padding:6px 14px;border:none;border-radius:5px;color:#fff;font-family:'Cinzel',serif;font-size:11px;font-weight:700;letter-spacing:1px;cursor:pointer;}
+.body-wrap{display:flex;flex:1;overflow:hidden;}
+.preview-col{width:640px;flex-shrink:0;background:#050505;border-right:1px solid #141414;display:flex;align-items:flex-start;justify-content:center;padding:14px;overflow-y:auto;}
+.card-outer{width:590px;height:817px;position:relative;flex-shrink:0;}
+.card-stage{width:1831px;height:2539px;transform-origin:top left;transform:scale(0.3222);position:absolute;top:0;left:0;}
+.form-panel{flex:1;display:flex;flex-direction:column;overflow:hidden;}
+.tab-bar{display:flex;background:#080808;border-bottom:1px solid #1a1a1a;flex-shrink:0;}
+.tab{padding:9px 20px;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#333;cursor:pointer;border-bottom:2px solid transparent;transition:all .15s;}
+.tc{flex:1;overflow-y:auto;padding:16px 20px;display:none;}
+.tc.vis{display:block;}
+.fs{margin-bottom:16px;}
+.fs-t{font-family:'Cinzel',serif;font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#303030;border-bottom:1px solid #1a1a1a;padding-bottom:4px;margin-bottom:9px;}
+label{display:block;font-size:9px;color:#404040;margin-bottom:2px;font-weight:600;letter-spacing:.4px;text-transform:uppercase;}
+input[type=text],input[type=number],select,textarea{width:100%;background:#0e0e0e;border:1px solid #1c1c1c;border-radius:4px;color:#aaa;font-family:'Outfit',sans-serif;font-size:12px;padding:6px 8px;outline:none;margin-bottom:7px;transition:border-color .15s;}
+select option{background:#0e0e0e;}
+textarea{resize:vertical;line-height:1.5;}
+.r2{display:grid;grid-template-columns:1fr 1fr;gap:7px;}
+.r3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:5px;}
+.img-up{border:2px dashed #1a1a1a;border-radius:6px;padding:12px;text-align:center;cursor:pointer;position:relative;overflow:hidden;margin-bottom:7px;}
+.img-up input{position:absolute;inset:0;opacity:0;cursor:pointer;z-index:2;}
+.img-up-l{font-size:10px;color:#2e2e2e;}
+.img-up img{width:100%;border-radius:3px;display:none;margin-top:5px;}
+.sl-row{display:flex;align-items:center;gap:8px;margin-bottom:9px;}
+.sl-row label{min-width:110px;margin-bottom:0;font-size:9px;}
+.sl-row input[type=range]{flex:1;accent-color:#c8a030;margin-bottom:0;height:4px;}
+.sl-val{font-family:'JetBrains Mono',monospace;font-size:9px;color:#484848;min-width:38px;text-align:right;}
+.sl-row input[type=color]{width:32px;height:24px;border:1px solid #1a1a1a;border-radius:3px;background:none;cursor:pointer;padding:1px;margin-bottom:0;flex-shrink:0;}
+.theme-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;margin-bottom:12px;}
+.tbtn{padding:7px 4px;border:1.5px solid #1a1a1a;border-radius:5px;background:#0a0a0a;color:#383838;font-size:9px;font-weight:700;letter-spacing:.5px;cursor:pointer;text-align:center;transition:all .15s;text-transform:uppercase;}
+.tbtn:hover{border-color:#333;color:#666;}
+.tbtn.act{border-color:#c8a030;color:#c8a030;background:#110e00;}
+.note{font-size:9px;color:#262626;margin-top:-4px;margin-bottom:7px;line-height:1.5;}
+.eff-row{display:flex;gap:5px;margin-bottom:5px;}
+.eff-row input[type=text]{flex:1;margin-bottom:0;}
+.eff-row button{background:#0e0e0e;border:1px solid #1c1c1c;border-radius:4px;color:#444;width:26px;height:32px;cursor:pointer;font-size:14px;flex-shrink:0;}
+
+.btn-dl{background:#7a1a1a;}.btn-dl:hover{background:#c94040;}
+.top-bar h1{color:#c94040;}
+.tab.on-d{color:#c94040;border-bottom-color:#c94040;}
+.tab.on-s{color:#c8a030;border-bottom-color:#c8a030;}
+.add-eff{width:100%;background:none;border:1px dashed #5a1010;border-radius:4px;color:#c94040;font-size:10px;padding:5px;cursor:pointer;}
+/* CARTA 1831x2539 */
+.card{width:1831px;height:2539px;position:relative;font-family:'Cinzel',serif;overflow:hidden;background:#f6e8e8;}
+.c-border{position:absolute;inset:0;border:28px solid #3a0808;border-radius:56px;z-index:20;pointer-events:none;box-shadow:inset 0 0 0 8px #8b1a1a;}
+.c-head{position:absolute;left:28px;right:28px;top:28px;height:148px;background:#060606;display:flex;align-items:center;padding:0 52px;gap:24px;z-index:10;}
+.c-head-icon{font-size:64px;line-height:1;flex-shrink:0;color:#666;}
+.c-head-name{flex:1;font-size:96px;font-weight:900;color:#fff;letter-spacing:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1;}
+.c-star{width:160px;height:160px;flex-shrink:0;clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%);background:#fff;display:flex;align-items:center;justify-content:center;}
+.c-star span{font-size:70px;font-weight:900;color:#060606;line-height:1;margin-top:22px;}
+.c-art{position:absolute;left:28px;right:28px;top:176px;height:820px;background:#181818;overflow:hidden;}
+.c-art img{width:100%;height:100%;object-fit:cover;object-position:center;display:none;}
+.c-art-ph{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:160px;color:#282828;background:#141414;}
+.c-rar{position:absolute;left:0;right:0;height:52px;z-index:4;}
+.c-rar.t{top:0;}.c-rar.b{bottom:0;}
+.c-lower{position:absolute;left:28px;right:28px;top:996px;bottom:28px;overflow:hidden;}
+.c-lower-col{position:absolute;inset:0;z-index:0;}
+.c-lower-bgimg{position:absolute;inset:0;z-index:1;background-size:cover;background-position:center;opacity:.5;}
+.c-lower-pat{position:absolute;inset:0;z-index:2;background-repeat:repeat;}
+.c-lower-brd{position:absolute;inset:0;border-top:7px solid #060606;z-index:20;pointer-events:none;}
+.ci-r1{position:absolute;left:0;right:0;top:0;height:200px;display:flex;border-bottom:3px solid rgba(0,0,0,0.2);z-index:5;}
+.c-icell{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:12px 10px;position:relative;gap:10px;}
+.c-icell+.c-icell::before{content:'';position:absolute;left:0;top:15%;bottom:15%;width:2px;background:rgba(0,0,0,0.18);}
+.c-ilbl{font-size:32px;font-weight:700;letter-spacing:3px;text-transform:uppercase;opacity:.52;}
+.c-ival{font-family:'JetBrains Mono',monospace;font-size:82px;font-weight:700;text-align:center;line-height:1;}
+.c-ival.lg{font-size:96px;}.c-ival.sm{font-size:38px;font-family:'Cinzel',serif;font-weight:900;line-height:1.2;}.c-ival.xs{font-size:34px;font-family:'Outfit',sans-serif;font-weight:700;line-height:1.25;}
+.ci-r2{position:absolute;left:0;right:0;top:200px;height:200px;display:flex;border-bottom:3px solid rgba(0,0,0,0.18);z-index:5;}
+.stat-cell{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:10px;position:relative;gap:8px;}
+.stat-cell+.stat-cell::before{content:'';position:absolute;left:0;top:15%;bottom:15%;width:2px;background:rgba(0,0,0,0.18);}
+.s-lbl{font-size:30px;font-weight:700;letter-spacing:3px;}
+.s-lbl.C{color:#b82020;}.s-lbl.M{color:#a88800;}.s-lbl.A{color:#1c7020;}
+.s-nums{display:flex;align-items:baseline;gap:14px;}
+.s-num{font-family:'JetBrains Mono',monospace;font-size:76px;font-weight:700;}
+.s-mod{font-family:'JetBrains Mono',monospace;font-size:50px;font-weight:700;}
+.s-mod.C{color:#b82020;}.s-mod.M{color:#a88800;}.s-mod.A{color:#1c7020;}
+.ci-r3{position:absolute;left:0;right:0;top:400px;height:290px;display:flex;border-bottom:3px solid rgba(0,0,0,0.18);z-index:5;}
+.ird-cell{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:14px 10px;position:relative;gap:10px;}
+.ird-cell+.ird-cell::before{content:'';position:absolute;left:0;top:12%;bottom:12%;width:2px;background:rgba(0,0,0,0.18);}
+.ird-lbl{font-size:30px;font-weight:700;letter-spacing:2px;text-transform:uppercase;}
+.ird-lbl.i{color:#0e6630;}.ird-lbl.r{color:#3830a0;}.ird-lbl.w{color:#aa1010;}
+.ird-val{font-family:'Outfit',sans-serif;font-size:38px;font-weight:700;text-align:center;line-height:1.3;}
+.ird-val.i{color:#0e5528;}.ird-val.r{color:#2820a0;}.ird-val.w{color:#991010;}
+.c-eff{position:absolute;left:0;right:0;top:690px;bottom:0;z-index:5;display:flex;flex-direction:column;overflow:hidden;}
+.c-eff-inner{position:absolute;inset:28px;border-radius:22px;border-width:8px;border-style:solid;overflow:hidden;display:flex;flex-direction:column;}
+.c-eff-title{font-size:52px;font-weight:900;padding:30px 48px 14px;letter-spacing:2px;flex-shrink:0;position:relative;z-index:1;}
+.c-eff-list{flex:1;padding:0 48px;overflow:hidden;display:flex;flex-direction:column;position:relative;z-index:1;}
+.c-eff-item{font-family:'Outfit',sans-serif;font-size:44px;line-height:1.5;padding:12px 0;border-bottom:2px solid rgba(0,0,0,0.12);display:flex;gap:18px;flex-shrink:0;}
+.c-eff-item:last-child{border-bottom:none;}
+.c-eff-dot{font-size:48px;flex-shrink:0;line-height:1.35;margin-top:2px;}
+.c-eff-desc{font-size:34px;font-style:italic;text-align:center;padding:12px 48px 22px;border-top:2px solid rgba(0,0,0,0.15);flex-shrink:0;position:relative;z-index:1;opacity:.5;}
+</style>
+</head>
+<body>
+<div class="top-bar">
+  <h1>💀 Carta Nemico</h1>
+  <span class="badge">1831x2539px</span><span class="badge">preview 590px</span>
+  <button class="btn-dl" onclick="dl()">⬇ Scarica HD</button>
+</div>
+<div class="body-wrap">
+  <div class="preview-col">
+    <div class="card-outer"><div class="card-stage">
+      <div class="card" id="the-card">
+        <div class="c-border"></div>
+        <div class="c-head">
+          <span class="c-head-icon">⚔</span>
+          <div class="c-head-name" id="d-nome">NOME MOSTRO</div>
+          <div class="c-star" id="grade-sym"><span id="d-grado">2</span></div>
+        </div>
+        <div class="c-art" id="c-art">
+          <div class="c-rar t" id="rb-t"></div><div class="c-rar b" id="rb-b"></div>
+          <img id="art-img" alt=""/><div class="c-art-ph" id="art-ph">🎨</div>
+        </div>
+        <div class="c-lower" id="c-lower">
+          <div class="c-lower-col" id="lower-col"></div>
+          <div class="c-lower-bgimg" id="lower-bgimg"></div>
+          <div class="c-lower-pat" id="lower-pat"></div>
+          <div class="c-lower-brd"></div>
+          <div class="ci-r1">
+            <div class="c-icell"><div class="c-ilbl" id="lbl-hp">HP</div><div class="c-ival lg" id="d-hp">70</div></div>
+            <div class="c-icell"><div class="c-ilbl" id="lbl-vel">Velocità</div><div class="c-ival" id="d-vel">6m</div></div>
+            <div class="c-icell"><div class="c-ilbl" id="lbl-arm">Armor</div><div class="c-ival sm" id="d-arm">CORPO</div></div>
+            <div class="c-icell"><div class="c-ilbl" id="lbl-tags">Tag · Origine</div><div class="c-ival xs" id="d-tags">—</div></div>
+          </div>
+          <div class="ci-r2">
+            <div class="stat-cell"><div class="s-lbl C" id="lbl-c">CORPO</div><div class="s-nums"><span class="s-num" id="d-corpo">6</span><span class="s-mod C" id="d-cmod">+2</span></div></div>
+            <div class="stat-cell"><div class="s-lbl M" id="lbl-m">MENTE</div><div class="s-nums"><span class="s-num" id="d-mente">3</span><span class="s-mod M" id="d-mmod">+1</span></div></div>
+            <div class="stat-cell"><div class="s-lbl A" id="lbl-a">ANIMA</div><div class="s-nums"><span class="s-num" id="d-anima">2</span><span class="s-mod A" id="d-amod">+0</span></div></div>
+          </div>
+          <div class="ci-r3">
+            <div class="ird-cell"><div class="ird-lbl i">Immunità</div><div class="ird-val i" id="d-imm">—</div></div>
+            <div class="ird-cell"><div class="ird-lbl r">Resistenza</div><div class="ird-val r" id="d-res">—</div></div>
+            <div class="ird-cell"><div class="ird-lbl w">Debolezza</div><div class="ird-val w" id="d-web">—</div></div>
+          </div>
+          <div class="c-eff">
+            <div class="c-eff-inner" id="eff-inner">
+              <div class="c-eff-title" id="eff-title">Azioni del nemico</div>
+              <div class="c-eff-list" id="d-effs"><div class="c-eff-item"><span class="c-eff-dot">◆</span><span>—</span></div></div>
+              <div class="c-eff-desc" id="d-desc">Descrizione del mostro</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div></div>
+  </div>
+  <div class="form-panel">
+    <div class="tab-bar">
+      <div class="tab on-d" id="tab-d" onclick="swTab('d')">📋 Dati</div>
+      <div class="tab" id="tab-s" onclick="swTab('s')">🎨 Stile</div>
+    </div>
+    <div class="tc vis" id="tc-d">
+      <div class="fs"><div class="fs-t">Artwork</div>
+        <div class="img-up"><input type="file" accept="image/*" onchange="loadImg(event)"/>
+          <div class="img-up-l" id="img-lbl">📷 Carica immagine</div><img id="img-prev"/></div>
+      </div>
+      <div class="fs"><div class="fs-t">Intestazione</div>
+        <label>Nome Nemico</label><input type="text" id="f-nome" placeholder="es. Golem di Pietra" maxlength="20" oninput="upd()"/>
+        <div class="r2">
+          <div><label>Grado</label><select id="f-grado" onchange="upd()"><option>1</option><option selected>2</option><option>3</option><option>4</option></select></div>
+          <div><label>Rarità</label><select id="f-rar" onchange="upd()"><option value="#888">Comune</option><option value="#48c88a">Non Comune</option><option value="#5890e8">Rara</option><option value="#a070e8">Molto Rara</option><option value="#e8a030">Leggendaria</option><option value="#e05050">Artefatto</option></select></div>
+        </div>
+      </div>
+      <div class="fs"><div class="fs-t">Stats</div>
+        <div class="r2">
+          <div><label>HP</label><input type="number" id="f-hp" value="70" oninput="upd()"/></div>
+          <div><label>Velocità (m)</label><input type="number" id="f-vel" value="6" oninput="upd()"/></div>
+        </div>
+        <label>Armor — Stat principale</label>
+        <select id="f-arm" onchange="upd()"><option>CORPO</option><option>MENTE</option><option>ANIMA</option></select>
+        <div class="note">Armor = Grado x3 sull'asse, Grado sugli altri.</div>
+        <div class="r3">
+          <div><label>CORPO</label><input type="number" id="f-corpo" value="6" min="1" max="24" oninput="upd()"/></div>
+          <div><label>MENTE</label><input type="number" id="f-mente" value="3" min="1" max="24" oninput="upd()"/></div>
+          <div><label>ANIMA</label><input type="number" id="f-anima" value="2" min="1" max="24" oninput="upd()"/></div>
+        </div>
+      </div>
+      <div class="fs"><div class="fs-t">Tag e Origine</div>
+        <input type="text" id="f-tags" placeholder="#Costrutto #Terra - Magia Antica" oninput="upd()"/>
+      </div>
+      <div class="fs"><div class="fs-t">IRD</div>
+        <label>Immunità</label><input type="text" id="f-imm" placeholder="es. Veleno, Psichico" oninput="upd()"/>
+        <label>Resistenze</label><input type="text" id="f-res" placeholder="—" oninput="upd()"/>
+        <label>Debolezze</label><input type="text" id="f-web" placeholder="—" oninput="upd()"/>
+      </div>
+      <div class="fs"><div class="fs-t">Azioni</div>
+        <div class="note">Es: Pugno: Caricata, COR, 2xGd12 [Contundente]</div>
+        <div id="eff-container"></div>
+        <button class="add-eff" onclick="addEff()">+ Aggiungi azione</button>
+      </div>
+      <div class="fs"><div class="fs-t">Descrizione</div>
+        <textarea id="f-desc" rows="3" placeholder="Descrizione del mostro..." oninput="upd()"></textarea>
+      </div>
+    </div>
+
+    <div class="tc" id="tc-s">
+      <div class="fs"><div class="fs-t">Tema</div><div class="theme-grid" id="tgrid"></div></div>
+      <div class="fs"><div class="fs-t">Sfondo sezione info</div>
+        <div class="sl-row"><label>Colore base</label><input type="color" id="sl-bg" value="#f0e8d0" oninput="applyTheme()"/><span class="sl-val" id="v-bg">#f0e8d0</span></div>
+        <div class="sl-row"><label>Luminosità</label><input type="range" id="sl-br" min="30" max="200" value="100" oninput="applyTheme()"/><span class="sl-val" id="v-br">100%</span></div>
+        <div class="sl-row"><label>Intensità pattern</label><input type="range" id="sl-op" min="0" max="100" value="55" oninput="applyTheme()"/><span class="sl-val" id="v-op">55%</span></div>
+        <div class="sl-row"><label>Colore pattern</label><input type="color" id="sl-pc" value="#7a5010" oninput="applyTheme()"/></div>
+      </div>
+      <div class="fs"><div class="fs-t">Immagine sfondo custom</div>
+        <div class="img-up"><input type="file" accept="image/*" onchange="loadBgImg(event)"/>
+          <div class="img-up-l">📁 Carica immagine sfondo (opzionale)</div></div>
+        <div class="sl-row"><label>Opacità sfondo</label><input type="range" id="sl-bgimg-op" min="0" max="100" value="50" oninput="applyTheme()"/><span class="sl-val" id="v-bgimg-op">50%</span></div>
+        <div class="note">0% = invisibile · 100% = piena copertura. Si sovrappone al colore base.</div>
+      </div>
+      <div class="fs"><div class="fs-t">Artwork</div>
+        <div class="sl-row"><label>Altezza artwork</label><input type="range" id="sl-arth" min="300" max="1600" value="820" oninput="setArtH(this.value)"/><span class="sl-val" id="v-arth">820px</span></div>
+      </div>
+      <div class="fs"><div class="fs-t">Tipografia</div>
+        <div class="sl-row"><label>Font principale</label>
+          <select id="sl-font" onchange="applyTheme()" style="flex:1;margin-bottom:0;font-size:11px">
+            <option value="'Cinzel',serif">Cinzel — fantasy</option>
+            <option value="'JetBrains Mono',monospace">JetBrains Mono — tech</option>
+            <option value="'Outfit',sans-serif">Outfit — moderno</option>
+            <option value="'Uncial Antiqua',cursive">Uncial Antiqua — medievale</option>
+          </select>
+        </div>
+        <div class="sl-row"><label>Dim. nome header</label><input type="range" id="sl-nfs" min="50" max="140" value="96" oninput="applyTheme()"/><span class="sl-val" id="v-nfs">96px</span></div>
+        <div class="sl-row"><label>Dim. label</label><input type="range" id="sl-lfs" min="20" max="60" value="36" oninput="applyTheme()"/><span class="sl-val" id="v-lfs">36px</span></div>
+        <div class="sl-row"><label>Dim. valori info</label><input type="range" id="sl-dvfs" min="40" max="130" value="90" oninput="applyTheme()"/><span class="sl-val" id="v-dvfs">90px</span></div>
+        <div class="sl-row"><label>Dim. testo effetti</label><input type="range" id="sl-efs" min="24" max="70" value="46" oninput="applyTheme()"/><span class="sl-val" id="v-efs">46px</span></div>
+        <div class="sl-row"><label>Colore testo</label><input type="color" id="sl-tc" value="#1a0e00" oninput="applyTheme()"/></div>
+        <div class="sl-row"><label>Colore label</label><input type="color" id="sl-lc" value="#5a4020" oninput="applyTheme()"/></div>
+      </div>
+      <div class="fs"><div class="fs-t">Pannello Effetti</div>
+        <div class="sl-row"><label>Sfondo</label><input type="color" id="sl-effbg" value="#fde88e" oninput="applyTheme()"/></div>
+        <div class="sl-row"><label>Bordo</label><input type="color" id="sl-effbr" value="#c09818" oninput="applyTheme()"/></div>
+        <div class="sl-row"><label>Colore titolo</label><input type="color" id="sl-efftc" value="#1a0800" oninput="applyTheme()"/></div>
+        <div class="sl-row"><label>Colore punto ◆</label><input type="color" id="sl-dotc" value="#8b1a1a" oninput="applyTheme()"/></div>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+var TAB_ACTIVE_CLASS = {d:'on-d', s:'on-s'};
+var CARD_FILENAME = 'nemico.png';
+var mc = function(v){ var m=Math.floor((parseInt(v)||0)/3); return (m>=0?'+':'')+m; };
+
+const TEMI = {
+  pergamena: {
+    n:'Pergamena', bg:'#f0e8d0', pc:'#7a5010', br:100, op:55,
+    font:"'Cinzel',serif", tc:'#1a0e00', lc:'#6a4010',
+    talbg:'#f8d840', talbr:'#c09818',
+    effbg:'#fde88e', effbr:'#c09818', efftc:'#1a0800', dotc:'#3d2a7a',
+    nfs:96, lfs:36, ivfs:56, dvfs:90, svfs:76, mfs:80, efs:46, tfs:42,
+    pat: function(c,o){
+      var v=o/100;
+      var svg = '<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400">'
+        + '<filter id="n"><feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="4" stitchTiles="stitch"/>'
+        + '<feColorMatrix type="saturate" values="0"/></filter>'
+        + '<rect width="400" height="400" filter="url(#n)" opacity="'+(v*0.22)+'"/>'
+        + '<line x1="0" y1="133" x2="400" y2="133" stroke="'+c+'" stroke-width="1.2" opacity="'+(v*0.18)+'"/>'
+        + '<line x1="0" y1="266" x2="400" y2="266" stroke="'+c+'" stroke-width="1.2" opacity="'+(v*0.18)+'"/>'
+        + '<line x1="133" y1="0" x2="133" y2="400" stroke="'+c+'" stroke-width="0.6" opacity="'+(v*0.1)+'"/>'
+        + '<line x1="266" y1="0" x2="266" y2="400" stroke="'+c+'" stroke-width="0.6" opacity="'+(v*0.1)+'"/>'
+        + '<ellipse cx="200" cy="200" rx="160" ry="130" stroke="'+c+'" stroke-width="0.8" fill="none" opacity="'+(v*0.07)+'"/>'
+        + '</svg>';
+      return 'url("data:image/svg+xml,' + encodeURIComponent(svg) + '")';
+    }
+  },
+  pietra: {
+    n:'Pietra Incisa', bg:'#252527', pc:'#8890b8', br:100, op:70,
+    font:"'JetBrains Mono',monospace", tc:'#d8d8f0', lc:'#6878a0',
+    talbg:'#1c1e30', talbr:'#4858a0',
+    effbg:'#1c1e30', effbr:'#4858a0', efftc:'#d8d8f0', dotc:'#a0a0e0',
+    nfs:88, lfs:32, ivfs:50, dvfs:82, svfs:68, mfs:76, efs:40, tfs:36,
+    pat: function(c,o){
+      var v=o/100;
+      var svg = '<svg xmlns="http://www.w3.org/2000/svg" width="80" height="80">'
+        + '<line x1="0" y1="0" x2="80" y2="80" stroke="'+c+'" stroke-width="0.7" opacity="'+(v*0.35)+'"/>'
+        + '<line x1="80" y1="0" x2="0" y2="80" stroke="'+c+'" stroke-width="0.7" opacity="'+(v*0.25)+'"/>'
+        + '<line x1="40" y1="0" x2="40" y2="80" stroke="'+c+'" stroke-width="0.4" opacity="'+(v*0.18)+'"/>'
+        + '<line x1="0" y1="40" x2="80" y2="40" stroke="'+c+'" stroke-width="0.4" opacity="'+(v*0.18)+'"/>'
+        + '<rect x="1" y="1" width="78" height="78" fill="none" stroke="'+c+'" stroke-width="0.3" opacity="'+(v*0.12)+'"/>'
+        + '</svg>';
+      return 'url("data:image/svg+xml,' + encodeURIComponent(svg) + '")';
+    }
+  },
+  sigillo: {
+    n:'Sigillo Magico', bg:'#1a0838', pc:'#c0a0ff', br:100, op:62,
+    font:"'Cinzel',serif", tc:'#f0e8ff', lc:'#9080c0',
+    talbg:'#28105a', talbr:'#8060d0',
+    effbg:'#28105a', effbr:'#8060d0', efftc:'#f0e8ff', dotc:'#c0a0ff',
+    nfs:96, lfs:36, ivfs:56, dvfs:90, svfs:76, mfs:80, efs:46, tfs:42,
+    pat: function(c,o){
+      var v=o/100, rays='';
+      for(var i=0;i<12;i++){
+        var a=i*30*Math.PI/180;
+        rays += '<line x1="400" y1="400" x2="'+(400+360*Math.cos(a))+'" y2="'+(400+360*Math.sin(a))+'" stroke="'+c+'" stroke-width="0.9" opacity="'+(v*0.28)+'"/>';
+      }
+      var svg = '<svg xmlns="http://www.w3.org/2000/svg" width="800" height="800" viewBox="0 0 800 800">'
+        + '<circle cx="400" cy="400" r="355" stroke="'+c+'" stroke-width="2.5" fill="none" opacity="'+(v*0.45)+'"/>'
+        + '<circle cx="400" cy="400" r="285" stroke="'+c+'" stroke-width="1.2" fill="none" opacity="'+(v*0.35)+'"/>'
+        + '<circle cx="400" cy="400" r="195" stroke="'+c+'" stroke-width="1.5" fill="none" opacity="'+(v*0.4)+'"/>'
+        + '<circle cx="400" cy="400" r="90" stroke="'+c+'" stroke-width="1" fill="none" opacity="'+(v*0.35)+'"/>'
+        + rays
+        + '<polygon points="400,68 685,596 115,596" stroke="'+c+'" stroke-width="1.8" fill="none" opacity="'+(v*0.32)+'"/>'
+        + '<polygon points="400,732 115,204 685,204" stroke="'+c+'" stroke-width="1.8" fill="none" opacity="'+(v*0.32)+'"/>'
+        + '</svg>';
+      return 'url("data:image/svg+xml,' + encodeURIComponent(svg) + '")';
+    }
+  },
+  metallo: {
+    n:'Metallo Battuto', bg:'#b0a898', pc:'#ffffff', br:100, op:52,
+    font:"'Cinzel',serif", tc:'#160c00', lc:'#503820',
+    talbg:'#e8d890', talbr:'#988020',
+    effbg:'#e0d080', effbr:'#988020', efftc:'#1a0800', dotc:'#604020',
+    nfs:96, lfs:36, ivfs:56, dvfs:90, svfs:76, mfs:80, efs:46, tfs:42,
+    pat: function(c,o){
+      var v=o/100, lines='';
+      for(var i=0;i<24;i++){
+        var op2 = i%5===0 ? v*0.3 : v*0.12;
+        var sw  = i%5===0 ? 0.8 : 0.4;
+        lines += '<line x1="0" y1="'+(i*8)+'" x2="200" y2="'+(i*8)+'" stroke="'+c+'" stroke-width="'+sw+'" opacity="'+op2+'"/>';
+      }
+      var svg = '<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200">'
+        + lines
+        + '<line x1="0" y1="0" x2="200" y2="200" stroke="'+c+'" stroke-width="0.5" opacity="'+(v*0.18)+'"/>'
+        + '<line x1="200" y1="0" x2="0" y2="200" stroke="'+c+'" stroke-width="0.5" opacity="'+(v*0.12)+'"/>'
+        + '<defs><radialGradient id="sh" cx="38%" cy="28%" r="52%">'
+        + '<stop offset="0%" stop-color="white" stop-opacity="'+(v*0.35)+'"/>'
+        + '<stop offset="100%" stop-color="white" stop-opacity="0"/>'
+        + '</radialGradient></defs>'
+        + '<rect width="200" height="200" fill="url(#sh)"/>'
+        + '</svg>';
+      return 'url("data:image/svg+xml,' + encodeURIComponent(svg) + '")';
+    }
+  },
+  legno: {
+    n:'Legno Nobile', bg:'#7a4e28', pc:'#f0d090', br:100, op:58,
+    font:"'Cinzel',serif", tc:'#fff5e0', lc:'#f0d090',
+    talbg:'#4a2808', talbr:'#c07818',
+    effbg:'#4a2808', effbr:'#c07818', efftc:'#fff5e0', dotc:'#f0c060',
+    nfs:96, lfs:36, ivfs:56, dvfs:90, svfs:76, mfs:80, efs:46, tfs:42,
+    pat: function(c,o){
+      var v=o/100, waves='';
+      for(var i=0;i<50;i++){
+        var sw  = i%6===0 ? 1.4 : 0.7;
+        var op2 = i%6===0 ? v*0.3 : v*0.14;
+        waves += '<path d="M0,'+(i*14)+' Q200,'+(i*14+9)+' 400,'+(i*14)+' Q600,'+(i*14-9)+' 800,'+(i*14)+'" stroke="'+c+'" stroke-width="'+sw+'" fill="none" opacity="'+op2+'"/>';
+      }
+      var svg = '<svg xmlns="http://www.w3.org/2000/svg" width="800" height="700">'
+        + waves
+        + '<defs><radialGradient id="vg" cx="50%" cy="50%" r="50%">'
+        + '<stop offset="0%" stop-color="white" stop-opacity="'+(v*0.1)+'"/>'
+        + '<stop offset="100%" stop-color="black" stop-opacity="'+(v*0.15)+'"/>'
+        + '</radialGradient></defs>'
+        + '<rect width="800" height="700" fill="url(#vg)"/>'
+        + '</svg>';
+      return 'url("data:image/svg+xml,' + encodeURIComponent(svg) + '")';
+    }
+  }
+};
+
+var curT = 'pergamena';
+var effs = [];
+
+function swTab(t) {
+  ['d','s'].forEach(function(x) {
+    var tc = document.getElementById('tc-'+x);
+    var tb = document.getElementById('tab-'+x);
+    if (!tc || !tb) return;
+    tc.classList.toggle('vis', x===t);
+    tb.className = 'tab' + (x===t ? (' ' + TAB_ACTIVE_CLASS[x]) : '');
+  });
+}
+
+function buildGrid() {
+  var g = document.getElementById('tgrid');
+  Object.keys(TEMI).forEach(function(k) {
+    var t = TEMI[k];
+    var b = document.createElement('button');
+    b.className = 'tbtn' + (k===curT ? ' act' : '');
+    b.textContent = t.n;
+    b.onclick = function() {
+      curT = k;
+      document.querySelectorAll('.tbtn').forEach(function(x){ x.classList.remove('act'); });
+      b.classList.add('act');
+      loadDef(k);
+      applyTheme();
+    };
+    g.appendChild(b);
+  });
+}
+
+function loadDef(k) {
+  var t = TEMI[k];
+  setV('sl-bg', t.bg); setV('sl-pc', t.pc);
+  setV('sl-br', t.br); setV('sl-op', t.op);
+  setV('sl-font', t.font);
+  setV('sl-tc', t.tc); setV('sl-lc', t.lc);
+  if(document.getElementById('sl-talbg')) { setV('sl-talbg', t.talbg); setV('sl-talbr', t.talbr); }
+  if(document.getElementById('sl-effbg')) { setV('sl-effbg', t.effbg); setV('sl-effbr', t.effbr); setV('sl-efftc', t.efftc); setV('sl-dotc', t.dotc); }
+  setV('sl-nfs', t.nfs); setV('sl-lfs', t.lfs);
+  if(document.getElementById('sl-dvfs')) setV('sl-dvfs', t.dvfs);
+  if(document.getElementById('sl-svfs')) setV('sl-svfs', t.svfs);
+  if(document.getElementById('sl-mfs'))  setV('sl-mfs',  t.mfs);
+  if(document.getElementById('sl-tfs'))  setV('sl-tfs',  t.tfs);
+  if(document.getElementById('sl-ivfs')) setV('sl-ivfs', t.ivfs);
+  if(document.getElementById('sl-efs'))  setV('sl-efs',  t.efs);
+  updV();
+}
+
+function setV(id, val) {
+  var el = document.getElementById(id);
+  if (el) el.value = val;
+}
+
+function gV(id, fallback) {
+  var el = document.getElementById(id);
+  return el ? el.value : (fallback || '');
+}
+
+function updV() {
+  var map = {
+    'v-bg':'sl-bg', 'v-pc':null,
+    'v-br':'sl-br', 'v-op':'sl-op',
+    'v-nfs':'sl-nfs', 'v-lfs':'sl-lfs',
+    'v-dvfs':'sl-dvfs', 'v-svfs':'sl-svfs',
+    'v-mfs':'sl-mfs', 'v-tfs':'sl-tfs',
+    'v-ivfs':'sl-ivfs', 'v-efs':'sl-efs',
+    'v-arth':'sl-arth'
+  };
+  Object.keys(map).forEach(function(vid) {
+    var sid = map[vid]; if (!sid) return;
+    var vel = document.getElementById(vid), sel = document.getElementById(sid);
+    if (vel && sel) {
+      var raw = sel.value;
+      vel.textContent = (vid.indexOf('fs')>-1 || vid==='v-arth') ? raw+'px' : (vid==='v-br'||vid==='v-op' ? raw+'%' : raw);
+    }
+  });
+}
+
+function applyBgColor() {
+  var col  = document.getElementById('lower-col');
+  var pat  = document.getElementById('lower-pat');
+  var bgimg= document.getElementById('lower-bgimg');
+  if (!col) return;
+  var bg   = gV('sl-bg','#f0e8d0');
+  var br   = parseFloat(gV('sl-br',100)) / 100;
+  col.style.background = bg;
+  col.style.filter = 'brightness(' + br + ')';
+  var t = TEMI[curT];
+  var pc = gV('sl-pc','#000');
+  var op = parseFloat(gV('sl-op',55));
+  if (pat) {
+    pat.style.backgroundImage = t.pat(pc, op);
+    pat.style.backgroundSize = '800px';
+    pat.style.backgroundRepeat = 'repeat';
+  }
+  // sfondo immagine custom
+  if (bgimg) {
+    var opacity = parseFloat(gV('sl-bgimg-op', 50)) / 100;
+    bgimg.style.opacity = opacity;
+  }
+}
+
+function setArtH(h) {
+  var art   = document.getElementById('c-art');
+  var lower = document.getElementById('c-lower');
+  var hpx   = parseInt(h);
+  if (art)   art.style.height   = hpx + 'px';
+  if (lower) lower.style.top    = (176 + hpx) + 'px';
+  var lbl = document.getElementById('v-arth');
+  if (lbl) lbl.textContent = hpx + 'px';
+}
+
+function loadImg(e) {
+  var f = e.target.files[0]; if (!f) return;
+  var r = new FileReader();
+  r.onload = function(ev) {
+    var img  = document.getElementById('art-img');
+    var ph   = document.getElementById('art-ph');
+    var prev = document.getElementById('img-prev');
+    var lbl  = document.getElementById('img-lbl');
+    if (img)  { img.src = ev.target.result; img.style.display = 'block'; }
+    if (ph)   ph.style.display = 'none';
+    if (prev) { prev.src = ev.target.result; prev.style.display = 'block'; }
+    if (lbl)  lbl.style.display = 'none';
+  };
+  r.readAsDataURL(f);
+}
+
+function loadBgImg(e) {
+  var f = e.target.files[0]; if (!f) return;
+  var r = new FileReader();
+  r.onload = function(ev) {
+    var el = document.getElementById('lower-bgimg');
+    if (el) {
+      el.style.backgroundImage = 'url(' + ev.target.result + ')';
+      el.style.backgroundSize  = 'cover';
+      el.style.backgroundPosition = 'center';
+    }
+  };
+  r.readAsDataURL(f);
+}
+
+async function dl() {
+  var card = document.getElementById('the-card');
+  if (typeof html2canvas !== 'undefined') {
+    var c = await html2canvas(card, {scale:1, useCORS:true, allowTaint:true});
+    var a = document.createElement('a');
+    a.download = CARD_FILENAME;
+    a.href = c.toDataURL('image/png');
+    a.click();
+  } else {
+    alert('DevTools (F12) → Elements → tasto dx su #the-card → Capture node screenshot');
+  }
+}
+
+
+function applyTheme() {
+  updV();
+  var t    = TEMI[curT];
+  var font = gV('sl-font', "'Cinzel',serif");
+  var tc   = gV('sl-tc','#1a0e00');
+  var lc   = gV('sl-lc','#5a4020');
+  var nfs  = gV('sl-nfs',96);
+  var lfs  = gV('sl-lfs',32);
+  var dvfs = gV('sl-dvfs',82);
+  var efs  = gV('sl-efs',44);
+  var effbg= gV('sl-effbg','#fce88e');
+  var effbr= gV('sl-effbr','#c09818');
+  var efftc= gV('sl-efftc','#1a0800');
+  var dotc = gV('sl-dotc','#8b1a1a');
+  var bgop = parseFloat(gV('sl-bgimg-op',50))/100;
+
+  applyBgColor();
+  var bi=document.getElementById('lower-bgimg'); if(bi) bi.style.opacity=bgop;
+
+  document.getElementById('d-nome').style.fontFamily=font;
+  document.getElementById('d-nome').style.fontSize=nfs+'px';
+  ['lbl-hp','lbl-vel','lbl-arm','lbl-tags'].forEach(function(id){
+    var el=document.getElementById(id); if(!el)return;
+    el.style.color=lc; el.style.fontSize=lfs+'px'; el.style.fontFamily=font;
+  });
+  ['d-hp','d-vel'].forEach(function(id){
+    var el=document.getElementById(id); if(!el)return;
+    el.style.color=tc; el.style.fontSize=dvfs+'px'; el.style.fontFamily=font;
+  });
+  var da=document.getElementById('d-arm'); if(da) {da.style.color=tc; da.style.fontFamily=font;}
+  var dt=document.getElementById('d-tags'); if(dt) {dt.style.color=tc; dt.style.fontFamily=font;}
+  ['d-imm','d-res','d-web'].forEach(function(id){
+    var el=document.getElementById(id); if(!el)return;
+    el.style.fontFamily=font; el.style.fontSize=(parseInt(lfs)+6)+'px';
+  });
+  var ei=document.getElementById('eff-inner'); if(ei){ei.style.background=effbg;ei.style.borderColor=effbr;}
+  var et=document.getElementById('eff-title'); if(et){et.style.color=efftc;et.style.fontFamily=font;}
+  var ed=document.getElementById('d-desc'); if(ed){ed.style.color=tc;ed.style.fontFamily=font;}
+  var list=document.getElementById('d-effs'); if(list) list.style.fontSize=efs+'px';
+  document.querySelectorAll('.c-eff-dot').forEach(function(el){
+    el.style.color=dotc; el.style.fontSize=(parseInt(efs)+4)+'px';
+  });
+  document.querySelectorAll('.c-eff-item span:last-child').forEach(function(el){ el.style.color=tc; });
+}
+
+function addEff() {
+  var i=effs.length; effs.push('');
+  var c=document.getElementById('eff-container');
+  var d=document.createElement('div'); d.className='eff-row';
+  d.innerHTML='<input type="text" placeholder="Es: Pugno: Caricata, COR, 2xGd12 [Contundente]" oninput="effs['+i+']=this.value;renderEff()"/>'
+    +'<button onclick="effs['+i+']=null;this.parentElement.remove();renderEff()">x</button>';
+  c.appendChild(d); renderEff();
+}
+
+function renderEff() {
+  var list=document.getElementById('d-effs');
+  var active=effs.filter(function(e){ return e!==null&&e.trim()!==''; });
+  var tc=gV('sl-tc','#1a0e00'), dotc=gV('sl-dotc','#8b1a1a'), efs=gV('sl-efs',44);
+  var html = active.length===0
+    ? '<div class="c-eff-item"><span class="c-eff-dot" style="color:'+dotc+';font-size:'+(parseInt(efs)+4)+'px">&#9670;</span><span style="color:'+tc+'">&#8212;</span></div>'
+    : active.map(function(e){ return '<div class="c-eff-item"><span class="c-eff-dot" style="color:'+dotc+';font-size:'+(parseInt(efs)+4)+'px">&#9670;</span><span style="color:'+tc+'">'+e+'</span></div>'; }).join('');
+  list.innerHTML=html; list.style.fontSize=efs+'px';
+  var tries=0;
+  while(list.scrollHeight>list.clientHeight+8&&parseInt(list.style.fontSize)>22&&tries<30){
+    list.style.fontSize=(parseInt(list.style.fontSize)-2)+'px'; tries++;
+  }
+}
+
+function upd() {
+  var grado=parseInt(document.getElementById('f-grado').value)||1;
+  var arm=document.getElementById('f-arm').value;
+  document.getElementById('d-nome').textContent=(document.getElementById('f-nome').value||'NOME MOSTRO').toUpperCase();
+  document.getElementById('d-grado').textContent=grado;
+  document.getElementById('d-hp').textContent=document.getElementById('f-hp').value||70;
+  document.getElementById('d-vel').textContent=(document.getElementById('f-vel').value||6)+'m';
+  document.getElementById('d-arm').textContent=arm+' +'+( grado*3)+'/+'+grado;
+  document.getElementById('d-tags').textContent=document.getElementById('f-tags').value||'—';
+  var co=document.getElementById('f-corpo').value||1;
+  var me=document.getElementById('f-mente').value||1;
+  var an=document.getElementById('f-anima').value||1;
+  document.getElementById('d-corpo').textContent=co; document.getElementById('d-cmod').textContent=mc(co);
+  document.getElementById('d-mente').textContent=me; document.getElementById('d-mmod').textContent=mc(me);
+  document.getElementById('d-anima').textContent=an; document.getElementById('d-amod').textContent=mc(an);
+  document.getElementById('d-imm').textContent=document.getElementById('f-imm').value||'—';
+  document.getElementById('d-res').textContent=document.getElementById('f-res').value||'—';
+  document.getElementById('d-web').textContent=document.getElementById('f-web').value||'—';
+  document.getElementById('d-desc').textContent=document.getElementById('f-desc').value||'Descrizione del mostro';
+  var rar=document.getElementById('f-rar').value;
+  document.getElementById('rb-t').style.background=rar;
+  document.getElementById('rb-b').style.background=rar;
+  CARD_FILENAME='nm_'+(document.getElementById('f-nome').value||'nemico').toLowerCase().replace(/\s+/g,'_')+'.png';
+  renderEff();
+}
+
+
+function applyGrade() {
+  var shape = document.getElementById('sl-grade-shape');
+  var sz    = document.getElementById('sl-grade-sz');
+  var fs    = document.getElementById('sl-grade-fs');
+  var col   = document.getElementById('sl-grade-col');
+  var ncol  = document.getElementById('sl-grade-ncol');
+  if (!shape) return;
+  var sym = document.getElementById('grade-sym');
+  var num = document.getElementById('d-grado');
+  if (sym) {
+    sym.style.width      = sz.value + 'px';
+    sym.style.height     = sz.value + 'px';
+    sym.style.clipPath   = shape.value;
+    sym.style.background = col.value;
+  }
+  if (num) {
+    num.style.fontSize = fs.value + 'px';
+    num.style.color    = ncol.value;
+  }
+  var vsz = document.getElementById('v-grade-sz');
+  var vfs = document.getElementById('v-grade-fs');
+  if (vsz) vsz.textContent = sz.value + 'px';
+  if (vfs) vfs.textContent = fs.value + 'px';
+}
+
+buildGrid(); loadDef(curT); applyTheme(); applyGrade(); addEff(); addEff(); upd();
+</script>
+</body>
+</html>

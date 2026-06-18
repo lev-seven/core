@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>CoreAndCards — Carta Personaggio</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Outfit:wght@300;400;600;800&family=JetBrains+Mono:wght@400;700&family=Uncial+Antiqua&display=swap" rel="stylesheet"/>
+<style>
+
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:#0e0e0e;color:#ccc;font-family:'Outfit',sans-serif;display:flex;flex-direction:column;height:100vh;overflow:hidden;}
+.top-bar{background:#080808;border-bottom:1px solid #1e1e1e;padding:0 18px;height:44px;display:flex;align-items:center;gap:12px;flex-shrink:0;}
+.top-bar h1{font-family:'Cinzel',serif;font-size:12px;font-weight:700;letter-spacing:2px;}
+.badge{font-size:9px;color:#2a2a2a;border:1px solid #1e1e1e;border-radius:3px;padding:1px 5px;font-family:'JetBrains Mono',monospace;}
+.btn-dl{margin-left:auto;padding:6px 14px;border:none;border-radius:5px;color:#fff;font-family:'Cinzel',serif;font-size:11px;font-weight:700;letter-spacing:1px;cursor:pointer;}
+.body-wrap{display:flex;flex:1;overflow:hidden;}
+.preview-col{width:640px;flex-shrink:0;background:#050505;border-right:1px solid #141414;display:flex;align-items:flex-start;justify-content:center;padding:14px;overflow-y:auto;}
+.card-outer{width:590px;height:817px;position:relative;flex-shrink:0;}
+.card-stage{width:1831px;height:2539px;transform-origin:top left;transform:scale(0.3222);position:absolute;top:0;left:0;}
+.form-panel{flex:1;display:flex;flex-direction:column;overflow:hidden;}
+.tab-bar{display:flex;background:#080808;border-bottom:1px solid #1a1a1a;flex-shrink:0;}
+.tab{padding:9px 20px;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#333;cursor:pointer;border-bottom:2px solid transparent;transition:all .15s;}
+.tc{flex:1;overflow-y:auto;padding:16px 20px;display:none;}
+.tc.vis{display:block;}
+.fs{margin-bottom:16px;}
+.fs-t{font-family:'Cinzel',serif;font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#303030;border-bottom:1px solid #1a1a1a;padding-bottom:4px;margin-bottom:9px;}
+label{display:block;font-size:9px;color:#404040;margin-bottom:2px;font-weight:600;letter-spacing:.4px;text-transform:uppercase;}
+input[type=text],input[type=number],select,textarea{width:100%;background:#0e0e0e;border:1px solid #1c1c1c;border-radius:4px;color:#aaa;font-family:'Outfit',sans-serif;font-size:12px;padding:6px 8px;outline:none;margin-bottom:7px;transition:border-color .15s;}
+select option{background:#0e0e0e;}
+textarea{resize:vertical;line-height:1.5;}
+.r2{display:grid;grid-template-columns:1fr 1fr;gap:7px;}
+.r3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:5px;}
+.img-up{border:2px dashed #1a1a1a;border-radius:6px;padding:12px;text-align:center;cursor:pointer;position:relative;overflow:hidden;margin-bottom:7px;}
+.img-up input{position:absolute;inset:0;opacity:0;cursor:pointer;z-index:2;}
+.img-up-l{font-size:10px;color:#2e2e2e;}
+.img-up img{width:100%;border-radius:3px;display:none;margin-top:5px;}
+.sl-row{display:flex;align-items:center;gap:8px;margin-bottom:9px;}
+.sl-row label{min-width:110px;margin-bottom:0;font-size:9px;}
+.sl-row input[type=range]{flex:1;accent-color:#c8a030;margin-bottom:0;height:4px;}
+.sl-val{font-family:'JetBrains Mono',monospace;font-size:9px;color:#484848;min-width:38px;text-align:right;}
+.sl-row input[type=color]{width:32px;height:24px;border:1px solid #1a1a1a;border-radius:3px;background:none;cursor:pointer;padding:1px;margin-bottom:0;flex-shrink:0;}
+.theme-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;margin-bottom:12px;}
+.tbtn{padding:7px 4px;border:1.5px solid #1a1a1a;border-radius:5px;background:#0a0a0a;color:#383838;font-size:9px;font-weight:700;letter-spacing:.5px;cursor:pointer;text-align:center;transition:all .15s;text-transform:uppercase;}
+.tbtn:hover{border-color:#333;color:#666;}
+.tbtn.act{border-color:#c8a030;color:#c8a030;background:#110e00;}
+.note{font-size:9px;color:#262626;margin-top:-4px;margin-bottom:7px;line-height:1.5;}
+.eff-row{display:flex;gap:5px;margin-bottom:5px;}
+.eff-row input[type=text]{flex:1;margin-bottom:0;}
+.eff-row button{background:#0e0e0e;border:1px solid #1c1c1c;border-radius:4px;color:#444;width:26px;height:32px;cursor:pointer;font-size:14px;flex-shrink:0;}
+
+.btn-dl{background:#1a6b2a;} .btn-dl:hover{background:#2d9e40;}
+.top-bar h1{color:#2d9e40;}
+.tab.on-d{color:#2d9e40;border-bottom-color:#2d9e40;}
+.tab.on-s{color:#c8a030;border-bottom-color:#c8a030;}
+input:focus,select:focus,textarea:focus{border-color:#2d9e40 !important;}
+/* CARTA 1831x2539 */
+.card{width:1831px;height:2539px;position:relative;font-family:'Cinzel',serif;overflow:hidden;background:#e4f0e6;}
+.c-border{position:absolute;inset:0;border:28px solid #0c3518;border-radius:56px;z-index:20;pointer-events:none;box-shadow:inset 0 0 0 8px #1a6b2a;}
+.c-head{position:absolute;left:28px;right:28px;top:28px;height:148px;background:#060606;display:flex;align-items:center;padding:0 52px;gap:24px;z-index:10;}
+.c-head-icon{font-size:64px;line-height:1;flex-shrink:0;color:#666;}
+.c-head-name{flex:1;font-size:96px;font-weight:900;color:#fff;letter-spacing:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1;}
+.c-hex{width:160px;height:160px;flex-shrink:0;clip-path:polygon(50% 0%,100% 25%,100% 75%,50% 100%,0% 75%,0% 25%);background:#fff;display:flex;align-items:center;justify-content:center;}
+.c-hex span{font-size:70px;font-weight:900;color:#060606;line-height:1;}
+.c-art{position:absolute;left:28px;right:28px;top:176px;height:910px;background:#181818;overflow:hidden;}
+.c-art img{width:100%;height:100%;object-fit:cover;object-position:center;display:none;}
+.c-art-ph{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:160px;color:#282828;background:#141414;}
+.c-rar{position:absolute;left:0;right:0;height:52px;z-index:4;}
+.c-rar.t{top:0;} .c-rar.b{bottom:0;}
+.c-lower{position:absolute;left:28px;right:28px;top:1086px;bottom:28px;overflow:hidden;}
+.c-lower-col{position:absolute;inset:0;z-index:0;}
+.c-lower-bgimg{position:absolute;inset:0;z-index:1;background-size:cover;background-position:center;opacity:.5;}
+.c-lower-pat{position:absolute;inset:0;z-index:2;background-repeat:repeat;}
+.c-lower-brd{position:absolute;inset:0;border-top:7px solid #060606;z-index:20;pointer-events:none;}
+.c-race{position:absolute;left:0;right:0;top:0;height:220px;display:flex;border-bottom:3px solid rgba(0,0,0,0.2);z-index:5;}
+.c-icell{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:16px 12px;position:relative;gap:12px;}
+.c-icell+.c-icell::before{content:'';position:absolute;left:0;top:18%;bottom:18%;width:2px;background:rgba(0,0,0,0.18);}
+.c-ilbl{font-size:36px;font-weight:700;letter-spacing:3px;text-transform:uppercase;opacity:.55;}
+.c-ival{font-size:58px;font-weight:900;text-align:center;line-height:1.1;}
+.c-ival.bonus{font-family:'JetBrains Mono',monospace;font-size:50px;}
+.c-racial{position:absolute;left:32px;right:32px;top:226px;border-radius:18px;padding:28px 40px;z-index:5;min-height:100px;border-width:6px;border-style:solid;}
+.c-racial-lbl{font-size:36px;font-weight:900;letter-spacing:2px;margin-bottom:10px;}
+.c-racial-txt{font-size:42px;font-style:italic;line-height:1.35;}
+.c-deriv{position:absolute;left:0;right:0;top:454px;height:200px;display:flex;border-top:3px solid rgba(0,0,0,0.18);border-bottom:3px solid rgba(0,0,0,0.18);z-index:5;}
+.c-dval{font-family:'JetBrains Mono',monospace;font-size:94px;font-weight:700;line-height:1;}
+.c-stats{position:absolute;left:0;right:0;top:654px;bottom:0;display:grid;grid-template-columns:1fr 1fr 1fr;border-top:5px solid rgba(0,0,0,0.35);z-index:5;}
+.c-stat{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;position:relative;overflow:hidden;border-right:5px solid rgba(0,0,0,0.25);}
+.c-stat:last-child{border-right:none;}
+.c-stat.corpo{background:rgba(170,25,25,0.9);}
+.c-stat.mente{background:rgba(170,130,0,0.9);}
+.c-stat.anima{background:rgba(22,100,26,0.9);}
+.c-slbl{font-size:80px;font-weight:900;color:rgba(255,255,255,0.92);letter-spacing:6px;position:relative;z-index:1;}
+.c-sval{font-family:'JetBrains Mono',monospace;font-size:244px;font-weight:700;color:#fff;line-height:.88;position:relative;z-index:1;text-shadow:0 8px 32px rgba(0,0,0,0.4);}
+.c-smod{font-family:'JetBrains Mono',monospace;font-size:80px;font-weight:700;color:rgba(255,255,255,0.82);position:relative;z-index:1;}
+</style>
+</head>
+<body>
+<div class="top-bar">
+  <h1>🧬 Carta Personaggio</h1>
+  <span class="badge">1831x2539px</span><span class="badge">preview 590px</span>
+  <button class="btn-dl" onclick="dl()">⬇ Scarica HD</button>
+</div>
+<div class="body-wrap">
+  <div class="preview-col">
+    <div class="card-outer"><div class="card-stage">
+      <div class="card" id="the-card">
+        <div class="c-border"></div>
+        <div class="c-head">
+          <span class="c-head-icon">⚔</span>
+          <div class="c-head-name" id="d-nome">NOME PG</div>
+          <div class="c-hex" id="grade-sym"><span id="d-grado">1</span></div>
+        </div>
+        <div class="c-art" id="c-art">
+          <div class="c-rar t" id="rb-t"></div>
+          <div class="c-rar b" id="rb-b"></div>
+          <img id="art-img" alt=""/>
+          <div class="c-art-ph" id="art-ph">🎨</div>
+        </div>
+        <div class="c-lower" id="c-lower">
+          <div class="c-lower-col" id="lower-col"></div>
+          <div class="c-lower-bgimg" id="lower-bgimg"></div>
+          <div class="c-lower-pat" id="lower-pat"></div>
+          <div class="c-lower-brd"></div>
+          <div class="c-race">
+            <div class="c-icell"><div class="c-ilbl" id="lbl-razza">Razza</div><div class="c-ival" id="d-razza" style="font-size:54px">—</div></div>
+            <div class="c-icell"><div class="c-ilbl" id="lbl-prim">Primaria</div><div class="c-ival bonus" id="d-p2">+2 CORPO</div></div>
+            <div class="c-icell"><div class="c-ilbl" id="lbl-sec">Secondaria</div><div class="c-ival bonus" id="d-p1">+1 MENTE</div></div>
+          </div>
+          <div class="c-racial" id="racial-band">
+            <div class="c-racial-lbl" id="lbl-tal">⭐ Talento Raziale</div>
+            <div class="c-racial-txt" id="d-tal">—</div>
+          </div>
+          <div class="c-deriv">
+            <div class="c-icell"><div class="c-ilbl" id="lbl-hp">HP</div><div class="c-dval" id="d-hp">12</div></div>
+            <div class="c-icell"><div class="c-ilbl" id="lbl-vel">Velocità</div><div class="c-dval" id="d-vel">4m</div></div>
+            <div class="c-icell"><div class="c-ilbl" id="lbl-cap">Cap.</div><div class="c-dval" id="d-cap">12kg</div></div>
+          </div>
+          <div class="c-stats">
+            <div class="c-stat corpo"><div class="c-slbl" id="lbl-corpo">CORPO</div><div class="c-sval" id="d-corpo">4</div><div class="c-smod" id="d-cmod">+1</div></div>
+            <div class="c-stat mente"><div class="c-slbl" id="lbl-mente">MENTE</div><div class="c-sval" id="d-mente">4</div><div class="c-smod" id="d-mmod">+1</div></div>
+            <div class="c-stat anima"><div class="c-slbl" id="lbl-anima">ANIMA</div><div class="c-sval" id="d-anima">4</div><div class="c-smod" id="d-amod">+1</div></div>
+          </div>
+        </div>
+      </div>
+    </div></div>
+  </div>
+  <div class="form-panel">
+    <div class="tab-bar">
+      <div class="tab on-d" id="tab-d" onclick="swTab('d')">📋 Dati</div>
+      <div class="tab" id="tab-s" onclick="swTab('s')">🎨 Stile</div>
+    </div>
+    <div class="tc vis" id="tc-d">
+      <div class="fs"><div class="fs-t">Artwork</div>
+        <div class="img-up"><input type="file" accept="image/*" onchange="loadImg(event)"/>
+          <div class="img-up-l" id="img-lbl">📷 Carica immagine</div>
+          <img id="img-prev"/></div>
+      </div>
+      <div class="fs"><div class="fs-t">Intestazione</div>
+        <label>Nome PG</label><input type="text" id="f-nome" placeholder="es. Lyra Sunthorn" maxlength="20" oninput="upd()"/>
+        <div class="r2">
+          <div><label>Grado</label><select id="f-grado" onchange="upd()"><option>1</option><option>2</option><option>3</option><option>4</option></select></div>
+          <div><label>Rarità</label><select id="f-rar" onchange="upd()"><option value="#888">Comune</option><option value="#48c88a">Non Comune</option><option value="#5890e8">Rara</option><option value="#a070e8">Molto Rara</option><option value="#e8a030">Leggendaria</option><option value="#e05050">Artefatto</option></select></div>
+        </div>
+      </div>
+      <div class="fs"><div class="fs-t">Razza</div>
+        <label>Nome Razza</label><input type="text" id="f-razza" placeholder="es. Tabaxi" oninput="upd()"/>
+        <div class="r2">
+          <div><label>Stat +2</label><select id="f-s2" onchange="upd()"><option>CORPO</option><option>MENTE</option><option>ANIMA</option></select></div>
+          <div><label>Stat +1</label><select id="f-s1" onchange="upd()"><option>CORPO</option><option selected>MENTE</option><option>ANIMA</option></select></div>
+        </div>
+        <label>Talento Raziale</label><input type="text" id="f-tal" placeholder="es. Agilità Felina: +3m movimento" oninput="upd()"/>
+      </div>
+      <div class="fs"><div class="fs-t">Statistiche</div>
+        <div class="r3">
+          <div><label>CORPO</label><input type="number" id="f-corpo" value="4" min="1" max="24" oninput="upd()"/></div>
+          <div><label>MENTE</label><input type="number" id="f-mente" value="4" min="1" max="24" oninput="upd()"/></div>
+          <div><label>ANIMA</label><input type="number" id="f-anima" value="4" min="1" max="24" oninput="upd()"/></div>
+        </div>
+      </div>
+      <div class="fs"><div class="fs-t">Derivati</div>
+        <div class="r3">
+          <div><label>HP</label><input type="number" id="f-hp" value="12" oninput="upd()"/></div>
+          <div><label>Vel. (m)</label><input type="number" id="f-vel" value="4" oninput="upd()"/></div>
+          <div><label>Cap. (kg)</label><input type="number" id="f-cap" value="12" oninput="upd()"/></div>
+        </div>
+        <div class="note">HP=C+M+A · Vel=Corpo · Cap=Corpo×3</div>
+      </div>
+    </div>
+
+    <div class="tc" id="tc-s">
+      <div class="fs"><div class="fs-t">Tema</div><div class="theme-grid" id="tgrid"></div></div>
+      <div class="fs"><div class="fs-t">Sfondo sezione info</div>
+        <div class="sl-row"><label>Colore base</label><input type="color" id="sl-bg" value="#d8e8d8" oninput="applyTheme()"/><span class="sl-val" id="v-bg">#d8e8d8</span></div>
+        <div class="sl-row"><label>Luminosità</label><input type="range" id="sl-br" min="30" max="200" value="100" oninput="applyTheme()"/><span class="sl-val" id="v-br">100%</span></div>
+        <div class="sl-row"><label>Intensità pattern</label><input type="range" id="sl-op" min="0" max="100" value="55" oninput="applyTheme()"/><span class="sl-val" id="v-op">55%</span></div>
+        <div class="sl-row"><label>Colore pattern</label><input type="color" id="sl-pc" value="#406040" oninput="applyTheme()"/></div>
+      </div>
+      <div class="fs"><div class="fs-t">Immagine sfondo custom</div>
+        <div class="img-up"><input type="file" accept="image/*" onchange="loadBgImg(event)"/>
+          <div class="img-up-l">📁 Carica immagine sfondo (opzionale)</div></div>
+        <div class="sl-row"><label>Opacità sfondo</label><input type="range" id="sl-bgimg-op" min="0" max="100" value="50" oninput="applyTheme()"/><span class="sl-val" id="v-bgimg-op">50%</span></div>
+        <div class="note">0% = invisibile · 100% = piena copertura. Si sovrappone al colore base.</div>
+      </div>
+      <div class="fs"><div class="fs-t">Artwork</div>
+        <div class="sl-row"><label>Altezza artwork</label><input type="range" id="sl-arth" min="300" max="1600" value="910" oninput="setArtH(this.value)"/><span class="sl-val" id="v-arth">910px</span></div>
+      </div>
+      <div class="fs"><div class="fs-t">Tipografia</div>
+        <div class="sl-row"><label>Font principale</label>
+          <select id="sl-font" onchange="applyTheme()" style="flex:1;margin-bottom:0;font-size:11px">
+            <option value="'Cinzel',serif">Cinzel — fantasy</option>
+            <option value="'JetBrains Mono',monospace">JetBrains Mono — tech</option>
+            <option value="'Outfit',sans-serif">Outfit — moderno</option>
+            <option value="'Uncial Antiqua',cursive">Uncial Antiqua — medievale</option>
+          </select>
+        </div>
+        <div class="sl-row"><label>Dim. nome header</label><input type="range" id="sl-nfs" min="50" max="140" value="96" oninput="applyTheme()"/><span class="sl-val" id="v-nfs">96px</span></div>
+        <div class="sl-row"><label>Dim. label</label><input type="range" id="sl-lfs" min="20" max="60" value="36" oninput="applyTheme()"/><span class="sl-val" id="v-lfs">36px</span></div>
+        <div class="sl-row"><label>Dim. valori HP/VEL</label><input type="range" id="sl-dvfs" min="40" max="130" value="94" oninput="applyTheme()"/><span class="sl-val" id="v-dvfs">94px</span></div>
+        <div class="sl-row"><label>Dim. stat (CORPO…)</label><input type="range" id="sl-svfs" min="100" max="300" value="244" oninput="applyTheme()"/><span class="sl-val" id="v-svfs">244px</span></div>
+        <div class="sl-row"><label>Dim. MOD</label><input type="range" id="sl-mfs" min="40" max="110" value="80" oninput="applyTheme()"/><span class="sl-val" id="v-mfs">80px</span></div>
+        <div class="sl-row"><label>Dim. talento</label><input type="range" id="sl-tfs" min="24" max="64" value="42" oninput="applyTheme()"/><span class="sl-val" id="v-tfs">42px</span></div>
+        <div class="sl-row"><label>Colore testo</label><input type="color" id="sl-tc" value="#0a0a0a" oninput="applyTheme()"/></div>
+        <div class="sl-row"><label>Colore label</label><input type="color" id="sl-lc" value="#404040" oninput="applyTheme()"/></div>
+      </div>
+      <div class="fs"><div class="fs-t">Banda Talento</div>
+        <div class="sl-row"><label>Sfondo</label><input type="color" id="sl-talbg" value="#f8d840" oninput="applyTheme()"/></div>
+        <div class="sl-row"><label>Bordo</label><input type="color" id="sl-talbr" value="#c09818" oninput="applyTheme()"/></div>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+var TAB_ACTIVE_CLASS = {d:'on-d', s:'on-s'};
+var CARD_FILENAME = 'pg_personaggio.png';
+var mc = function(v){ var m=Math.floor((parseInt(v)||0)/3); return (m>=0?'+':'')+m; };
+
+
+const TEMI = {
+  pergamena: {
+    n:'Pergamena', bg:'#f0e8d0', pc:'#7a5010', br:100, op:55,
+    font:"'Cinzel',serif", tc:'#1a0e00', lc:'#6a4010',
+    talbg:'#f8d840', talbr:'#c09818',
+    effbg:'#fde88e', effbr:'#c09818', efftc:'#1a0800', dotc:'#3d2a7a',
+    nfs:96, lfs:36, ivfs:56, dvfs:90, svfs:76, mfs:80, efs:46, tfs:42,
+    pat: function(c,o){
+      var v=o/100;
+      var svg = '<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400">'
+        + '<filter id="n"><feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="4" stitchTiles="stitch"/>'
+        + '<feColorMatrix type="saturate" values="0"/></filter>'
+        + '<rect width="400" height="400" filter="url(#n)" opacity="'+(v*0.22)+'"/>'
+        + '<line x1="0" y1="133" x2="400" y2="133" stroke="'+c+'" stroke-width="1.2" opacity="'+(v*0.18)+'"/>'
+        + '<line x1="0" y1="266" x2="400" y2="266" stroke="'+c+'" stroke-width="1.2" opacity="'+(v*0.18)+'"/>'
+        + '<line x1="133" y1="0" x2="133" y2="400" stroke="'+c+'" stroke-width="0.6" opacity="'+(v*0.1)+'"/>'
+        + '<line x1="266" y1="0" x2="266" y2="400" stroke="'+c+'" stroke-width="0.6" opacity="'+(v*0.1)+'"/>'
+        + '<ellipse cx="200" cy="200" rx="160" ry="130" stroke="'+c+'" stroke-width="0.8" fill="none" opacity="'+(v*0.07)+'"/>'
+        + '</svg>';
+      return 'url("data:image/svg+xml,' + encodeURIComponent(svg) + '")';
+    }
+  },
+  pietra: {
+    n:'Pietra Incisa', bg:'#252527', pc:'#8890b8', br:100, op:70,
+    font:"'JetBrains Mono',monospace", tc:'#d8d8f0', lc:'#6878a0',
+    talbg:'#1c1e30', talbr:'#4858a0',
+    effbg:'#1c1e30', effbr:'#4858a0', efftc:'#d8d8f0', dotc:'#a0a0e0',
+    nfs:88, lfs:32, ivfs:50, dvfs:82, svfs:68, mfs:76, efs:40, tfs:36,
+    pat: function(c,o){
+      var v=o/100;
+      var svg = '<svg xmlns="http://www.w3.org/2000/svg" width="80" height="80">'
+        + '<line x1="0" y1="0" x2="80" y2="80" stroke="'+c+'" stroke-width="0.7" opacity="'+(v*0.35)+'"/>'
+        + '<line x1="80" y1="0" x2="0" y2="80" stroke="'+c+'" stroke-width="0.7" opacity="'+(v*0.25)+'"/>'
+        + '<line x1="40" y1="0" x2="40" y2="80" stroke="'+c+'" stroke-width="0.4" opacity="'+(v*0.18)+'"/>'
+        + '<line x1="0" y1="40" x2="80" y2="40" stroke="'+c+'" stroke-width="0.4" opacity="'+(v*0.18)+'"/>'
+        + '<rect x="1" y="1" width="78" height="78" fill="none" stroke="'+c+'" stroke-width="0.3" opacity="'+(v*0.12)+'"/>'
+        + '</svg>';
+      return 'url("data:image/svg+xml,' + encodeURIComponent(svg) + '")';
+    }
+  },
+  sigillo: {
+    n:'Sigillo Magico', bg:'#1a0838', pc:'#c0a0ff', br:100, op:62,
+    font:"'Cinzel',serif", tc:'#f0e8ff', lc:'#9080c0',
+    talbg:'#28105a', talbr:'#8060d0',
+    effbg:'#28105a', effbr:'#8060d0', efftc:'#f0e8ff', dotc:'#c0a0ff',
+    nfs:96, lfs:36, ivfs:56, dvfs:90, svfs:76, mfs:80, efs:46, tfs:42,
+    pat: function(c,o){
+      var v=o/100, rays='';
+      for(var i=0;i<12;i++){
+        var a=i*30*Math.PI/180;
+        rays += '<line x1="400" y1="400" x2="'+(400+360*Math.cos(a))+'" y2="'+(400+360*Math.sin(a))+'" stroke="'+c+'" stroke-width="0.9" opacity="'+(v*0.28)+'"/>';
+      }
+      var svg = '<svg xmlns="http://www.w3.org/2000/svg" width="800" height="800" viewBox="0 0 800 800">'
+        + '<circle cx="400" cy="400" r="355" stroke="'+c+'" stroke-width="2.5" fill="none" opacity="'+(v*0.45)+'"/>'
+        + '<circle cx="400" cy="400" r="285" stroke="'+c+'" stroke-width="1.2" fill="none" opacity="'+(v*0.35)+'"/>'
+        + '<circle cx="400" cy="400" r="195" stroke="'+c+'" stroke-width="1.5" fill="none" opacity="'+(v*0.4)+'"/>'
+        + '<circle cx="400" cy="400" r="90" stroke="'+c+'" stroke-width="1" fill="none" opacity="'+(v*0.35)+'"/>'
+        + rays
+        + '<polygon points="400,68 685,596 115,596" stroke="'+c+'" stroke-width="1.8" fill="none" opacity="'+(v*0.32)+'"/>'
+        + '<polygon points="400,732 115,204 685,204" stroke="'+c+'" stroke-width="1.8" fill="none" opacity="'+(v*0.32)+'"/>'
+        + '</svg>';
+      return 'url("data:image/svg+xml,' + encodeURIComponent(svg) + '")';
+    }
+  },
+  metallo: {
+    n:'Metallo Battuto', bg:'#b0a898', pc:'#ffffff', br:100, op:52,
+    font:"'Cinzel',serif", tc:'#160c00', lc:'#503820',
+    talbg:'#e8d890', talbr:'#988020',
+    effbg:'#e0d080', effbr:'#988020', efftc:'#1a0800', dotc:'#604020',
+    nfs:96, lfs:36, ivfs:56, dvfs:90, svfs:76, mfs:80, efs:46, tfs:42,
+    pat: function(c,o){
+      var v=o/100, lines='';
+      for(var i=0;i<24;i++){
+        var op2 = i%5===0 ? v*0.3 : v*0.12;
+        var sw  = i%5===0 ? 0.8 : 0.4;
+        lines += '<line x1="0" y1="'+(i*8)+'" x2="200" y2="'+(i*8)+'" stroke="'+c+'" stroke-width="'+sw+'" opacity="'+op2+'"/>';
+      }
+      var svg = '<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200">'
+        + lines
+        + '<line x1="0" y1="0" x2="200" y2="200" stroke="'+c+'" stroke-width="0.5" opacity="'+(v*0.18)+'"/>'
+        + '<line x1="200" y1="0" x2="0" y2="200" stroke="'+c+'" stroke-width="0.5" opacity="'+(v*0.12)+'"/>'
+        + '<defs><radialGradient id="sh" cx="38%" cy="28%" r="52%">'
+        + '<stop offset="0%" stop-color="white" stop-opacity="'+(v*0.35)+'"/>'
+        + '<stop offset="100%" stop-color="white" stop-opacity="0"/>'
+        + '</radialGradient></defs>'
+        + '<rect width="200" height="200" fill="url(#sh)"/>'
+        + '</svg>';
+      return 'url("data:image/svg+xml,' + encodeURIComponent(svg) + '")';
+    }
+  },
+  legno: {
+    n:'Legno Nobile', bg:'#7a4e28', pc:'#f0d090', br:100, op:58,
+    font:"'Cinzel',serif", tc:'#fff5e0', lc:'#f0d090',
+    talbg:'#4a2808', talbr:'#c07818',
+    effbg:'#4a2808', effbr:'#c07818', efftc:'#fff5e0', dotc:'#f0c060',
+    nfs:96, lfs:36, ivfs:56, dvfs:90, svfs:76, mfs:80, efs:46, tfs:42,
+    pat: function(c,o){
+      var v=o/100, waves='';
+      for(var i=0;i<50;i++){
+        var sw  = i%6===0 ? 1.4 : 0.7;
+        var op2 = i%6===0 ? v*0.3 : v*0.14;
+        waves += '<path d="M0,'+(i*14)+' Q200,'+(i*14+9)+' 400,'+(i*14)+' Q600,'+(i*14-9)+' 800,'+(i*14)+'" stroke="'+c+'" stroke-width="'+sw+'" fill="none" opacity="'+op2+'"/>';
+      }
+      var svg = '<svg xmlns="http://www.w3.org/2000/svg" width="800" height="700">'
+        + waves
+        + '<defs><radialGradient id="vg" cx="50%" cy="50%" r="50%">'
+        + '<stop offset="0%" stop-color="white" stop-opacity="'+(v*0.1)+'"/>'
+        + '<stop offset="100%" stop-color="black" stop-opacity="'+(v*0.15)+'"/>'
+        + '</radialGradient></defs>'
+        + '<rect width="800" height="700" fill="url(#vg)"/>'
+        + '</svg>';
+      return 'url("data:image/svg+xml,' + encodeURIComponent(svg) + '")';
+    }
+  }
+};
+
+var curT = 'pergamena';
+var effs = [];
+
+function swTab(t) {
+  ['d','s'].forEach(function(x) {
+    var tc = document.getElementById('tc-'+x);
+    var tb = document.getElementById('tab-'+x);
+    if (!tc || !tb) return;
+    tc.classList.toggle('vis', x===t);
+    tb.className = 'tab' + (x===t ? (' ' + TAB_ACTIVE_CLASS[x]) : '');
+  });
+}
+
+function buildGrid() {
+  var g = document.getElementById('tgrid');
+  Object.keys(TEMI).forEach(function(k) {
+    var t = TEMI[k];
+    var b = document.createElement('button');
+    b.className = 'tbtn' + (k===curT ? ' act' : '');
+    b.textContent = t.n;
+    b.onclick = function() {
+      curT = k;
+      document.querySelectorAll('.tbtn').forEach(function(x){ x.classList.remove('act'); });
+      b.classList.add('act');
+      loadDef(k);
+      applyTheme();
+    };
+    g.appendChild(b);
+  });
+}
+
+function loadDef(k) {
+  var t = TEMI[k];
+  setV('sl-bg', t.bg); setV('sl-pc', t.pc);
+  setV('sl-br', t.br); setV('sl-op', t.op);
+  setV('sl-font', t.font);
+  setV('sl-tc', t.tc); setV('sl-lc', t.lc);
+  if(document.getElementById('sl-talbg')) { setV('sl-talbg', t.talbg); setV('sl-talbr', t.talbr); }
+  if(document.getElementById('sl-effbg')) { setV('sl-effbg', t.effbg); setV('sl-effbr', t.effbr); setV('sl-efftc', t.efftc); setV('sl-dotc', t.dotc); }
+  setV('sl-nfs', t.nfs); setV('sl-lfs', t.lfs);
+  if(document.getElementById('sl-dvfs')) setV('sl-dvfs', t.dvfs);
+  if(document.getElementById('sl-svfs')) setV('sl-svfs', t.svfs);
+  if(document.getElementById('sl-mfs'))  setV('sl-mfs',  t.mfs);
+  if(document.getElementById('sl-tfs'))  setV('sl-tfs',  t.tfs);
+  if(document.getElementById('sl-ivfs')) setV('sl-ivfs', t.ivfs);
+  if(document.getElementById('sl-efs'))  setV('sl-efs',  t.efs);
+  updV();
+}
+
+function setV(id, val) {
+  var el = document.getElementById(id);
+  if (el) el.value = val;
+}
+
+function gV(id, fallback) {
+  var el = document.getElementById(id);
+  return el ? el.value : (fallback || '');
+}
+
+function updV() {
+  var map = {
+    'v-bg':'sl-bg', 'v-pc':null,
+    'v-br':'sl-br', 'v-op':'sl-op',
+    'v-nfs':'sl-nfs', 'v-lfs':'sl-lfs',
+    'v-dvfs':'sl-dvfs', 'v-svfs':'sl-svfs',
+    'v-mfs':'sl-mfs', 'v-tfs':'sl-tfs',
+    'v-ivfs':'sl-ivfs', 'v-efs':'sl-efs',
+    'v-arth':'sl-arth'
+  };
+  Object.keys(map).forEach(function(vid) {
+    var sid = map[vid]; if (!sid) return;
+    var vel = document.getElementById(vid), sel = document.getElementById(sid);
+    if (vel && sel) {
+      var raw = sel.value;
+      vel.textContent = (vid.indexOf('fs')>-1 || vid==='v-arth') ? raw+'px' : (vid==='v-br'||vid==='v-op' ? raw+'%' : raw);
+    }
+  });
+}
+
+function applyBgColor() {
+  var col  = document.getElementById('lower-col');
+  var pat  = document.getElementById('lower-pat');
+  var bgimg= document.getElementById('lower-bgimg');
+  if (!col) return;
+  var bg   = gV('sl-bg','#f0e8d0');
+  var br   = parseFloat(gV('sl-br',100)) / 100;
+  col.style.background = bg;
+  col.style.filter = 'brightness(' + br + ')';
+  var t = TEMI[curT];
+  var pc = gV('sl-pc','#000');
+  var op = parseFloat(gV('sl-op',55));
+  if (pat) {
+    pat.style.backgroundImage = t.pat(pc, op);
+    pat.style.backgroundSize = '800px';
+    pat.style.backgroundRepeat = 'repeat';
+  }
+  // sfondo immagine custom
+  if (bgimg) {
+    var opacity = parseFloat(gV('sl-bgimg-op', 50)) / 100;
+    bgimg.style.opacity = opacity;
+  }
+}
+
+function setArtH(h) {
+  var art   = document.getElementById('c-art');
+  var lower = document.getElementById('c-lower');
+  var hpx   = parseInt(h);
+  if (art)   art.style.height   = hpx + 'px';
+  if (lower) lower.style.top    = (176 + hpx) + 'px';
+  var lbl = document.getElementById('v-arth');
+  if (lbl) lbl.textContent = hpx + 'px';
+}
+
+function loadImg(e) {
+  var f = e.target.files[0]; if (!f) return;
+  var r = new FileReader();
+  r.onload = function(ev) {
+    var img  = document.getElementById('art-img');
+    var ph   = document.getElementById('art-ph');
+    var prev = document.getElementById('img-prev');
+    var lbl  = document.getElementById('img-lbl');
+    if (img)  { img.src = ev.target.result; img.style.display = 'block'; }
+    if (ph)   ph.style.display = 'none';
+    if (prev) { prev.src = ev.target.result; prev.style.display = 'block'; }
+    if (lbl)  lbl.style.display = 'none';
+  };
+  r.readAsDataURL(f);
+}
+
+function loadBgImg(e) {
+  var f = e.target.files[0]; if (!f) return;
+  var r = new FileReader();
+  r.onload = function(ev) {
+    var el = document.getElementById('lower-bgimg');
+    if (el) {
+      el.style.backgroundImage = 'url(' + ev.target.result + ')';
+      el.style.backgroundSize  = 'cover';
+      el.style.backgroundPosition = 'center';
+    }
+  };
+  r.readAsDataURL(f);
+}
+
+async function dl() {
+  var card = document.getElementById('the-card');
+  if (typeof html2canvas !== 'undefined') {
+    var c = await html2canvas(card, {scale:1, useCORS:true, allowTaint:true});
+    var a = document.createElement('a');
+    a.download = CARD_FILENAME;
+    a.href = c.toDataURL('image/png');
+    a.click();
+  } else {
+    alert('DevTools (F12) → Elements → tasto dx su #the-card → Capture node screenshot');
+  }
+}
+
+
+function applyTheme() {
+  updV();
+  var t    = TEMI[curT];
+  var font = gV('sl-font', "'Cinzel',serif");
+  var tc   = gV('sl-tc','#1a0e00');
+  var lc   = gV('sl-lc','#6a4010');
+  var nfs  = gV('sl-nfs',96);
+  var lfs  = gV('sl-lfs',36);
+  var dvfs = gV('sl-dvfs',90);
+  var svfs = gV('sl-svfs',244);
+  var mfs  = gV('sl-mfs',80);
+  var tfs  = gV('sl-tfs',42);
+  var talbg= gV('sl-talbg','#f8d840');
+  var talbr= gV('sl-talbr','#c09818');
+  var bgop = parseFloat(gV('sl-bgimg-op',50))/100;
+
+  applyBgColor();
+  var bi = document.getElementById('lower-bgimg');
+  if(bi) bi.style.opacity = bgop;
+
+  document.getElementById('d-nome').style.fontFamily = font;
+  document.getElementById('d-nome').style.fontSize   = nfs+'px';
+
+  ['lbl-razza','lbl-prim','lbl-sec','lbl-hp','lbl-vel','lbl-cap','lbl-tal'].forEach(function(id){
+    var el=document.getElementById(id); if(!el)return;
+    el.style.color=lc; el.style.fontSize=lfs+'px'; el.style.fontFamily=font;
+  });
+  ['lbl-corpo','lbl-mente','lbl-anima'].forEach(function(id){
+    var el=document.getElementById(id); if(!el)return;
+    el.style.color='rgba(255,255,255,0.85)'; el.style.fontSize=mfs+'px'; el.style.fontFamily=font;
+  });
+  ['d-razza','d-p2','d-p1','d-tal'].forEach(function(id){
+    var el=document.getElementById(id); if(!el)return;
+    el.style.color=tc; el.style.fontFamily=font;
+  });
+  document.getElementById('d-tal').style.fontSize=tfs+'px';
+  ['d-hp','d-vel','d-cap'].forEach(function(id){
+    var el=document.getElementById(id); if(!el)return;
+    el.style.fontSize=dvfs+'px'; el.style.color=tc; el.style.fontFamily=font;
+  });
+  ['d-corpo','d-mente','d-anima'].forEach(function(id){ document.getElementById(id).style.fontSize=svfs+'px'; });
+  ['d-cmod','d-mmod','d-amod'].forEach(function(id){ document.getElementById(id).style.fontSize=mfs+'px'; });
+
+  var rb=document.getElementById('racial-band');
+  rb.style.background=talbg; rb.style.borderColor=talbr;
+  document.getElementById('lbl-tal').style.color=tc;
+}
+
+function upd() {
+  document.getElementById('d-nome').textContent = (document.getElementById('f-nome').value||'NOME PG').toUpperCase();
+  document.getElementById('d-grado').textContent = document.getElementById('f-grado').value;
+  document.getElementById('d-razza').textContent = document.getElementById('f-razza').value||'—';
+  document.getElementById('d-p2').textContent = '+2 '+document.getElementById('f-s2').value;
+  document.getElementById('d-p1').textContent = '+1 '+document.getElementById('f-s1').value;
+  document.getElementById('d-tal').textContent = document.getElementById('f-tal').value||'—';
+  document.getElementById('d-hp').textContent  = document.getElementById('f-hp').value||12;
+  document.getElementById('d-vel').textContent = (document.getElementById('f-vel').value||4)+'m';
+  document.getElementById('d-cap').textContent = (document.getElementById('f-cap').value||12)+'kg';
+  var corpo=document.getElementById('f-corpo').value||4;
+  var mente=document.getElementById('f-mente').value||4;
+  var anima=document.getElementById('f-anima').value||4;
+  document.getElementById('d-corpo').textContent=corpo; document.getElementById('d-cmod').textContent=mc(corpo);
+  document.getElementById('d-mente').textContent=mente; document.getElementById('d-mmod').textContent=mc(mente);
+  document.getElementById('d-anima').textContent=anima; document.getElementById('d-amod').textContent=mc(anima);
+  var rar=document.getElementById('f-rar').value;
+  document.getElementById('rb-t').style.background=rar;
+  document.getElementById('rb-b').style.background=rar;
+  CARD_FILENAME = 'pg_'+(document.getElementById('f-nome').value||'personaggio').toLowerCase().replace(/\s+/g,'_')+'.png';
+}
+
+
+function applyGrade() {
+  var shape = document.getElementById('sl-grade-shape');
+  var sz    = document.getElementById('sl-grade-sz');
+  var fs    = document.getElementById('sl-grade-fs');
+  var col   = document.getElementById('sl-grade-col');
+  var ncol  = document.getElementById('sl-grade-ncol');
+  if (!shape) return;
+  var sym = document.getElementById('grade-sym');
+  var num = document.getElementById('d-grado');
+  if (sym) {
+    sym.style.width      = sz.value + 'px';
+    sym.style.height     = sz.value + 'px';
+    sym.style.clipPath   = shape.value;
+    sym.style.background = col.value;
+  }
+  if (num) {
+    num.style.fontSize = fs.value + 'px';
+    num.style.color    = ncol.value;
+  }
+  var vsz = document.getElementById('v-grade-sz');
+  var vfs = document.getElementById('v-grade-fs');
+  if (vsz) vsz.textContent = sz.value + 'px';
+  if (vfs) vfs.textContent = fs.value + 'px';
+}
+
+buildGrid(); loadDef(curT); applyTheme(); applyGrade(); upd();
+</script>
+</body>
+</html>
