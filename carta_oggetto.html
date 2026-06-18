@@ -494,7 +494,6 @@ async function dl() {
 
   async function ensureH2C() {
     if (typeof html2canvas !== 'undefined') return;
-    console.log('[dl] loading html2canvas CDN...');
     await new Promise(function(resolve, reject) {
       var s = document.createElement('script');
       s.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
@@ -512,7 +511,7 @@ async function dl() {
   var outer = stage ? stage.parentElement : null;
   if (!card || !stage) { alert('Carta non trovata.'); return; }
 
-  // Salva stili originali
+  // --- Salva stili stage/outer ---
   var saved = {
     stageTransform: stage.style.transform,
     stagePosition:  stage.style.position,
@@ -526,7 +525,71 @@ async function dl() {
     outerHeight:    outer ? outer.style.height   : ''
   };
 
-  // Porta stage fuori schermo senza scala
+  // --- Stili inline da inlineare prima della cattura ---
+  // Raccoglie: elemento, proprietà CSS da inlineare, valore attuale
+  var inlined = []; // [{el, prop, oldVal}]
+
+  function inlineStyle(el, prop, val) {
+    if (!el) return;
+    inlined.push({el:el, prop:prop, old: el.style[prop]});
+    el.style[prop] = val;
+  }
+
+  function inlineComputed(el, prop) {
+    if (!el) return;
+    var val = window.getComputedStyle(el)[prop];
+    inlineStyle(el, prop, val);
+  }
+
+  // 1. Simbolo grado: clip-path inline (già potrebbe esserci, ma forziamo)
+  var sym = document.getElementById('grade-sym');
+  // Converti grade-sym in canvas disegnato (html2canvas non supporta clip-path)
+  var gradeCanvas = gradeSymToCanvas(sym);
+
+  // 2. c-border: abbassa z-index, converte box-shadow inset in outline
+  var border = card.querySelector('.c-border');
+  if (border) {
+    inlineStyle(border, 'zIndex', '0');
+    // box-shadow inset non renderizzato da h2c → usiamo outline
+    inlineStyle(border, 'boxShadow', 'none');
+    inlineStyle(border, 'outline', '8px solid #1a6b2a');
+    inlineStyle(border, 'outlineOffset', '-8px');
+  }
+
+  // 3. c-stat border-right: inlinea come stile esplicito
+  card.querySelectorAll('.c-stat').forEach(function(el) {
+    inlineComputed(el, 'borderRight');
+    inlineComputed(el, 'borderTop');
+  });
+
+  // 4. c-stats border-top
+  var stats = card.querySelector('.c-stats');
+  if (stats) inlineComputed(stats, 'borderTop');
+
+  // 5. c-deriv borders
+  var deriv = card.querySelector('.c-deriv');
+  if (deriv) {
+    inlineComputed(deriv, 'borderTop');
+    inlineComputed(deriv, 'borderBottom');
+  }
+
+  // 6. c-lower-brd border-top
+  var lbrd = card.querySelector('.c-lower-brd');
+  if (lbrd) inlineComputed(lbrd, 'borderTop');
+
+  // 7. c-racial border
+  var racial = card.querySelector('.c-racial');
+  if (racial) {
+    inlineComputed(racial, 'border');
+    inlineComputed(racial, 'borderRadius');
+  }
+
+  // 8. c-icell divisori (::before non accessibili, ma i border delle celle sì)
+  card.querySelectorAll('.c-icell').forEach(function(el) {
+    inlineComputed(el, 'borderLeft');
+  });
+
+  // --- Porta stage fuori schermo ---
   stage.style.transform = 'none';
   stage.style.position  = 'fixed';
   stage.style.top       = '0px';
@@ -540,14 +603,9 @@ async function dl() {
     outer.style.height   = '2539px';
   }
 
-  // Abbassa z-index di c-border per la cattura — era 20, lo mettiamo sotto tutto
-  var border = card.querySelector('.c-border');
-  var savedBorderZ = border ? border.style.zIndex : '';
-  if (border) border.style.zIndex = '0';
-
   await new Promise(function(r){ requestAnimationFrame(function(){ requestAnimationFrame(r); }); });
 
-  console.log('[dl] capturing 1831x2539...');
+  console.log('[dl] capturing...');
   try {
     var canvas = await html2canvas(card, {
       scale: 1,
@@ -558,29 +616,31 @@ async function dl() {
       height: 2539,
       windowWidth: 1831,
       windowHeight: 2539,
-      x: 0,
-      y: 0,
-      scrollX: 0,
-      scrollY: 0
+      x: 0, y: 0, scrollX: 0, scrollY: 0
     });
 
-    // Pixel check
     var ctx = canvas.getContext('2d');
     function px(x,y){ var d=ctx.getImageData(x,y,1,1).data; return 'rgba('+d[0]+','+d[1]+','+d[2]+','+d[3]+')'; }
-    console.log('[dl] pixel(900,80)=',   px(900,80),   'expected: near-black header');
-    console.log('[dl] pixel(900,500)=',  px(900,500),  'expected: dark artwork');
-    console.log('[dl] pixel(900,2000)=', px(900,2000), 'expected: colored stat block');
+    console.log('[dl] pixel(900,80)=',   px(900,80),   'header (expect dark)');
+    console.log('[dl] pixel(900,500)=',  px(900,500),  'artwork (expect dark)');
+    console.log('[dl] pixel(900,2000)=', px(900,2000), 'stat (expect colored)');
 
     var a = document.createElement('a');
     a.download = CARD_FILENAME;
     a.href = canvas.toDataURL('image/png');
     a.click();
-    console.log('[dl] download OK — canvas', canvas.width, 'x', canvas.height);
+    console.log('[dl] download OK', canvas.width, 'x', canvas.height);
   } catch(err) {
     console.error('[dl] ERROR:', err);
     alert('Errore: ' + err.message);
   } finally {
-    if (border) border.style.zIndex = savedBorderZ;
+    // Ripristina stili inlineati
+    inlined.forEach(function(item){ item.el.style[item.prop] = item.old; });
+    // Rimuovi canvas grade-sym e ripristina clip-path
+    if (gradeCanvas && gradeCanvas.parentElement) {
+      gradeCanvas.parentElement.removeChild(gradeCanvas);
+    }
+
     stage.style.transform = saved.stageTransform;
     stage.style.position  = saved.stagePosition;
     stage.style.top       = saved.stageTop;
@@ -715,6 +775,61 @@ function applyGrade() {
   var vfs = document.getElementById('v-grade-fs');
   if (vsz) vsz.textContent = sz + 'px';
   if (vfs) vfs.textContent = fs + 'px';
+}
+
+
+function gradeSymToCanvas(sym) {
+  // Legge il clip-path corrente e disegna il simbolo su un canvas inline
+  if (!sym) return null;
+  var cs   = window.getComputedStyle(sym);
+  var w    = parseInt(cs.width)  || 160;
+  var h    = parseInt(cs.height) || 160;
+  var bg   = sym.style.background || cs.backgroundColor || '#ffffff';
+  var cp   = sym.style.clipPath || cs.clipPath || '';
+
+  // Crea canvas delle stesse dimensioni
+  var cvs = document.createElement('canvas');
+  cvs.width  = w; cvs.height = h;
+  var ctx = cvs.getContext('2d');
+
+  // Parsa il clip-path polygon
+  var polyMatch = cp.match(/polygon\(([^)]+)\)/);
+  if (polyMatch) {
+    var pts = polyMatch[1].split(',').map(function(p){
+      var parts = p.trim().split(/\s+/);
+      return {
+        x: parseFloat(parts[0]) / 100 * w,
+        y: parseFloat(parts[1]) / 100 * h
+      };
+    });
+    ctx.beginPath();
+    ctx.moveTo(pts[0].x, pts[0].y);
+    for (var i=1;i<pts.length;i++) ctx.lineTo(pts[i].x, pts[i].y);
+    ctx.closePath();
+    ctx.fillStyle = bg;
+    ctx.fill();
+  } else {
+    // Cerchio o fallback rettangolo
+    var circleMatch = cp.match(/circle\(/);
+    if (circleMatch) {
+      ctx.beginPath();
+      ctx.arc(w/2, h/2, Math.min(w,h)/2, 0, Math.PI*2);
+      ctx.fillStyle = bg;
+      ctx.fill();
+    } else {
+      ctx.fillStyle = bg;
+      ctx.fillRect(0,0,w,h);
+    }
+  }
+
+  // Posiziona il canvas sopra il sym originale
+  cvs.style.cssText = 'position:absolute;top:0;left:0;width:'+w+'px;height:'+h+'px;z-index:1;';
+  sym.style.clipPath = 'none';
+  sym.style.webkitClipPath = 'none';
+  sym.style.background = 'transparent';
+  sym.style.position = 'relative';
+  sym.appendChild(cvs);
+  return cvs;
 }
 
 buildGrid(); loadDef(curT); applyTheme(); applyGrade(); addEff(); addEff(); upd();
