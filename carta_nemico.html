@@ -55,10 +55,10 @@ textarea{resize:vertical;line-height:1.5;}
 /* CARTA 1831x2539 */
 .card{width:1831px;height:2539px;position:relative;font-family:'Cinzel',serif;overflow:hidden;background:#f6e8e8;}
 .c-border{position:absolute;inset:0;border:28px solid #3a0808;border-radius:56px;z-index:20;pointer-events:none;box-shadow:inset 0 0 0 8px #8b1a1a;}
-.c-head{position:absolute;left:28px;right:28px;top:28px;height:148px;background:#060606;display:flex;align-items:center;padding:0 52px;gap:24px;z-index:10;}
+.c-head{position:absolute;left:28px;right:28px;top:28px;height:148px;background:#060606;display:flex;align-items:center;padding:0 52px;gap:24px;z-index:10;;overflow:hidden}
 .c-head-icon{font-size:64px;line-height:1;flex-shrink:0;color:#666;}
 .c-head-name{flex:1;font-size:96px;font-weight:900;color:#fff;letter-spacing:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1;}
-.c-star{width:160px;height:160px;flex-shrink:0;clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%);background:#fff;display:flex;align-items:center;justify-content:center;}
+.c-star{width:160px;height:160px;flex-shrink:0;clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%);background:#fff;display:flex;align-items:center;justify-content:center;;overflow:hidden}
 .c-star span{font-size:70px;font-weight:900;color:#060606;line-height:1;margin-top:22px;}
 .c-art{position:absolute;left:28px;right:28px;top:176px;height:820px;background:#181818;overflow:hidden;}
 .c-art img{width:100%;height:100%;object-fit:cover;object-position:center;display:none;}
@@ -257,6 +257,11 @@ textarea{resize:vertical;line-height:1.5;}
         <div class="sl-row"><label>Dim. numero grado</label><input type="range" id="sl-grade-fs" min="40" max="160" value="70" oninput="applyGrade()"/><span class="sl-val" id="v-grade-fs">70px</span></div>
         <div class="sl-row"><label>Colore simbolo</label><input type="color" id="sl-grade-col" value="#ffffff" oninput="applyGrade()"/></div>
         <div class="sl-row"><label>Colore numero</label><input type="color" id="sl-grade-ncol" value="#060606" oninput="applyGrade()"/></div>
+      </div>
+      <div class="fs"><div class="fs-t">Bordo Carta</div>
+        <div class="sl-row"><label>Spessore bordo</label><input type="range" id="sl-brd-sz" min="4" max="80" value="28" oninput="applyBorder()"/><span class="sl-val" id="v-brd-sz">28px</span></div>
+        <div class="sl-row"><label>Colore bordo esterno</label><input type="color" id="sl-brd-col1" value="#0c3518" oninput="applyBorder()"/></div>
+        <div class="sl-row"><label>Colore bordo interno</label><input type="color" id="sl-brd-col2" value="#1a6b2a" oninput="applyBorder()"/></div>
       </div>
     </div>
   </div>
