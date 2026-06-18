@@ -513,16 +513,13 @@ async function dl() {
   console.log('[dl] START');
 
   async function ensureH2C() {
-    if (typeof html2canvas !== 'undefined') {
-      console.log('[dl] html2canvas already loaded');
-      return;
-    }
-    console.log('[dl] loading html2canvas from CDN...');
+    if (typeof html2canvas !== 'undefined') return;
+    console.log('[dl] loading html2canvas CDN...');
     await new Promise(function(resolve, reject) {
       var s = document.createElement('script');
       s.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
-      s.onload = function(){ console.log('[dl] html2canvas loaded OK'); resolve(); };
-      s.onerror = function(){ console.error('[dl] html2canvas CDN FAILED'); reject(new Error('CDN failed')); };
+      s.onload = function(){ console.log('[dl] h2c loaded'); resolve(); };
+      s.onerror = function(){ reject(new Error('CDN failed')); };
       document.head.appendChild(s);
     });
   }
@@ -533,21 +530,7 @@ async function dl() {
   var card  = document.getElementById('the-card');
   var stage = card ? card.parentElement : null;
   var outer = stage ? stage.parentElement : null;
-
-  console.log('[dl] card:', card);
-  console.log('[dl] stage:', stage);
-  console.log('[dl] outer:', outer);
-
-  if (!card)  { alert('Carta non trovata (#the-card).'); return; }
-  if (!stage) { alert('Stage non trovato (parent di #the-card).'); return; }
-
-  // Leggi dimensioni attuali
-  var cardRect  = card.getBoundingClientRect();
-  var stageRect = stage.getBoundingClientRect();
-  console.log('[dl] card boundingRect:', JSON.stringify({w:cardRect.width,h:cardRect.height,top:cardRect.top,left:cardRect.left}));
-  console.log('[dl] stage boundingRect:', JSON.stringify({w:stageRect.width,h:stageRect.height}));
-  console.log('[dl] stage computed transform:', window.getComputedStyle(stage).transform);
-  console.log('[dl] card computed w/h:', window.getComputedStyle(card).width, window.getComputedStyle(card).height);
+  if (!card || !stage) { alert('Carta non trovata.'); return; }
 
   // Salva stili originali
   var saved = {
@@ -562,7 +545,6 @@ async function dl() {
     outerWidth:     outer ? outer.style.width    : '',
     outerHeight:    outer ? outer.style.height   : ''
   };
-  console.log('[dl] saved styles:', JSON.stringify(saved));
 
   // Porta stage fuori schermo senza scala
   stage.style.transform = 'none';
@@ -578,22 +560,15 @@ async function dl() {
     outer.style.height   = '2539px';
   }
 
-  // Due frame per assicurare layout
+  // Abbassa z-index di c-border per la cattura — era 20, lo mettiamo sotto tutto
+  var border = card.querySelector('.c-border');
+  var savedBorderZ = border ? border.style.zIndex : '';
+  if (border) border.style.zIndex = '0';
+
   await new Promise(function(r){ requestAnimationFrame(function(){ requestAnimationFrame(r); }); });
 
-  // Verifica dopo il reflow
-  var cardRect2 = card.getBoundingClientRect();
-  console.log('[dl] card rect AFTER transform removal:', JSON.stringify({w:cardRect2.width,h:cardRect2.height,top:cardRect2.top,left:cardRect2.left}));
-  console.log('[dl] card children count:', card.children.length);
-
-  // Log z-index dei figli diretti
-  Array.from(card.children).forEach(function(el, i) {
-    var cs = window.getComputedStyle(el);
-    console.log('[dl] child['+i+'] class="'+el.className+'" zIndex='+cs.zIndex+' pos='+cs.position+' display='+cs.display+' w='+cs.width+' h='+cs.height);
-  });
-
+  console.log('[dl] capturing 1831x2539...');
   try {
-    console.log('[dl] calling html2canvas...');
     var canvas = await html2canvas(card, {
       scale: 1,
       useCORS: true,
@@ -606,33 +581,26 @@ async function dl() {
       x: 0,
       y: 0,
       scrollX: 0,
-      scrollY: 0,
-      logging: true
+      scrollY: 0
     });
-    console.log('[dl] canvas size:', canvas.width, 'x', canvas.height);
 
-    // Ispeziona pixel di debug: centro, angolo top-left, zona header
+    // Pixel check
     var ctx = canvas.getContext('2d');
-    function px(x, y) {
-      var d = ctx.getImageData(x, y, 1, 1).data;
-      return 'rgba('+d[0]+','+d[1]+','+d[2]+','+d[3]+')';
-    }
-    console.log('[dl] pixel(50,50)=',     px(50,50),    '  expected: header/border area');
-    console.log('[dl] pixel(900,80)=',    px(900,80),   '  expected: header black bg');
-    console.log('[dl] pixel(900,500)=',   px(900,500),  '  expected: artwork area (dark)');
-    console.log('[dl] pixel(900,1300)=',  px(900,1300), '  expected: info section');
-    console.log('[dl] pixel(900,2000)=',  px(900,2000), '  expected: stat block');
+    function px(x,y){ var d=ctx.getImageData(x,y,1,1).data; return 'rgba('+d[0]+','+d[1]+','+d[2]+','+d[3]+')'; }
+    console.log('[dl] pixel(900,80)=',   px(900,80),   'expected: near-black header');
+    console.log('[dl] pixel(900,500)=',  px(900,500),  'expected: dark artwork');
+    console.log('[dl] pixel(900,2000)=', px(900,2000), 'expected: colored stat block');
 
     var a = document.createElement('a');
     a.download = CARD_FILENAME;
     a.href = canvas.toDataURL('image/png');
     a.click();
-    console.log('[dl] download triggered OK');
+    console.log('[dl] download OK — canvas', canvas.width, 'x', canvas.height);
   } catch(err) {
-    console.error('[dl] html2canvas ERROR:', err);
-    alert('Errore durante la cattura: ' + err.message);
+    console.error('[dl] ERROR:', err);
+    alert('Errore: ' + err.message);
   } finally {
-    console.log('[dl] restoring styles...');
+    if (border) border.style.zIndex = savedBorderZ;
     stage.style.transform = saved.stageTransform;
     stage.style.position  = saved.stagePosition;
     stage.style.top       = saved.stageTop;
@@ -645,7 +613,7 @@ async function dl() {
       outer.style.width    = saved.outerWidth;
       outer.style.height   = saved.outerHeight;
     }
-    console.log('[dl] styles restored. END');
+    console.log('[dl] restored. END');
   }
 }
 
