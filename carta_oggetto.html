@@ -556,6 +556,26 @@ async function dl() {
     inlineStyle(border, 'outlineOffset', '-8px');
   }
 
+
+  // Fix z-index per html2canvas: inlinea stacking context esplicita
+  var zFixes = [
+    [card.querySelector('.c-art'),         'zIndex', '3'],
+    [card.querySelector('.c-lower'),       'zIndex', '4'],
+    [card.querySelector('.c-lower-col'),   'zIndex', '0'],
+    [card.querySelector('.c-lower-bgimg'), 'zIndex', '1'],
+    [card.querySelector('.c-lower-pat'),   'zIndex', '2'],
+    [card.querySelector('.c-lower-brd'),   'zIndex', '6'],
+  ];
+  // Per oggetto: c-info-top, c-info-bot, c-eff
+  var innerEls = card.querySelectorAll('.c-info-top,.c-info-bot,.c-eff,.c-race,.c-racial,.c-deriv,.c-stats');
+  innerEls.forEach(function(el){ zFixes.push([el,'zIndex','5']); });
+
+  zFixes.forEach(function(fix){
+    if (!fix[0]) return;
+    inlined.push({el:fix[0], prop:'zIndex', old: fix[0].style.zIndex});
+    fix[0].style.zIndex = fix[2];
+  });
+
   // 3. c-stat border-right: inlinea come stile esplicito
   card.querySelectorAll('.c-stat').forEach(function(el) {
     inlineComputed(el, 'borderRight');
