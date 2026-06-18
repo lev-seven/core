@@ -288,12 +288,10 @@ td.mn{font-family:'JetBrains Mono',monospace;font-size:11.5px;}
  
   <!-- Carte -->
   <div class="sb-head col-card" id="sbl-card" style="display:none;margin-top:12px">Le Carte</div>
+  <a class="sb-a" href="#c0" data-part="card" style="display:none"><span class="sb-n">🃏</span>Anatomia</a>
   <a class="sb-a" href="#c1" data-part="card" style="display:none"><span class="sb-n">C1</span>Carta Personaggio</a>
-  <a class="sb-a" href="#c2" data-part="card" style="display:none"><span class="sb-n">C2</span>Carta Arma</a>
-  <a class="sb-a" href="#c3" data-part="card" style="display:none"><span class="sb-n">C3</span>Carta Armatura</a>
-  <a class="sb-a" href="#c4" data-part="card" style="display:none"><span class="sb-n">C4</span>Carta Aumento</a>
-  <a class="sb-a" href="#c5" data-part="card" style="display:none"><span class="sb-n">C5</span>Carta Oggetto</a>
-  <a class="sb-a" href="#c6" data-part="card" style="display:none"><span class="sb-n">C6</span>Carta Nemico</a>
+  <a class="sb-a" href="#c2" data-part="card" style="display:none"><span class="sb-n">C2</span>Carta Oggetto</a>
+  <a class="sb-a" href="#c3" data-part="card" style="display:none"><span class="sb-n">C3</span>Carta Nemico</a>
  
   <!-- Dev -->
   <div class="sb-head col-dev" id="sbl-dev" style="display:none;margin-top:12px">Sviluppo</div>
@@ -621,507 +619,321 @@ Requisito: Grado_PG ≥ Grado_destinazione</div>
  
 <!-- ═══════════════ PARTE II — LE CARTE ═══════════════ -->
 <div class="part" id="part-card">
- 
-<!-- SIZE SLIDER -->
+
+<!-- Slider dimensione -->
 <div class="card-size-bar">
   <label>DIMENSIONE CARTE</label>
-  <input type="range" id="card-scale" min="60" max="200" value="100" oninput="scaleCards(this.value)"/>
+  <input type="range" id="card-scale" min="60" max="220" value="100" oninput="scaleCards(this.value)"/>
   <span id="card-scale-val">100%</span>
 </div>
- 
+
 <div class="sec" id="c0">
   <div class="sh card"><span class="sh-n">🃏</span><span class="sh-t">Anatomia delle Carte</span><span class="sh-pip card"></span></div>
-  <p>Ogni carta segue una struttura visiva standard. I numeri indicano le sezioni. Usa lo slider per ingrandire o rimpicciolire le carte.</p>
+  <p>Tre tipi di carte — Personaggio, Oggetto, Nemico — ognuna con struttura standardizzata. I numeri indicano le sezioni. Usa lo slider per ridimensionare. Il bottone <strong>✏ Crea →</strong> apre il designer per stamparla.</p>
 </div>
- 
+
 <!-- C1 CARTA PERSONAGGIO -->
 <div class="sec card-wrap" id="c1">
   <div class="card-subtitle">C1 · Carta Personaggio<a class="btn-crea" href="carta_personaggio.html" target="_blank">✏ Crea →</a></div>
   <div class="card-anatomy">
-    <div class="card-svg-wrap" id="svg-c1">
-      <svg viewBox="0 0 220 308" width="220" height="308" style="border-radius:11px;display:block;filter:drop-shadow(0 6px 24px rgba(0,0,0,0.55))">
-        <rect x="1" y="1" width="218" height="306" rx="11" fill="#131318" stroke="#7c6af7" stroke-width="2"/>
-        <polygon points="174,1 219,1 219,43" fill="#48c88a" opacity="0.92"/>
-        <rect x="1" y="1" width="218" height="55" rx="11" fill="rgba(124,106,247,0.18)"/>
-        <rect x="1" y="47" width="218" height="8" fill="#131318"/>
-        <!-- ① nome e tipo -->
-        <circle cx="10" cy="10" r="7" fill="none" stroke="#7c6af7" stroke-width="1.2"/>
-        <text x="10" y="13.5" fill="#7c6af7" font-size="8" font-family="'JetBrains Mono',monospace" font-weight="700" text-anchor="middle">1</text>
-        <text x="20" y="21" fill="#7c6af7" font-size="11.5" font-family="'Cinzel',serif" font-weight="700">Lyra Sunthorn</text>
-        <rect x="20" y="27" width="56" height="13" rx="3" fill="rgba(124,106,247,0.18)" stroke="rgba(124,106,247,0.4)" stroke-width="0.8"/>
-        <text x="48" y="36" fill="#7c6af7" font-size="7" font-family="'JetBrains Mono',monospace" font-weight="600" text-anchor="middle">PERSONAGGIO</text>
-        <rect x="177" y="27" width="30" height="13" rx="3" fill="rgba(124,106,247,0.15)" stroke="rgba(124,106,247,0.3)" stroke-width="0.8"/>
-        <text x="192" y="36" fill="#7c6af7" font-size="9" font-family="'Cinzel',serif" font-weight="700" text-anchor="middle">G2</text>
-        <!-- ② rarità angolo -->
-        <text x="205" y="10" fill="#48c88a" font-size="8" font-family="'JetBrains Mono',monospace" font-weight="700">②</text>
-        <!-- ③ arte + razza -->
-        <rect x="1" y="55" width="218" height="66" fill="#0c0c10"/>
-        <text x="109" y="92" fill="#7c6af7" font-size="30" text-anchor="middle" opacity="0.1" font-family="serif">🧝</text>
-        <circle cx="10" cy="64" r="6" fill="none" stroke="#e8a030" stroke-width="1.2"/>
-        <text x="10" y="67.5" fill="#e8a030" font-size="7" font-family="'JetBrains Mono',monospace" font-weight="700" text-anchor="middle">3</text>
-        <rect x="1" y="121" width="218" height="18" fill="rgba(124,106,247,0.06)"/>
-        <text x="13" y="133" fill="#7c6af7" font-size="8" font-family="'Cinzel',serif" font-weight="700">🧬 Elfo</text>
-        <text x="60" y="133" fill="#2ec4a0" font-size="7.5" font-family="'JetBrains Mono',monospace" font-weight="700">+2 CORPO</text>
-        <text x="118" y="133" fill="#f0a500" font-size="7.5" font-family="'JetBrains Mono',monospace" font-weight="700">+1 MENTE</text>
-        <!-- ④ stat -->
-        <line x1="1" y1="139" x2="219" y2="139" stroke="rgba(255,255,255,0.07)" stroke-width="0.8"/>
-        <circle cx="10" cy="148" r="6" fill="none" stroke="#2ec4a0" stroke-width="1.2"/>
-        <text x="10" y="151.5" fill="#2ec4a0" font-size="7" font-family="'JetBrains Mono',monospace" font-weight="700" text-anchor="middle">4</text>
-        <text x="36" y="151" fill="#2ec4a0" font-size="6.5" font-family="'Cinzel',serif" font-weight="700" text-anchor="middle" letter-spacing="0.8">CORPO</text>
-        <text x="36" y="165" fill="#2ec4a0" font-size="18" font-family="'JetBrains Mono',monospace" font-weight="900" text-anchor="middle">8</text>
-        <text x="36" y="177" fill="#7c6af7" font-size="9" font-family="'JetBrains Mono',monospace" text-anchor="middle">+2</text>
-        <text x="109" y="151" fill="#f0a500" font-size="6.5" font-family="'Cinzel',serif" font-weight="700" text-anchor="middle" letter-spacing="0.8">MENTE</text>
-        <text x="109" y="165" fill="#f0a500" font-size="18" font-family="'JetBrains Mono',monospace" font-weight="900" text-anchor="middle">5</text>
-        <text x="109" y="177" fill="#7c6af7" font-size="9" font-family="'JetBrains Mono',monospace" text-anchor="middle">+1</text>
-        <text x="182" y="151" fill="#c94040" font-size="6.5" font-family="'Cinzel',serif" font-weight="700" text-anchor="middle" letter-spacing="0.8">ANIMA</text>
-        <text x="182" y="165" fill="#c94040" font-size="18" font-family="'JetBrains Mono',monospace" font-weight="900" text-anchor="middle">5</text>
-        <text x="182" y="177" fill="#7c6af7" font-size="9" font-family="'JetBrains Mono',monospace" text-anchor="middle">+1</text>
-        <!-- ⑤ derivati -->
-        <line x1="1" y1="182" x2="219" y2="182" stroke="rgba(255,255,255,0.07)" stroke-width="0.8"/>
-        <circle cx="10" cy="191" r="6" fill="none" stroke="#f0a500" stroke-width="1.2"/>
-        <text x="10" y="194.5" fill="#f0a500" font-size="7" font-family="'JetBrains Mono',monospace" font-weight="700" text-anchor="middle">5</text>
-        <text x="20" y="194" fill="#55536a" font-size="7" font-family="'JetBrains Mono',monospace">HP</text>
-        <text x="34" y="194" fill="#e8e4d8" font-size="8.5" font-family="'JetBrains Mono',monospace" font-weight="700">18</text>
-        <text x="64" y="194" fill="#55536a" font-size="7" font-family="'JetBrains Mono',monospace">VEL</text>
-        <text x="80" y="194" fill="#e8e4d8" font-size="8.5" font-family="'JetBrains Mono',monospace" font-weight="700">8m</text>
-        <text x="110" y="194" fill="#55536a" font-size="7" font-family="'JetBrains Mono',monospace">CAP</text>
-        <text x="128" y="194" fill="#e8e4d8" font-size="8.5" font-family="'JetBrains Mono',monospace" font-weight="700">24kg</text>
-        <!-- ⑥ soglie -->
-        <text x="13" y="208" fill="#55536a" font-size="6.5" font-family="'Cinzel',serif" letter-spacing="1">SOGLIE DIFESA</text>
-        <circle cx="118" cy="204" r="6" fill="none" stroke="#c94040" stroke-width="1.2"/>
-        <text x="118" y="207.5" fill="#c94040" font-size="7" font-family="'JetBrains Mono',monospace" font-weight="700" text-anchor="middle">6</text>
-        <line x1="13" y1="211" x2="206" y2="211" stroke="rgba(255,255,255,0.05)" stroke-width="0.5"/>
-        <rect x="13" y="215" width="58" height="36" rx="5" fill="rgba(46,196,160,0.13)" stroke="rgba(46,196,160,0.4)" stroke-width="0.8"/>
-        <text x="42" y="226" fill="#2ec4a0" font-size="6.5" font-family="'Cinzel',serif" text-anchor="middle">CORPO ★</text>
-        <text x="42" y="242" fill="#2ec4a0" font-size="15" font-family="'JetBrains Mono',monospace" font-weight="900" text-anchor="middle">11</text>
-        <rect x="80" y="215" width="54" height="36" rx="5" fill="#1a1a26" stroke="rgba(255,255,255,0.07)" stroke-width="0.5"/>
-        <text x="107" y="226" fill="#f0a500" font-size="6.5" font-family="'Cinzel',serif" text-anchor="middle">MENTE</text>
-        <text x="107" y="242" fill="#f0a500" font-size="15" font-family="'JetBrains Mono',monospace" font-weight="900" text-anchor="middle">3</text>
-        <rect x="143" y="215" width="54" height="36" rx="5" fill="#1a1a26" stroke="rgba(255,255,255,0.07)" stroke-width="0.5"/>
-        <text x="170" y="226" fill="#c94040" font-size="6.5" font-family="'Cinzel',serif" text-anchor="middle">ANIMA</text>
-        <text x="170" y="242" fill="#c94040" font-size="15" font-family="'JetBrains Mono',monospace" font-weight="900" text-anchor="middle">3</text>
-        <!-- ⑦ talento -->
-        <circle cx="10" cy="259" r="6" fill="none" stroke="#e8a030" stroke-width="1.2"/>
-        <text x="10" y="262.5" fill="#e8a030" font-size="7" font-family="'JetBrains Mono',monospace" font-weight="700" text-anchor="middle">7</text>
-        <rect x="20" y="254" width="196" height="16" rx="4" fill="#0c0c10" stroke="rgba(124,106,247,0.18)" stroke-width="0.8"/>
-        <text x="28" y="264" fill="#f0a500" font-size="7" font-family="'Cinzel',serif" font-weight="700">⭐ Grazia Elfica:</text>
-        <text x="105" y="264" fill="#9490a0" font-size="7" font-family="'JetBrains Mono',monospace">+3m · vant. Mente</text>
-        <!-- footer -->
-        <line x1="1" y1="277" x2="219" y2="277" stroke="rgba(255,255,255,0.07)" stroke-width="0.8"/>
-        <text x="55" y="291" fill="#48c88a" font-size="8" font-family="'Cinzel',serif" font-weight="700" text-anchor="middle">Non Comune</text>
-        <text x="55" y="300" fill="#55536a" font-size="6.5" font-family="'JetBrains Mono',monospace" text-anchor="middle">Rarità</text>
-        <line x1="109" y1="280" x2="109" y2="305" stroke="rgba(255,255,255,0.07)" stroke-width="0.8"/>
-        <text x="164" y="291" fill="#e8e4d8" font-size="8" font-family="'Cinzel',serif" font-weight="700" text-anchor="middle">Grado 2</text>
-        <text x="164" y="300" fill="#55536a" font-size="6.5" font-family="'JetBrains Mono',monospace" text-anchor="middle">Progressione</text>
-      </svg>
-    </div>
+    <div class="card-svg-wrap" id="svg-c1"><svg viewBox="0 0 240 332" width="240" height="332" style="border-radius:14px;display:block;filter:drop-shadow(0 8px 28px rgba(0,0,0,0.6));flex-shrink:0">
+  <!-- Sfondo -->
+  <rect x="0" y="0" width="240" height="332" rx="14" fill="#e4f0e6"/>
+  <!-- Bordo -->
+  <rect x="0" y="0" width="240" height="332" rx="14" fill="none" stroke="#0c3518" stroke-width="7"/>
+  <rect x="3.5" y="3.5" width="233" height="325" rx="11" fill="none" stroke="#1a6b2a" stroke-width="3"/>
+  <!-- Header nero -->
+  <rect x="3" y="3" width="234" height="42" rx="11" fill="#060606"/>
+  <rect x="3" y="30" width="234" height="15" fill="#060606"/>
+  <text x="16" y="29" fill="#ffffff" font-size="14" font-family="'Cinzel',serif" font-weight="900" letter-spacing="1">LYRA SUNTHORN</text>
+  <!-- Esagono grado -->
+  <polygon points="225,6 238,13 238,29 225,36 212,29 212,13" fill="#ffffff"/>
+  <text x="225" y="27" fill="#060606" font-size="12" font-family="'Cinzel',serif" font-weight="900" text-anchor="middle">2</text>
+  <!-- Label numero 1 -->
+  <circle cx="10" cy="10" r="6" fill="none" stroke="#e8a030" stroke-width="1.2"/>
+  <text x="10" y="13.5" fill="#e8a030" font-size="7" font-family="'JetBrains Mono',monospace" font-weight="700" text-anchor="middle">1</text>
+  <!-- Artwork -->
+  <rect x="3" y="45" width="234" height="108" fill="#141414"/>
+  <!-- Bande rarità sull'artwork -->
+  <rect x="3" y="45" width="234" height="7" fill="#48c88a" opacity="0.85"/>
+  <rect x="3" y="146" width="234" height="7" fill="#48c88a" opacity="0.85"/>
+  <text x="120" y="107" fill="#1a6b2a" font-size="36" font-family="serif" opacity="0.2" text-anchor="middle">🧝</text>
+  <!-- Label numero 2 -->
+  <circle cx="10" cy="56" r="6" fill="none" stroke="#48c88a" stroke-width="1.2"/>
+  <text x="10" y="59.5" fill="#48c88a" font-size="7" font-family="'JetBrains Mono',monospace" font-weight="700" text-anchor="middle">2</text>
+  <!-- Sezione info blu -->
+  <rect x="3" y="153" width="234" height="80" fill="url(#pgBlue)"/>
+  <defs>
+    <linearGradient id="pgBlue" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#b8d0ec"/>
+      <stop offset="100%" stop-color="#9ebcdf"/>
+    </linearGradient>
+  </defs>
+  <!-- Linee divisorie info -->
+  <line x1="3" y1="153" x2="237" y2="153" stroke="#060606" stroke-width="2"/>
+  <line x1="83" y1="157" x2="83" y2="178" stroke="rgba(0,0,0,0.2)" stroke-width="1"/>
+  <line x1="163" y1="157" x2="163" y2="178" stroke="rgba(0,0,0,0.2)" stroke-width="1"/>
+  <!-- Label razza -->
+  <text x="42" y="164" fill="rgba(0,0,0,0.45)" font-size="7" font-family="'Cinzel',serif" font-weight="700" text-anchor="middle" letter-spacing="1">RAZZA</text>
+  <text x="42" y="176" fill="#0a0a0a" font-size="9" font-family="'Cinzel',serif" font-weight="900" text-anchor="middle">Elfo</text>
+  <text x="122" y="164" fill="rgba(0,0,0,0.45)" font-size="7" font-family="'Cinzel',serif" font-weight="700" text-anchor="middle" letter-spacing="1">PRIMARIA</text>
+  <text x="122" y="176" fill="#1a3080" font-size="9" font-family="'JetBrains Mono',monospace" font-weight="700" text-anchor="middle">+2 MENTE</text>
+  <text x="202" y="164" fill="rgba(0,0,0,0.45)" font-size="7" font-family="'Cinzel',serif" font-weight="700" text-anchor="middle" letter-spacing="1">SECONDARIA</text>
+  <text x="202" y="176" fill="#1a3080" font-size="9" font-family="'JetBrains Mono',monospace" font-weight="700" text-anchor="middle">+1 CORPO</text>
+  <!-- Label numero 3 -->
+  <circle cx="10" cy="163" r="6" fill="none" stroke="#5890e8" stroke-width="1.2"/>
+  <text x="10" y="166.5" fill="#5890e8" font-size="7" font-family="'JetBrains Mono',monospace" font-weight="700" text-anchor="middle">3</text>
+  <!-- Banda talento gialla -->
+  <rect x="10" y="181" width="220" height="20" rx="5" fill="#f8d840" stroke="#c09818" stroke-width="2"/>
+  <text x="120" y="193" fill="#1a0e00" font-size="7.5" font-family="'Cinzel',serif" font-weight="700" text-anchor="middle">⭐ Grazia Elfica: vantaggio Mente</text>
+  <!-- Label numero 4 -->
+  <circle cx="10" cy="191" r="6" fill="none" stroke="#f0a500" stroke-width="1.2"/>
+  <text x="10" y="194.5" fill="#f0a500" font-size="7" font-family="'JetBrains Mono',monospace" font-weight="700" text-anchor="middle">4</text>
+  <!-- Derivati HP VEL CAP -->
+  <line x1="3" y1="204" x2="237" y2="204" stroke="rgba(0,0,0,0.18)" stroke-width="1"/>
+  <text x="42" y="211" fill="rgba(0,0,0,0.45)" font-size="6.5" font-family="'Cinzel',serif" font-weight="700" text-anchor="middle">HP</text>
+  <text x="42" y="222" fill="#0a0a0a" font-size="13" font-family="'JetBrains Mono',monospace" font-weight="700" text-anchor="middle">18</text>
+  <text x="120" y="211" fill="rgba(0,0,0,0.45)" font-size="6.5" font-family="'Cinzel',serif" font-weight="700" text-anchor="middle">VELOCITÀ</text>
+  <text x="120" y="222" fill="#0a0a0a" font-size="13" font-family="'JetBrains Mono',monospace" font-weight="700" text-anchor="middle">5m</text>
+  <text x="202" y="211" fill="rgba(0,0,0,0.45)" font-size="6.5" font-family="'Cinzel',serif" font-weight="700" text-anchor="middle">CAP.</text>
+  <text x="202" y="222" fill="#0a0a0a" font-size="13" font-family="'JetBrains Mono',monospace" font-weight="700" text-anchor="middle">15kg</text>
+  <!-- Label numero 5 -->
+  <circle cx="10" cy="214" r="6" fill="none" stroke="#2ec4a0" stroke-width="1.2"/>
+  <text x="10" y="217.5" fill="#2ec4a0" font-size="7" font-family="'JetBrains Mono',monospace" font-weight="700" text-anchor="middle">5</text>
+  <!-- Stat blocks 3 colori -->
+  <rect x="3" y="232" width="78" height="97" fill="rgba(170,25,25,0.9)"/>
+  <rect x="81" y="232" width="78" height="97" fill="rgba(170,130,0,0.9)"/>
+  <rect x="159" y="232" width="78" height="97" fill="rgba(22,100,26,0.9)"/>
+  <line x1="3" y1="232" x2="237" y2="232" stroke="rgba(0,0,0,0.35)" stroke-width="2"/>
+  <!-- Raggi decorativi -->
+  <line x1="42" y1="232" x2="3" y2="329" stroke="rgba(255,255,255,0.04)" stroke-width="12"/>
+  <line x1="120" y1="232" x2="81" y2="329" stroke="rgba(255,255,255,0.04)" stroke-width="12"/>
+  <line x1="198" y1="232" x2="159" y2="329" stroke="rgba(255,255,255,0.04)" stroke-width="12"/>
+  <!-- Label stat -->
+  <text x="42" y="247" fill="rgba(255,255,255,0.88)" font-size="7.5" font-family="'Cinzel',serif" font-weight="900" text-anchor="middle" letter-spacing="1">CORPO</text>
+  <text x="120" y="247" fill="rgba(255,255,255,0.88)" font-size="7.5" font-family="'Cinzel',serif" font-weight="900" text-anchor="middle" letter-spacing="1">MENTE</text>
+  <text x="198" y="247" fill="rgba(255,255,255,0.88)" font-size="7.5" font-family="'Cinzel',serif" font-weight="900" text-anchor="middle" letter-spacing="1">ANIMA</text>
+  <!-- Valori stat -->
+  <text x="42" y="295" fill="#fff" font-size="40" font-family="'JetBrains Mono',monospace" font-weight="700" text-anchor="middle">5</text>
+  <text x="120" y="295" fill="#fff" font-size="40" font-family="'JetBrains Mono',monospace" font-weight="700" text-anchor="middle">8</text>
+  <text x="198" y="295" fill="#fff" font-size="40" font-family="'JetBrains Mono',monospace" font-weight="700" text-anchor="middle">5</text>
+  <!-- MOD -->
+  <text x="42" y="316" fill="rgba(255,255,255,0.82)" font-size="10" font-family="'JetBrains Mono',monospace" font-weight="700" text-anchor="middle">+1</text>
+  <text x="120" y="316" fill="rgba(255,255,255,0.82)" font-size="10" font-family="'JetBrains Mono',monospace" font-weight="700" text-anchor="middle">+2</text>
+  <text x="198" y="316" fill="rgba(255,255,255,0.82)" font-size="10" font-family="'JetBrains Mono',monospace" font-weight="700" text-anchor="middle">+1</text>
+  <!-- Label numero 6 -->
+  <circle cx="10" cy="242" r="6" fill="none" stroke="rgba(255,255,255,0.7)" stroke-width="1.2"/>
+  <text x="10" y="245.5" fill="rgba(255,255,255,0.7)" font-size="7" font-family="'JetBrains Mono',monospace" font-weight="700" text-anchor="middle">6</text>
+</svg></div>
     <div class="card-callouts">
-      <div class="cc"><div class="cc-bubble">1</div><div class="cc-body"><div class="cc-t">Nome e Tipo</div><div class="cc-d">Nome del personaggio e badge "PERSONAGGIO". Il Grado (G1–G4) in viola — scala tutte le formule di danno e protezione.</div></div></div>
-      <div class="cc"><div class="cc-bubble" style="border-color:var(--gold);color:var(--gold)">2</div><div class="cc-body"><div class="cc-t">Rarità (angolo)</div><div class="cc-d">Triangolo colorato nell'angolo in alto a destra. Grigio = Comune, Verde = Non Comune, Blu = Rara, Viola = Molto Rara, Oro = Leggendaria, Rosso = Artefatto.</div></div></div>
-      <div class="cc"><div class="cc-bubble" style="border-color:var(--gold);color:var(--gold)">3</div><div class="cc-body"><div class="cc-t">Arte e Banda Razza</div><div class="cc-d">Area illustrazione. La banda colorata sotto mostra nome razza e i bonus stat (+2/+1 standard o +1/+1/+1 bilanciata).</div></div></div>
-      <div class="cc"><div class="cc-bubble" style="border-color:var(--corpo);color:var(--corpo)">4</div><div class="cc-body"><div class="cc-t">Caratteristiche e MOD</div><div class="cc-d">Corpo, Mente, Anima con valore finale (base + bonus razza). Il badge viola sotto è il Modificatore (STAT / 3) usato in tutte le formule.</div></div></div>
-      <div class="cc"><div class="cc-bubble" style="border-color:var(--mente);color:var(--mente)">5</div><div class="cc-body"><div class="cc-t">Statistiche Derivate</div><div class="cc-d">HP = somma delle stat finali. Velocità = Corpo finale m/turno. Capacità = Corpo × 3 kg.</div></div></div>
-      <div class="cc"><div class="cc-bubble" style="border-color:var(--anima);color:var(--anima)">6</div><div class="cc-body"><div class="cc-t">Soglie Difesa</div><div class="cc-d">Le tre soglie per asse. L'asse principale dell'armatura è evidenziato con ★ e vale MOD + Grado_arm × 3. Gli altri assi valgono MOD + Grado_arm.</div></div></div>
-      <div class="cc"><div class="cc-bubble" style="border-color:var(--gold);color:var(--gold)">7</div><div class="cc-body"><div class="cc-t">Talento Raziale</div><div class="cc-d">Il talento passivo della razza. Sempre attivo, non richiede azione. Non occupa slot nel mazzo.</div></div></div>
-    </div>
+      <div class="cc"><div class="cc-bubble" style="border-color:var(--gold);color:var(--gold)">1</div><div class="cc-body"><div class="cc-t">Header — Nome e Grado</div><div class="cc-d">Banda nera con nome in maiuscolo. Il simbolo in alto a destra (esagono/stella/cerchio, personalizzabile) contiene il Grado 1–4 che scala tutte le formule di danno, armatura e slot.</div></div></div>
+      <div class="cc"><div class="cc-bubble" style="border-color:#48c88a;color:#48c88a">2</div><div class="cc-body"><div class="cc-t">Cortoni Rarità sull'Artwork</div><div class="cc-d">Bande colorate sui bordi superiore e inferiore dell'artwork indicano la Rarità: grigio Comune, verde Non Comune, blu Rara, viola Molto Rara, oro Leggendaria, rosso Artefatto.</div></div></div>
+      <div class="cc"><div class="cc-bubble" style="border-color:#5890e8;color:#5890e8">3</div><div class="cc-body"><div class="cc-t">Sezione Info — Razza e Bonus</div><div class="cc-d">Nome razza e bonus stat: distribuzione Standard (+2 a una stat, +1 a un'altra diversa) o Bilanciata (+1 a tutte e tre). Determina le stat finali usate in tutti i calcoli.</div></div></div>
+      <div class="cc"><div class="cc-bubble" style="border-color:#f0a500;color:#f0a500">4</div><div class="cc-body"><div class="cc-t">Banda Talento Raziale</div><div class="cc-d">Il talento passivo della razza, sempre attivo. Non occupa slot. Personalizzabile nel designer: sfondo, bordo, dimensione testo.</div></div></div>
+      <div class="cc"><div class="cc-bubble" style="border-color:#2ec4a0;color:#2ec4a0">5</div><div class="cc-body"><div class="cc-t">Derivati — HP, Velocità, Cap.</div><div class="cc-d">HP = Corpo+Mente+Anima (stat finali). Velocità = Corpo finale m/turno. Capacità = Corpo×3 kg.</div></div></div>
+      <div class="cc"><div class="cc-bubble" style="border-color:rgba(255,255,255,0.6);color:rgba(255,255,255,0.6)">6</div><div class="cc-body"><div class="cc-t">Blocchi Stat — CORPO / MENTE / ANIMA</div><div class="cc-d">Tre blocchi colorati: rosso Corpo, giallo Mente, verde Anima. Valore grande = stat finale. MOD sotto = floor(stat/3), usato in tutte le formule di attacco e difesa.</div></div></div></div>
   </div>
 </div>
- 
-<!-- C2 CARTA ARMA -->
+
+<!-- C2 CARTA OGGETTO (arma/aumento/oggetto) -->
 <div class="sec card-wrap" id="c2">
-  <div class="card-subtitle">C2 · Carta Arma<a class="btn-crea" href="carta_oggetto.html" target="_blank">✏ Crea →</a></div>
+  <div class="card-subtitle">C2 · Carta Oggetto (Arma / Aumento / Oggetto)<a class="btn-crea" href="carta_oggetto.html" target="_blank">✏ Crea →</a></div>
   <div class="card-anatomy flip">
-    <div class="card-svg-wrap" id="svg-c2">
-      <svg viewBox="0 0 220 308" width="220" height="308" style="border-radius:11px;display:block;filter:drop-shadow(0 6px 24px rgba(0,0,0,0.55))">
-        <rect x="1" y="1" width="218" height="306" rx="11" fill="#131318" stroke="#c94040" stroke-width="2"/>
-        <polygon points="174,1 219,1 219,43" fill="#5890e8" opacity="0.92"/>
-        <rect x="1" y="1" width="218" height="54" rx="11" fill="rgba(201,64,64,0.16)"/>
-        <rect x="1" y="46" width="218" height="8" fill="#131318"/>
-        <!-- ① header -->
-        <circle cx="10" cy="10" r="6" fill="none" stroke="#c94040" stroke-width="1.2"/>
-        <text x="10" y="13.5" fill="#c94040" font-size="7" font-family="'JetBrains Mono',monospace" font-weight="700" text-anchor="middle">1</text>
-        <text x="20" y="21" fill="#c94040" font-size="11.5" font-family="'Cinzel',serif" font-weight="700">Lama del Vuoto</text>
-        <rect x="20" y="27" width="40" height="13" rx="3" fill="rgba(201,64,64,0.16)" stroke="rgba(201,64,64,0.4)" stroke-width="0.8"/>
-        <text x="40" y="36" fill="#c94040" font-size="7" font-family="'JetBrains Mono',monospace" font-weight="600" text-anchor="middle">⚔️ ARMA</text>
-        <text x="70" y="36" fill="#55536a" font-size="7.5" font-family="'JetBrains Mono',monospace">2kg · Mischia</text>
-        <rect x="177" y="27" width="30" height="13" rx="3" fill="rgba(124,106,247,0.15)" stroke="rgba(124,106,247,0.3)" stroke-width="0.8"/>
-        <text x="192" y="36" fill="#7c6af7" font-size="9" font-family="'Cinzel',serif" font-weight="700" text-anchor="middle">G2</text>
-        <!-- ② arte + tag + origine -->
-        <rect x="1" y="54" width="218" height="60" fill="#0c0c10"/>
-        <text x="109" y="87" fill="#c94040" font-size="28" text-anchor="middle" opacity="0.1" font-family="serif">⚔️</text>
-        <circle cx="10" cy="62" r="6" fill="none" stroke="#c94040" stroke-width="1.2"/>
-        <text x="10" y="65.5" fill="#c94040" font-size="7" font-family="'JetBrains Mono',monospace" font-weight="700" text-anchor="middle">2</text>
-        <rect x="13" y="118" width="42" height="12" rx="5" fill="rgba(0,0,0,0.45)" stroke="rgba(255,255,255,0.09)" stroke-width="0.5"/>
-        <text x="34" y="126" fill="#55536a" font-size="7" font-family="'JetBrains Mono',monospace" text-anchor="middle">#Ombra</text>
-        <rect x="60" y="118" width="36" height="12" rx="5" fill="rgba(0,0,0,0.45)" stroke="rgba(255,255,255,0.09)" stroke-width="0.5"/>
-        <text x="78" y="126" fill="#55536a" font-size="7" font-family="'JetBrains Mono',monospace" text-anchor="middle">#Lama</text>
-        <text x="206" y="126" fill="#55536a" font-size="6.5" font-family="'JetBrains Mono',monospace" text-anchor="end">MAGIA ARCANA</text>
-        <!-- ③ lore -->
-        <circle cx="10" cy="136" r="6" fill="none" stroke="#c94040" stroke-width="1.2"/>
-        <text x="10" y="139.5" fill="#c94040" font-size="7" font-family="'JetBrains Mono',monospace" font-weight="700" text-anchor="middle">3</text>
-        <rect x="20" y="131" width="196" height="24" rx="3" fill="rgba(201,64,64,0.06)"/>
-        <line x1="20" y1="131" x2="20" y2="155" stroke="#c94040" stroke-width="2"/>
-        <text x="26" y="142" fill="#55536a" font-size="7.5" font-family="'JetBrains Mono',monospace" font-style="italic">Forgiata tra i piani. I colpi fanno</text>
-        <text x="26" y="152" fill="#55536a" font-size="7.5" font-family="'JetBrains Mono',monospace" font-style="italic">male anche dove non toccano.</text>
-        <!-- ④ badge azione -->
-        <circle cx="10" cy="165" r="6" fill="none" stroke="#5890e8" stroke-width="1.2"/>
-        <text x="10" y="168.5" fill="#5890e8" font-size="7" font-family="'JetBrains Mono',monospace" font-weight="700" text-anchor="middle">4</text>
-        <rect x="20" y="159" width="198" height="34" rx="5" fill="#1a1a26" stroke="rgba(255,255,255,0.07)" stroke-width="0.8"/>
-        <line x1="20" y1="159" x2="20" y2="193" stroke="#5890e8" stroke-width="2.5"/>
-        <rect x="24" y="163" width="33" height="11" rx="2" fill="rgba(88,144,232,0.15)" stroke="rgba(88,144,232,0.35)" stroke-width="0.5"/>
-        <text x="40.5" y="171" fill="#5890e8" font-size="6.5" font-family="'JetBrains Mono',monospace" font-weight="700" text-anchor="middle">LEGGERA</text>
-        <text x="62" y="171" fill="#2ec4a0" font-size="7.5" font-family="'JetBrains Mono',monospace">COR</text>
-        <text x="216" y="171" fill="#e8e4d8" font-size="9" font-family="'JetBrains Mono',monospace" font-weight="700" text-anchor="end">2d12+MOD</text>
-        <!-- ⑤ effetto -->
-        <circle cx="30" cy="182" r="5" fill="none" stroke="#f0a500" stroke-width="1"/>
-        <text x="30" y="185" fill="#f0a500" font-size="6" font-family="'JetBrains Mono',monospace" font-weight="700" text-anchor="middle">5</text>
-        <text x="40" y="182" fill="#9490a0" font-size="8" font-family="'JetBrains Mono',monospace">Fendente oscuro.</text>
-        <rect x="124" y="177" width="48" height="11" rx="2" fill="rgba(160,112,232,0.12)" stroke="rgba(160,112,232,0.3)" stroke-width="0.5"/>
-        <text x="148" y="185" fill="#a070e8" font-size="7" font-family="'JetBrains Mono',monospace" text-anchor="middle">Necrotico</text>
-        <!-- ⑥ utilizzi azione 2 -->
-        <rect x="20" y="197" width="198" height="38" rx="5" fill="#1a1a26" stroke="rgba(255,255,255,0.07)" stroke-width="0.8"/>
-        <line x1="20" y1="197" x2="20" y2="235" stroke="#5890e8" stroke-width="2.5"/>
-        <rect x="24" y="201" width="33" height="11" rx="2" fill="rgba(88,144,232,0.15)" stroke="rgba(88,144,232,0.35)" stroke-width="0.5"/>
-        <text x="40.5" y="209" fill="#5890e8" font-size="6.5" font-family="'JetBrains Mono',monospace" font-weight="700" text-anchor="middle">LEGGERA</text>
-        <text x="62" y="209" fill="#f0a500" font-size="7.5" font-family="'JetBrains Mono',monospace">MEN</text>
-        <text x="216" y="209" fill="#e8e4d8" font-size="9" font-family="'JetBrains Mono',monospace" font-weight="700" text-anchor="end">2d6+MOD</text>
-        <text x="24" y="220" fill="#9490a0" font-size="8" font-family="'JetBrains Mono',monospace">Tocco psichico → Spaventato 2t</text>
-        <circle cx="10" cy="229" r="6" fill="none" stroke="#c94040" stroke-width="1.2"/>
-        <text x="10" y="232.5" fill="#c94040" font-size="7" font-family="'JetBrains Mono',monospace" font-weight="700" text-anchor="middle">6</text>
-        <circle cx="24" cy="230" r="3.2" fill="#c94040"/>
-        <circle cx="33" cy="230" r="3.2" fill="#c94040"/>
-        <circle cx="42" cy="230" r="3.2" fill="transparent" stroke="#c94040" stroke-width="0.8" opacity="0.4"/>
-        <text x="50" y="233" fill="#55536a" font-size="7" font-family="'JetBrains Mono',monospace">rec.Lungo</text>
-        <!-- ⑦ footer -->
-        <line x1="1" y1="242" x2="219" y2="242" stroke="rgba(255,255,255,0.07)" stroke-width="0.8"/>
-        <circle cx="10" cy="251" r="6" fill="none" stroke="#55536a" stroke-width="1.2"/>
-        <text x="10" y="254.5" fill="#55536a" font-size="7" font-family="'JetBrains Mono',monospace" font-weight="700" text-anchor="middle">7</text>
-        <text x="40" y="257" fill="#5890e8" font-size="8.5" font-family="'Cinzel',serif" font-weight="700" text-anchor="middle">Rara</text>
-        <text x="40" y="266" fill="#55536a" font-size="6.5" font-family="'JetBrains Mono',monospace" text-anchor="middle">Rarità</text>
-        <line x1="80" y1="245" x2="80" y2="270" stroke="rgba(255,255,255,0.07)" stroke-width="0.8"/>
-        <text x="110" y="257" fill="#e8e4d8" font-size="8.5" font-family="'Cinzel',serif" font-weight="700" text-anchor="middle">2 kg</text>
-        <text x="110" y="266" fill="#55536a" font-size="6.5" font-family="'JetBrains Mono',monospace" text-anchor="middle">Peso</text>
-        <line x1="140" y1="245" x2="140" y2="270" stroke="rgba(255,255,255,0.07)" stroke-width="0.8"/>
-        <text x="180" y="257" fill="#e8e4d8" font-size="8.5" font-family="'Cinzel',serif" font-weight="700" text-anchor="middle">1 azione</text>
-        <text x="180" y="266" fill="#55536a" font-size="6.5" font-family="'JetBrains Mono',monospace" text-anchor="middle">Attivazione</text>
-      </svg>
-    </div>
+    <div class="card-svg-wrap" id="svg-c2"><svg viewBox="0 0 240 332" width="240" height="332" style="border-radius:14px;display:block;filter:drop-shadow(0 8px 28px rgba(0,0,0,0.6));flex-shrink:0">
+  <rect x="0" y="0" width="240" height="332" rx="14" fill="#ede8f8"/>
+  <rect x="0" y="0" width="240" height="332" rx="14" fill="none" stroke="#1c0e44" stroke-width="7"/>
+  <rect x="3.5" y="3.5" width="233" height="325" rx="11" fill="none" stroke="#3d2a7a" stroke-width="3"/>
+  <!-- Header -->
+  <rect x="3" y="3" width="234" height="42" rx="11" fill="#060606"/>
+  <rect x="3" y="30" width="234" height="15" fill="#060606"/>
+  <text x="16" y="29" fill="#ffffff" font-size="13" font-family="'Cinzel',serif" font-weight="900" letter-spacing="1">LAMA DEL VUOTO</text>
+  <!-- Esagono grado -->
+  <polygon points="225,6 238,13 238,29 225,36 212,29 212,13" fill="#ffffff"/>
+  <text x="225" y="27" fill="#060606" font-size="12" font-family="'Cinzel',serif" font-weight="900" text-anchor="middle">2</text>
+  <!-- Label 1 -->
+  <circle cx="10" cy="10" r="6" fill="none" stroke="#e8a030" stroke-width="1.2"/>
+  <text x="10" y="13.5" fill="#e8a030" font-size="7" font-family="'JetBrains Mono',monospace" font-weight="700" text-anchor="middle">1</text>
+  <!-- Artwork -->
+  <rect x="3" y="45" width="234" height="100" fill="#141414"/>
+  <!-- Bande rarità sull'artwork -->
+  <rect x="3" y="45" width="234" height="7" fill="#5890e8" opacity="0.85"/>
+  <rect x="3" y="138" width="234" height="7" fill="#5890e8" opacity="0.85"/>
+  <text x="120" y="101" fill="#3d2a7a" font-size="32" font-family="serif" opacity="0.2" text-anchor="middle">⚔️</text>
+  <!-- Label 2 -->
+  <circle cx="10" cy="56" r="6" fill="none" stroke="#5890e8" stroke-width="1.2"/>
+  <text x="10" y="59.5" fill="#5890e8" font-size="7" font-family="'JetBrains Mono',monospace" font-weight="700" text-anchor="middle">2</text>
+  <!-- Info metadati blu -->
+  <rect x="3" y="145" width="234" height="52" fill="url(#objBlue)"/>
+  <defs>
+    <linearGradient id="objBlue" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#b8d0ec"/>
+      <stop offset="100%" stop-color="#9ebcdf"/>
+    </linearGradient>
+  </defs>
+  <line x1="3" y1="145" x2="237" y2="145" stroke="#060606" stroke-width="2"/>
+  <!-- Riga tipo / tag / origine -->
+  <line x1="3" y1="145" x2="237" y2="145" stroke="none"/>
+  <text x="62" y="155" fill="rgba(0,0,0,0.45)" font-size="6.5" font-family="'Cinzel',serif" font-weight="700" text-anchor="middle">TIPO</text>
+  <text x="62" y="166" fill="#0a0a0a" font-size="9" font-family="'Cinzel',serif" font-weight="900" text-anchor="middle">Arma</text>
+  <line x1="122" y1="148" x2="122" y2="170" stroke="rgba(0,0,0,0.18)" stroke-width="1"/>
+  <text x="175" y="155" fill="rgba(0,0,0,0.45)" font-size="6.5" font-family="'Cinzel',serif" font-weight="700" text-anchor="middle">TAG · ORIGINE</text>
+  <text x="175" y="166" fill="#0a0a0a" font-size="8" font-family="'Outfit',sans-serif" font-weight="700" text-anchor="middle">#Lama · Magia</text>
+  <!-- Label 3 -->
+  <circle cx="10" cy="155" r="6" fill="none" stroke="#3d2a7a" stroke-width="1.2"/>
+  <text x="10" y="158.5" fill="#3d2a7a" font-size="7" font-family="'JetBrains Mono',monospace" font-weight="700" text-anchor="middle">3</text>
+  <!-- Riga peso / attivazione -->
+  <line x1="3" y1="171" x2="237" y2="171" stroke="rgba(0,0,0,0.15)" stroke-width="1"/>
+  <text x="62" y="180" fill="rgba(0,0,0,0.45)" font-size="6.5" font-family="'Cinzel',serif" font-weight="700" text-anchor="middle">PESO</text>
+  <text x="62" y="192" fill="#0a0a0a" font-size="12" font-family="'JetBrains Mono',monospace" font-weight="700" text-anchor="middle">2 KG</text>
+  <line x1="122" y1="173" x2="122" y2="196" stroke="rgba(0,0,0,0.15)" stroke-width="1"/>
+  <text x="175" y="180" fill="rgba(0,0,0,0.45)" font-size="6.5" font-family="'Cinzel',serif" font-weight="700" text-anchor="middle">ATTIVAZIONE</text>
+  <text x="175" y="192" fill="#0a0a0a" font-size="12" font-family="'JetBrains Mono',monospace" font-weight="700" text-anchor="middle">1 azione</text>
+  <!-- Label 4 -->
+  <circle cx="10" cy="183" r="6" fill="none" stroke="#3d2a7a" stroke-width="1.2"/>
+  <text x="10" y="186.5" fill="#3d2a7a" font-size="7" font-family="'JetBrains Mono',monospace" font-weight="700" text-anchor="middle">4</text>
+  <!-- Pannello effetti giallo -->
+  <rect x="7" y="200" width="226" height="124" rx="10" fill="#fde88e" stroke="#c09818" stroke-width="4"/>
+  <text x="20" y="218" fill="#1a0800" font-size="10" font-family="'Cinzel',serif" font-weight="900" letter-spacing="1">Effetti dell'oggetto</text>
+  <!-- Decoro stelle -->
+  <polygon points="60,245 65,260 80,260 68,268 73,284 60,275 47,284 52,268 40,260 55,260" fill="#f0c840" opacity="0.18"/>
+  <polygon points="155,238 159,250 171,250 162,257 166,269 155,262 144,269 148,257 139,250 151,250" fill="#f0c840" opacity="0.15"/>
+  <!-- Azioni puntate -->
+  <text x="20" y="236" fill="#3d2a7a" font-size="9" font-family="serif">◆</text>
+  <text x="32" y="236" fill="#1a0800" font-size="8.5" font-family="'Outfit',sans-serif">Colpo: Leggera, COR, 1d12+MOD</text>
+  <text x="20" y="252" fill="#3d2a7a" font-size="9" font-family="serif">◆</text>
+  <text x="32" y="252" fill="#1a0800" font-size="8.5" font-family="'Outfit',sans-serif">Stordire: Leggera, MEN, 1d6+MOD</text>
+  <!-- Label 5 -->
+  <circle cx="10" cy="237" r="6" fill="none" stroke="#f0a500" stroke-width="1.2"/>
+  <text x="10" y="240.5" fill="#f0a500" font-size="7" font-family="'JetBrains Mono',monospace" font-weight="700" text-anchor="middle">5</text>
+  <!-- Utilizzi -->
+  <circle cx="20" cy="265" r="3.5" fill="#c94040"/>
+  <circle cx="29" cy="265" r="3.5" fill="#c94040"/>
+  <circle cx="38" cy="265" r="3.5" fill="none" stroke="#c94040" stroke-width="1" opacity="0.5"/>
+  <text x="47" y="268" fill="#555" font-size="7" font-family="'JetBrains Mono',monospace">rec.Lungo</text>
+  <!-- Label 6 -->
+  <circle cx="10" cy="265" r="6" fill="none" stroke="#c94040" stroke-width="1.2"/>
+  <text x="10" y="268.5" fill="#c94040" font-size="7" font-family="'JetBrains Mono',monospace" font-weight="700" text-anchor="middle">6</text>
+  <!-- Descrizione corsivo -->
+  <text x="120" y="313" fill="rgba(0,0,0,0.45)" font-size="7.5" font-family="'Cinzel',serif" font-style="italic" text-anchor="middle">Forgiata tra i piani...</text>
+  <line x1="20" y1="316" x2="220" y2="316" stroke="rgba(0,0,0,0.15)" stroke-width="0.8"/>
+  <!-- Label 7 -->
+  <circle cx="10" cy="310" r="6" fill="none" stroke="#888" stroke-width="1.2"/>
+  <text x="10" y="313.5" fill="#888" font-size="7" font-family="'JetBrains Mono',monospace" font-weight="700" text-anchor="middle">7</text>
+</svg></div>
     <div class="card-callouts">
-      <div class="cc"><div class="cc-bubble" style="border-color:#c94040;color:#c94040">1</div><div class="cc-body"><div class="cc-t">Nome, Tipo e Metadati</div><div class="cc-d">Nome carta, badge ⚔️ ARMA, peso in kg, portata (Contatto / Mischia / N metri). Grado G1–G4 in viola.</div></div></div>
-      <div class="cc"><div class="cc-bubble" style="border-color:#c94040;color:#c94040">2</div><div class="cc-body"><div class="cc-t">Arte, Tag e Origine</div><div class="cc-d">Area arte. I Tag (#Ombra, #Lama) permettono sinergie tra carte. L'Origine (Magia Arcana, Tecnologia…) è flavor e riferimento narrativo.</div></div></div>
-      <div class="cc"><div class="cc-bubble" style="border-color:#c94040;color:#c94040">3</div><div class="cc-body"><div class="cc-t">Lore</div><div class="cc-d">Testo narrativo in corsivo con bordo laterale colorato. Flavor puro — nessun effetto meccanico.</div></div></div>
-      <div class="cc"><div class="cc-bubble" style="border-color:#5890e8;color:#5890e8">4</div><div class="cc-body"><div class="cc-t">Badge Tipo Azione + Formula</div><div class="cc-d">Colore standardizzato: Leggera = blu, Caricata = rosso, Rapida = teal, Passiva = grigio, Reazione = viola, Concentrazione = ambra. Poi asse (COR/MEN/ANI) e formula dado.</div></div></div>
-      <div class="cc"><div class="cc-bubble" style="border-color:#f0a500;color:#f0a500">5</div><div class="cc-body"><div class="cc-t">Effetto e Condizione</div><div class="cc-d">Descrizione dell'effetto. Chip colorati per tipo danno (rosso scuro) e condizione applicata (colore della famiglia della condizione).</div></div></div>
-      <div class="cc"><div class="cc-bubble" style="border-color:#c94040;color:#c94040">6</div><div class="cc-body"><div class="cc-t">Utilizzi ◉◉◯</div><div class="cc-d">Puntini pieni = usi rimasti. Puntini vuoti = usati. Recupero: rec.Corto (1 ora), rec.Lungo (8 ore) o Consumo (definitivo).</div></div></div>
-      <div class="cc"><div class="cc-bubble" style="border-color:#55536a;color:#9490a0">7</div><div class="cc-body"><div class="cc-t">Footer</div><div class="cc-d">Rarità, Peso in kg, Tempo di Attivazione. Le armi si equipaggiano in 1 azione (6 sec) in combat.</div></div></div>
-    </div>
+      <div class="cc"><div class="cc-bubble" style="border-color:var(--gold);color:var(--gold)">1</div><div class="cc-body"><div class="cc-t">Header — Nome, Tipo e Grado</div><div class="cc-d">Banda nera con nome e grado. Il tipo (Arma / Aumento / Oggetto) determina le regole di slot: Arma max 1 attiva, Aumenti+Oggetti condividono il pool 2+Grado.</div></div></div>
+      <div class="cc"><div class="cc-bubble" style="border-color:#5890e8;color:#5890e8">2</div><div class="cc-body"><div class="cc-t">Artwork con Cortoni Rarità</div><div class="cc-d">Bande colorate top/bottom dell'artwork indicano la rarità. Puoi caricare qualsiasi immagine: il designer supporta il caricamento diretto con anteprima live.</div></div></div>
+      <div class="cc"><div class="cc-bubble" style="border-color:#3d2a7a;color:#a070e8">3</div><div class="cc-body"><div class="cc-t">Info — Tipo, Tag e Origine</div><div class="cc-d">Tipo carta (Arma/Aumento/Oggetto), Tag per le sinergie (#Fuoco, #Lama...) e Origine narrativa. Le azioni possono scalare con il numero di carte attive con lo stesso Tag.</div></div></div>
+      <div class="cc"><div class="cc-bubble" style="border-color:#3d2a7a;color:#a070e8">4</div><div class="cc-body"><div class="cc-t">Info — Peso e Attivazione</div><div class="cc-d">Peso in kg (conta per la Capacità di Carico del PG) e tempo di attivazione (1 azione in combat, oppure minuti/ore per armature e aumenti).</div></div></div>
+      <div class="cc"><div class="cc-bubble" style="border-color:#f0a500;color:#f0a500">5</div><div class="cc-body"><div class="cc-t">Pannello Effetti — Lista Azioni</div><div class="cc-d">Stile Yu-Gi-Oh: elenco puntato ◆ con azioni descritte in formato libero. Il testo scala automaticamente se le azioni sono troppe. Sfondo, bordo e colori personalizzabili.</div></div></div>
+      <div class="cc"><div class="cc-bubble" style="border-color:#c94040;color:#c94040">6</div><div class="cc-body"><div class="cc-t">Utilizzi ◉◉◯</div><div class="cc-d">Puntini pieni = usi rimasti. Puntini vuoti = usati. Il recupero si indica nell'azione: rec.Corto (1h), rec.Lungo (8h) o Consumo definitivo.</div></div></div>
+      <div class="cc"><div class="cc-bubble" style="border-color:#888;color:#888">7</div><div class="cc-body"><div class="cc-t">Descrizione in corsivo</div><div class="cc-d">Testo flavor in basso, separato dal testo meccanico. Nessun effetto in gioco — solo narrazione.</div></div></div></div>
   </div>
 </div>
- 
-<!-- C3 CARTA ARMATURA -->
+
+<!-- C3 CARTA NEMICO -->
 <div class="sec card-wrap" id="c3">
-  <div class="card-subtitle">C3 · Carta Armatura<a class="btn-crea" href="carta_oggetto.html" target="_blank">✏ Crea →</a></div>
+  <div class="card-subtitle">C3 · Carta Nemico / NPC<a class="btn-crea" href="carta_nemico.html" target="_blank">✏ Crea →</a></div>
   <div class="card-anatomy">
-    <div class="card-svg-wrap" id="svg-c3">
-      <svg viewBox="0 0 220 280" width="220" height="280" style="border-radius:11px;display:block;filter:drop-shadow(0 6px 24px rgba(0,0,0,0.55))">
-        <rect x="1" y="1" width="218" height="278" rx="11" fill="#131318" stroke="#5890e8" stroke-width="2"/>
-        <polygon points="174,1 219,1 219,43" fill="#48c88a" opacity="0.92"/>
-        <rect x="1" y="1" width="218" height="52" rx="11" fill="rgba(88,144,232,0.16)"/>
-        <rect x="1" y="44" width="218" height="8" fill="#131318"/>
-        <text x="14" y="20" fill="#5890e8" font-size="11.5" font-family="'Cinzel',serif" font-weight="700">Cotta di Maglia</text>
-        <rect x="14" y="26" width="52" height="13" rx="3" fill="rgba(88,144,232,0.16)" stroke="rgba(88,144,232,0.4)" stroke-width="0.8"/>
-        <text x="40" y="35" fill="#5890e8" font-size="7" font-family="'JetBrains Mono',monospace" font-weight="600" text-anchor="middle">🛡 ARMATURA</text>
-        <text x="76" y="35" fill="#55536a" font-size="7.5" font-family="'JetBrains Mono',monospace">15kg</text>
-        <rect x="177" y="26" width="30" height="13" rx="3" fill="rgba(124,106,247,0.15)" stroke="rgba(124,106,247,0.3)" stroke-width="0.8"/>
-        <text x="192" y="35" fill="#7c6af7" font-size="9" font-family="'Cinzel',serif" font-weight="700" text-anchor="middle">G2</text>
-        <rect x="1" y="52" width="218" height="58" fill="#0c0c10"/>
-        <text x="109" y="84" fill="#5890e8" font-size="28" text-anchor="middle" opacity="0.1" font-family="serif">🛡</text>
-        <rect x="14" y="113" width="46" height="12" rx="5" fill="rgba(0,0,0,0.45)" stroke="rgba(255,255,255,0.09)" stroke-width="0.5"/>
-        <text x="37" y="121" fill="#55536a" font-size="7" font-family="'JetBrains Mono',monospace" text-anchor="middle">#Metallo</text>
-        <rect x="66" y="113" width="56" height="12" rx="5" fill="rgba(0,0,0,0.45)" stroke="rgba(255,255,255,0.09)" stroke-width="0.5"/>
-        <text x="94" y="121" fill="#55536a" font-size="7" font-family="'JetBrains Mono',monospace" text-anchor="middle">#Flessibile</text>
-        <text x="206" y="121" fill="#55536a" font-size="6.5" font-family="'JetBrains Mono',monospace" text-anchor="end">ARTIGIANATO</text>
-        <!-- Azione passiva -->
-        <rect x="14" y="128" width="192" height="24" rx="5" fill="#1a1a26" stroke="rgba(255,255,255,0.07)" stroke-width="0.8"/>
-        <line x1="14" y1="128" x2="14" y2="152" stroke="#6b7280" stroke-width="2.5"/>
-        <rect x="18" y="132" width="30" height="11" rx="2" fill="rgba(107,114,128,0.2)" stroke="rgba(107,114,128,0.35)" stroke-width="0.5"/>
-        <text x="33" y="140" fill="#6b7280" font-size="6.5" font-family="'JetBrains Mono',monospace" font-weight="700" text-anchor="middle">PASSIVA</text>
-        <text x="18" y="149" fill="#9490a0" font-size="8" font-family="'JetBrains Mono',monospace">Asse: Corpo. Grado×3 su Corpo, Grado sugli altri.</text>
-        <!-- Soglie — sezione speciale -->
-        <text x="14" y="164" fill="#55536a" font-size="6.5" font-family="'Cinzel',serif" letter-spacing="1">PROTEZIONE</text>
-        <circle cx="96" cy="161" r="6" fill="none" stroke="#5890e8" stroke-width="1.2"/>
-        <text x="96" y="164.5" fill="#5890e8" font-size="7" font-family="'JetBrains Mono',monospace" font-weight="700" text-anchor="middle">★</text>
-        <line x1="14" y1="167" x2="206" y2="167" stroke="rgba(255,255,255,0.05)" stroke-width="0.5"/>
-        <rect x="14" y="171" width="60" height="38" rx="5" fill="rgba(88,144,232,0.14)" stroke="rgba(88,144,232,0.4)" stroke-width="0.8"/>
-        <text x="44" y="183" fill="#5890e8" font-size="6.5" font-family="'Cinzel',serif" text-anchor="middle">CORPO ★</text>
-        <text x="44" y="200" fill="#5890e8" font-size="17" font-family="'JetBrains Mono',monospace" font-weight="900" text-anchor="middle">+6</text>
-        <rect x="82" y="171" width="56" height="38" rx="5" fill="#1a1a26" stroke="rgba(255,255,255,0.07)" stroke-width="0.5"/>
-        <text x="110" y="183" fill="#f0a500" font-size="6.5" font-family="'Cinzel',serif" text-anchor="middle">MENTE</text>
-        <text x="110" y="200" fill="#f0a500" font-size="17" font-family="'JetBrains Mono',monospace" font-weight="900" text-anchor="middle">+2</text>
-        <rect x="146" y="171" width="54" height="38" rx="5" fill="#1a1a26" stroke="rgba(255,255,255,0.07)" stroke-width="0.5"/>
-        <text x="173" y="183" fill="#c94040" font-size="6.5" font-family="'Cinzel',serif" text-anchor="middle">ANIMA</text>
-        <text x="173" y="200" fill="#c94040" font-size="17" font-family="'JetBrains Mono',monospace" font-weight="900" text-anchor="middle">+2</text>
-        <!-- footer -->
-        <line x1="1" y1="216" x2="219" y2="216" stroke="rgba(255,255,255,0.07)" stroke-width="0.8"/>
-        <text x="38" y="231" fill="#48c88a" font-size="8.5" font-family="'Cinzel',serif" font-weight="700" text-anchor="middle">Non Comune</text>
-        <text x="38" y="240" fill="#55536a" font-size="6.5" font-family="'JetBrains Mono',monospace" text-anchor="middle">Rarità</text>
-        <line x1="78" y1="219" x2="78" y2="244" stroke="rgba(255,255,255,0.07)" stroke-width="0.8"/>
-        <text x="110" y="231" fill="#e8e4d8" font-size="8.5" font-family="'Cinzel',serif" font-weight="700" text-anchor="middle">15 kg</text>
-        <text x="110" y="240" fill="#55536a" font-size="6.5" font-family="'JetBrains Mono',monospace" text-anchor="middle">Peso</text>
-        <line x1="142" y1="219" x2="142" y2="244" stroke="rgba(255,255,255,0.07)" stroke-width="0.8"/>
-        <text x="181" y="231" fill="#e8e4d8" font-size="8.5" font-family="'Cinzel',serif" font-weight="700" text-anchor="middle">10 minuti</text>
-        <text x="181" y="240" fill="#55536a" font-size="6.5" font-family="'JetBrains Mono',monospace" text-anchor="middle">Attivazione</text>
-      </svg>
-    </div>
+    <div class="card-svg-wrap" id="svg-c3"><svg viewBox="0 0 240 332" width="240" height="332" style="border-radius:14px;display:block;filter:drop-shadow(0 8px 28px rgba(0,0,0,0.6));flex-shrink:0">
+  <rect x="0" y="0" width="240" height="332" rx="14" fill="#f6e8e8"/>
+  <rect x="0" y="0" width="240" height="332" rx="14" fill="none" stroke="#3a0808" stroke-width="7"/>
+  <rect x="3.5" y="3.5" width="233" height="325" rx="11" fill="none" stroke="#8b1a1a" stroke-width="3"/>
+  <!-- Header -->
+  <rect x="3" y="3" width="234" height="42" rx="11" fill="#060606"/>
+  <rect x="3" y="30" width="234" height="15" fill="#060606"/>
+  <text x="16" y="29" fill="#ffffff" font-size="13" font-family="'Cinzel',serif" font-weight="900" letter-spacing="1">GOLEM DI PIETRA</text>
+  <!-- Stella grado -->
+  <polygon points="225,4 228,14 238,14 231,21 233,31 225,25 217,31 219,21 212,14 222,14" fill="#ffffff"/>
+  <text x="225" y="27" fill="#060606" font-size="11" font-family="'Cinzel',serif" font-weight="900" text-anchor="middle">2</text>
+  <!-- Label 1 -->
+  <circle cx="10" cy="10" r="6" fill="none" stroke="#e8a030" stroke-width="1.2"/>
+  <text x="10" y="13.5" fill="#e8a030" font-size="7" font-family="'JetBrains Mono',monospace" font-weight="700" text-anchor="middle">1</text>
+  <!-- Artwork -->
+  <rect x="3" y="45" width="234" height="90" fill="#141414"/>
+  <!-- Bande rarità sull'artwork -->
+  <rect x="3" y="45" width="234" height="7" fill="#e8a030" opacity="0.85"/>
+  <rect x="3" y="128" width="234" height="7" fill="#e8a030" opacity="0.85"/>
+  <text x="120" y="96" fill="#8b1a1a" font-size="30" font-family="serif" opacity="0.2" text-anchor="middle">🪨</text>
+  <!-- Label 2 -->
+  <circle cx="10" cy="56" r="6" fill="none" stroke="#e8a030" stroke-width="1.2"/>
+  <text x="10" y="59.5" fill="#e8a030" font-size="7" font-family="'JetBrains Mono',monospace" font-weight="700" text-anchor="middle">2</text>
+  <!-- Info blu -->
+  <rect x="3" y="135" width="234" height="108" fill="url(#nmBlue)"/>
+  <defs>
+    <linearGradient id="nmBlue" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#b8d0ec"/>
+      <stop offset="100%" stop-color="#9ebcdf"/>
+    </linearGradient>
+  </defs>
+  <line x1="3" y1="135" x2="237" y2="135" stroke="#060606" stroke-width="2"/>
+  <!-- Riga HP / Vel / Armor / Tag -->
+  <text x="30" y="144" fill="rgba(0,0,0,0.45)" font-size="6" font-family="'Cinzel',serif" font-weight="700" text-anchor="middle">HP</text>
+  <text x="30" y="154" fill="#0a0a0a" font-size="12" font-family="'JetBrains Mono',monospace" font-weight="700" text-anchor="middle">160</text>
+  <line x1="58" y1="137" x2="58" y2="158" stroke="rgba(0,0,0,0.18)" stroke-width="1"/>
+  <text x="84" y="144" fill="rgba(0,0,0,0.45)" font-size="6" font-family="'Cinzel',serif" font-weight="700" text-anchor="middle">VEL</text>
+  <text x="84" y="154" fill="#0a0a0a" font-size="12" font-family="'JetBrains Mono',monospace" font-weight="700" text-anchor="middle">6m</text>
+  <line x1="110" y1="137" x2="110" y2="158" stroke="rgba(0,0,0,0.18)" stroke-width="1"/>
+  <text x="143" y="144" fill="rgba(0,0,0,0.45)" font-size="6" font-family="'Cinzel',serif" font-weight="700" text-anchor="middle">ARMOR</text>
+  <text x="143" y="154" fill="#0a0a0a" font-size="9" font-family="'JetBrains Mono',monospace" font-weight="700" text-anchor="middle">CORPO +6/+2</text>
+  <line x1="178" y1="137" x2="178" y2="158" stroke="rgba(0,0,0,0.18)" stroke-width="1"/>
+  <text x="208" y="144" fill="rgba(0,0,0,0.45)" font-size="6" font-family="'Cinzel',serif" font-weight="700" text-anchor="middle">TAG</text>
+  <text x="208" y="154" fill="#0a0a0a" font-size="7.5" font-family="'Outfit',sans-serif" font-weight="700" text-anchor="middle">#Costrutto</text>
+  <!-- Label 3 -->
+  <circle cx="10" cy="147" r="6" fill="none" stroke="#e05050" stroke-width="1.2"/>
+  <text x="10" y="150.5" fill="#e05050" font-size="7" font-family="'JetBrains Mono',monospace" font-weight="700" text-anchor="middle">3</text>
+  <!-- Riga stat CORPO MENTE ANIMA -->
+  <line x1="3" y1="160" x2="237" y2="160" stroke="rgba(0,0,0,0.15)" stroke-width="1"/>
+  <text x="42" y="169" fill="#b82020" font-size="6.5" font-family="'Cinzel',serif" font-weight="700" text-anchor="middle">CORPO</text>
+  <text x="42" y="181" fill="#b82020" font-size="12" font-family="'JetBrains Mono',monospace" font-weight="700" text-anchor="middle">8 <tspan font-size="9">+2</tspan></text>
+  <line x1="82" y1="162" x2="82" y2="184" stroke="rgba(0,0,0,0.15)" stroke-width="1"/>
+  <text x="120" y="169" fill="#a88800" font-size="6.5" font-family="'Cinzel',serif" font-weight="700" text-anchor="middle">MENTE</text>
+  <text x="120" y="181" fill="#a88800" font-size="12" font-family="'JetBrains Mono',monospace" font-weight="700" text-anchor="middle">3 <tspan font-size="9">+1</tspan></text>
+  <line x1="158" y1="162" x2="158" y2="184" stroke="rgba(0,0,0,0.15)" stroke-width="1"/>
+  <text x="200" y="169" fill="#1c7020" font-size="6.5" font-family="'Cinzel',serif" font-weight="700" text-anchor="middle">ANIMA</text>
+  <text x="200" y="181" fill="#1c7020" font-size="12" font-family="'JetBrains Mono',monospace" font-weight="700" text-anchor="middle">2 <tspan font-size="9">+0</tspan></text>
+  <!-- Label 4 -->
+  <circle cx="10" cy="172" r="6" fill="none" stroke="#2ec4a0" stroke-width="1.2"/>
+  <text x="10" y="175.5" fill="#2ec4a0" font-size="7" font-family="'JetBrains Mono',monospace" font-weight="700" text-anchor="middle">4</text>
+  <!-- Riga IRD -->
+  <line x1="3" y1="186" x2="237" y2="186" stroke="rgba(0,0,0,0.15)" stroke-width="1"/>
+  <text x="40" y="195" fill="#0e6630" font-size="6.5" font-family="'Cinzel',serif" font-weight="700" text-anchor="middle">IMMUNITÀ</text>
+  <text x="40" y="205" fill="#0e5528" font-size="7.5" font-family="'Outfit',sans-serif" font-weight="700" text-anchor="middle">Veleno</text>
+  <line x1="80" y1="188" x2="80" y2="208" stroke="rgba(0,0,0,0.15)" stroke-width="1"/>
+  <text x="120" y="195" fill="#3830a0" font-size="6.5" font-family="'Cinzel',serif" font-weight="700" text-anchor="middle">RESISTENZA</text>
+  <text x="120" y="205" fill="#2820a0" font-size="7.5" font-family="'Outfit',sans-serif" font-weight="700" text-anchor="middle">Fuoco</text>
+  <line x1="160" y1="188" x2="160" y2="208" stroke="rgba(0,0,0,0.15)" stroke-width="1"/>
+  <text x="200" y="195" fill="#aa1010" font-size="6.5" font-family="'Cinzel',serif" font-weight="700" text-anchor="middle">DEBOLEZZA</text>
+  <text x="200" y="205" fill="#991010" font-size="7.5" font-family="'Outfit',sans-serif" font-weight="700" text-anchor="middle">Acido</text>
+  <!-- Label 5 -->
+  <circle cx="10" cy="197" r="6" fill="none" stroke="#48c88a" stroke-width="1.2"/>
+  <text x="10" y="200.5" fill="#48c88a" font-size="7" font-family="'JetBrains Mono',monospace" font-weight="700" text-anchor="middle">5</text>
+  <!-- Pannello azioni giallo -->
+  <rect x="7" y="246" width="226" height="80" rx="10" fill="#fce88e" stroke="#c09818" stroke-width="4"/>
+  <text x="20" y="262" fill="#1a0800" font-size="9.5" font-family="'Cinzel',serif" font-weight="900" letter-spacing="1">Azioni del nemico</text>
+  <text x="20" y="276" fill="#8b1a1a" font-size="9" font-family="serif">◆</text>
+  <text x="32" y="276" fill="#1a0800" font-size="8" font-family="'Outfit',sans-serif">Pugno: Caricata, COR, 2×Gd12</text>
+  <text x="20" y="290" fill="#8b1a1a" font-size="9" font-family="serif">◆</text>
+  <text x="32" y="290" fill="#1a0800" font-size="8" font-family="'Outfit',sans-serif">Az. Leggendaria: Reazione PG</text>
+  <!-- Label 6 -->
+  <circle cx="10" cy="276" r="6" fill="none" stroke="#e05050" stroke-width="1.2"/>
+  <text x="10" y="279.5" fill="#e05050" font-size="7" font-family="'JetBrains Mono',monospace" font-weight="700" text-anchor="middle">6</text>
+  <!-- Descrizione -->
+  <text x="120" y="319" fill="rgba(0,0,0,0.4)" font-size="7" font-family="'Cinzel',serif" font-style="italic" text-anchor="middle">Costrutto antico di Magia della Terra.</text>
+  <line x1="20" y1="322" x2="220" y2="322" stroke="rgba(0,0,0,0.15)" stroke-width="0.8"/>
+</svg></div>
     <div class="card-callouts">
-      <div class="cc"><div class="cc-bubble" style="border-color:#5890e8;color:#5890e8">A</div><div class="cc-body"><div class="cc-t">Azione Passiva</div><div class="cc-d">Le armature hanno sempre una Passiva che dichiara l'asse principale protetto e la formula di protezione.</div></div></div>
-      <div class="cc"><div class="cc-bubble" style="border-color:#5890e8;color:#5890e8">★</div><div class="cc-body"><div class="cc-t">Griglia Protezione</div><div class="cc-d">Sezione unica delle armature. Asse principale ★ = Grado × 3. Assi secondari = Grado. La differenza dipende da dove è concentrata la protezione.</div></div></div>
-      <div class="cc"><div class="cc-bubble" style="border-color:#55536a;color:#9490a0">T</div><div class="cc-body"><div class="cc-t">Tempo di Attivazione</div><div class="cc-d">Le armature richiedono minuti o ore per indossarsi. Non si cambiano in combat — questa scelta va fatta prima dello scontro.</div></div></div>
-    </div>
+      <div class="cc"><div class="cc-bubble" style="border-color:var(--gold);color:var(--gold)">1</div><div class="cc-body"><div class="cc-t">Header — Nome e Stella Grado</div><div class="cc-d">I nemici usano la STELLA invece dell'esagono per distinguersi visivamente dai PG. Il Grado determina Armor (Grado×3 sull'asse principale, Grado sugli altri).</div></div></div>
+      <div class="cc"><div class="cc-bubble" style="border-color:#e8a030;color:#e8a030">2</div><div class="cc-body"><div class="cc-t">Artwork con Cortoni Rarità</div><div class="cc-d">Bande colorate sui bordi dell'artwork. Per i nemici la rarità indica il livello di pericolosità e può guidare la narrazione della scoperta durante l'avventura.</div></div></div>
+      <div class="cc"><div class="cc-bubble" style="border-color:#e05050;color:#e05050">3</div><div class="cc-body"><div class="cc-t">Info — HP, Velocità, Armor, Tag</div><div class="cc-d">HP espliciti sulla carta (scalabili: HP×N_PG/4). Armor indica la stat principale e il Grado: "CORPO +6/+2" = Grado 2, asse Corpo protetto di 6, altri di 2. Zero calcoli al tavolo.</div></div></div>
+      <div class="cc"><div class="cc-bubble" style="border-color:#2ec4a0;color:#2ec4a0">4</div><div class="cc-body"><div class="cc-t">Stat Flat — CORPO / MENTE / ANIMA</div><div class="cc-d">I nemici non seguono le formule dei PG. Stat visive per flavor + MOD usato solo per riferimento. Le difese sono già calcolate nell'Armor.</div></div></div>
+      <div class="cc"><div class="cc-bubble" style="border-color:#48c88a;color:#48c88a">5</div><div class="cc-body"><div class="cc-t">IRD — Immunità / Resistenza / Debolezza</div><div class="cc-d">Immune = danno e condizioni annullati. Resistente = danno dimezzato, condizioni normali. Debole = danno doppio + condizioni automatiche anche se non specificate sull'azione.</div></div></div>
+      <div class="cc"><div class="cc-bubble" style="border-color:#e05050;color:#e05050">6</div><div class="cc-body"><div class="cc-t">Pannello Azioni + Leggendarie</div><div class="cc-d">Azioni descritte con formula esplicita. I Boss hanno Azioni Leggendarie (tipo Reazione) che si attivano alla fine del turno di ogni PG — non nel loro turno. Un Boss G4 con party da 4 agisce 4 volte a round.</div></div></div></div>
   </div>
 </div>
- 
-<!-- C6 CARTA NEMICO -->
-<div class="sec card-wrap" id="c6">
-  <div class="card-subtitle">C6 · Carta Nemico / NPC<a class="btn-crea" href="carta_nemico.html" target="_blank">✏ Crea →</a></div>
-  <div class="card-anatomy flip">
-    <div class="card-svg-wrap" id="svg-c6">
-      <svg viewBox="0 0 220 308" width="220" height="308" style="border-radius:11px;display:block;filter:drop-shadow(0 6px 24px rgba(0,0,0,0.55))">
-        <rect x="1" y="1" width="218" height="306" rx="11" fill="#131318" stroke="#e05050" stroke-width="2"/>
-        <polygon points="174,1 219,1 219,43" fill="#e8a030" opacity="0.92"/>
-        <rect x="1" y="1" width="218" height="52" rx="11" fill="rgba(224,80,80,0.16)"/>
-        <rect x="1" y="44" width="218" height="8" fill="#131318"/>
-        <!-- header -->
-        <circle cx="10" cy="10" r="6" fill="none" stroke="#e05050" stroke-width="1.2"/>
-        <text x="10" y="13.5" fill="#e05050" font-size="7" font-family="'JetBrains Mono',monospace" font-weight="700" text-anchor="middle">1</text>
-        <text x="20" y="21" fill="#e05050" font-size="11.5" font-family="'Cinzel',serif" font-weight="700">Golem di Pietra</text>
-        <rect x="20" y="26" width="56" height="13" rx="3" fill="rgba(224,80,80,0.16)" stroke="rgba(224,80,80,0.4)" stroke-width="0.8"/>
-        <text x="48" y="35" fill="#e05050" font-size="7" font-family="'JetBrains Mono',monospace" font-weight="600" text-anchor="middle">NEMICO G2</text>
-        <rect x="177" y="26" width="38" height="13" rx="3" fill="rgba(232,160,48,0.2)" stroke="rgba(232,160,48,0.4)" stroke-width="0.8"/>
-        <text x="196" y="35" fill="#e8a030" font-size="8" font-family="'Cinzel',serif" font-weight="700" text-anchor="middle">BOSS</text>
-        <!-- arte -->
-        <rect x="1" y="52" width="218" height="55" fill="#0c0c10"/>
-        <text x="109" y="84" fill="#e05050" font-size="26" text-anchor="middle" opacity="0.1" font-family="serif">🪨</text>
-        <!-- tags -->
-        <rect x="14" y="111" width="54" height="12" rx="5" fill="rgba(0,0,0,0.45)" stroke="rgba(255,255,255,0.09)" stroke-width="0.5"/>
-        <text x="41" y="119" fill="#55536a" font-size="7" font-family="'JetBrains Mono',monospace" text-anchor="middle">#Costrutto</text>
-        <rect x="74" y="111" width="36" height="12" rx="5" fill="rgba(0,0,0,0.45)" stroke="rgba(255,255,255,0.09)" stroke-width="0.5"/>
-        <text x="92" y="119" fill="#55536a" font-size="7" font-family="'JetBrains Mono',monospace" text-anchor="middle">#Terra</text>
-        <text x="206" y="119" fill="#55536a" font-size="6.5" font-family="'JetBrains Mono',monospace" text-anchor="end">MAGIA ANTICA</text>
-        <!-- ② HP + stat flat -->
-        <circle cx="10" cy="130" r="6" fill="none" stroke="#e05050" stroke-width="1.2"/>
-        <text x="10" y="133.5" fill="#e05050" font-size="7" font-family="'JetBrains Mono',monospace" font-weight="700" text-anchor="middle">2</text>
-        <rect x="20" y="124" width="196" height="40" rx="5" fill="#0c0c10" stroke="rgba(255,255,255,0.07)" stroke-width="0.8"/>
-        <text x="28" y="136" fill="#55536a" font-size="6.5" font-family="'Cinzel',serif" letter-spacing="0.8">HP</text>
-        <text x="42" y="136" fill="#e05050" font-size="9.5" font-family="'JetBrains Mono',monospace" font-weight="700">160</text>
-        <text x="76" y="136" fill="#2ec4a0" font-size="6.5" font-family="'Cinzel',serif" text-anchor="middle">CORPO</text>
-        <text x="76" y="148" fill="#2ec4a0" font-size="13" font-family="'JetBrains Mono',monospace" font-weight="900" text-anchor="middle">8</text>
-        <text x="120" y="136" fill="#f0a500" font-size="6.5" font-family="'Cinzel',serif" text-anchor="middle">MENTE</text>
-        <text x="120" y="148" fill="#f0a500" font-size="13" font-family="'JetBrains Mono',monospace" font-weight="900" text-anchor="middle">3</text>
-        <text x="164" y="136" fill="#c94040" font-size="6.5" font-family="'Cinzel',serif" text-anchor="middle">ANIMA</text>
-        <text x="164" y="148" fill="#c94040" font-size="13" font-family="'JetBrains Mono',monospace" font-weight="900" text-anchor="middle">2</text>
-        <!-- ③ difese flat -->
-        <circle cx="10" cy="157" r="6" fill="none" stroke="#e05050" stroke-width="1.2"/>
-        <text x="10" y="160.5" fill="#e05050" font-size="7" font-family="'JetBrains Mono',monospace" font-weight="700" text-anchor="middle">3</text>
-        <text x="28" y="157" fill="#55536a" font-size="6.5" font-family="'Cinzel',serif" letter-spacing="0.8">DIFESE</text>
-        <text x="68" y="157" fill="#2ec4a0" font-size="9" font-family="'JetBrains Mono',monospace" font-weight="700">C:6</text>
-        <text x="100" y="157" fill="#f0a500" font-size="9" font-family="'JetBrains Mono',monospace" font-weight="700">M:2</text>
-        <text x="132" y="157" fill="#c94040" font-size="9" font-family="'JetBrains Mono',monospace" font-weight="700">A:1</text>
-        <!-- ④ IRD -->
-        <circle cx="10" cy="172" r="6" fill="none" stroke="#48c88a" stroke-width="1.2"/>
-        <text x="10" y="175.5" fill="#48c88a" font-size="7" font-family="'JetBrains Mono',monospace" font-weight="700" text-anchor="middle">4</text>
-        <rect x="20" y="165" width="196" height="40" rx="5" fill="rgba(0,0,0,0.18)" stroke="rgba(255,255,255,0.05)" stroke-width="0.5"/>
-        <text x="26" y="177" fill="#48c88a" font-size="7" font-family="'JetBrains Mono',monospace" font-weight="700">IMM</text>
-        <rect x="46" y="170" width="36" height="11" rx="2" fill="rgba(72,200,138,0.1)" stroke="rgba(72,200,138,0.25)" stroke-width="0.5"/>
-        <text x="64" y="178" fill="#48c88a" font-size="7" font-family="'JetBrains Mono',monospace" text-anchor="middle">Veleno</text>
-        <rect x="88" y="170" width="42" height="11" rx="2" fill="rgba(72,200,138,0.1)" stroke="rgba(72,200,138,0.25)" stroke-width="0.5"/>
-        <text x="109" y="178" fill="#48c88a" font-size="7" font-family="'JetBrains Mono',monospace" text-anchor="middle">Psichico</text>
-        <rect x="136" y="170" width="36" height="11" rx="2" fill="rgba(72,200,138,0.1)" stroke="rgba(72,200,138,0.25)" stroke-width="0.5"/>
-        <text x="154" y="178" fill="#48c88a" font-size="7" font-family="'JetBrains Mono',monospace" text-anchor="middle">Freddo</text>
-        <text x="26" y="193" fill="#e05050" font-size="7" font-family="'JetBrains Mono',monospace" font-weight="700">DEB</text>
-        <rect x="46" y="186" width="32" height="11" rx="2" fill="rgba(224,80,80,0.1)" stroke="rgba(224,80,80,0.25)" stroke-width="0.5"/>
-        <text x="62" y="194" fill="#e05050" font-size="7" font-family="'JetBrains Mono',monospace" text-anchor="middle">Acido</text>
-        <rect x="84" y="186" width="32" height="11" rx="2" fill="rgba(224,80,80,0.1)" stroke="rgba(224,80,80,0.25)" stroke-width="0.5"/>
-        <text x="100" y="194" fill="#e05050" font-size="7" font-family="'JetBrains Mono',monospace" text-anchor="middle">Forza</text>
-        <!-- ⑤ azione caricata -->
-        <circle cx="10" cy="214" r="6" fill="none" stroke="#e05050" stroke-width="1.2"/>
-        <text x="10" y="217.5" fill="#e05050" font-size="7" font-family="'JetBrains Mono',monospace" font-weight="700" text-anchor="middle">5</text>
-        <rect x="20" y="208" width="196" height="24" rx="5" fill="#1a1a26" stroke="rgba(255,255,255,0.07)" stroke-width="0.8"/>
-        <line x1="20" y1="208" x2="20" y2="232" stroke="#e05050" stroke-width="2.5"/>
-        <rect x="24" y="212" width="35" height="11" rx="2" fill="rgba(224,80,80,0.15)" stroke="rgba(224,80,80,0.35)" stroke-width="0.5"/>
-        <text x="41.5" y="220" fill="#e05050" font-size="6.5" font-family="'JetBrains Mono',monospace" font-weight="700" text-anchor="middle">CARICATA</text>
-        <text x="216" y="220" fill="#e8e4d8" font-size="9" font-family="'JetBrains Mono',monospace" font-weight="700" text-anchor="end">2×G×d12</text>
-        <text x="24" y="229" fill="#9490a0" font-size="8" font-family="'JetBrains Mono',monospace">Pugno di roccia. Contundente.</text>
-        <!-- azione leggendaria -->
-        <rect x="20" y="236" width="196" height="24" rx="5" fill="#1a1a26" stroke="rgba(255,255,255,0.07)" stroke-width="0.8"/>
-        <line x1="20" y1="236" x2="20" y2="260" stroke="#a070e8" stroke-width="2.5"/>
-        <rect x="24" y="240" width="35" height="11" rx="2" fill="rgba(160,112,232,0.15)" stroke="rgba(160,112,232,0.35)" stroke-width="0.5"/>
-        <text x="41.5" y="248" fill="#a070e8" font-size="6.5" font-family="'JetBrains Mono',monospace" font-weight="700" text-anchor="middle">REAZIONE</text>
-        <text x="216" y="248" fill="#e8e4d8" font-size="9" font-family="'JetBrains Mono',monospace" font-weight="700" text-anchor="end">Leggendaria</text>
-        <text x="24" y="257" fill="#9490a0" font-size="8" font-family="'JetBrains Mono',monospace">Risponde al turno di ogni PG.</text>
-        <!-- footer -->
-        <line x1="1" y1="267" x2="219" y2="267" stroke="rgba(255,255,255,0.07)" stroke-width="0.8"/>
-        <text x="44" y="281" fill="#e8a030" font-size="8.5" font-family="'Cinzel',serif" font-weight="700" text-anchor="middle">Leggendaria</text>
-        <text x="44" y="290" fill="#55536a" font-size="6.5" font-family="'JetBrains Mono',monospace" text-anchor="middle">Rarità</text>
-        <line x1="88" y1="270" x2="88" y2="295" stroke="rgba(255,255,255,0.07)" stroke-width="0.8"/>
-        <text x="154" y="281" fill="#e8e4d8" font-size="8.5" font-family="'Cinzel',serif" font-weight="700" text-anchor="middle">Boss · 2 az. + Legg.</text>
-        <text x="154" y="290" fill="#55536a" font-size="6.5" font-family="'JetBrains Mono',monospace" text-anchor="middle">Struttura</text>
-      </svg>
-    </div>
-    <div class="card-callouts">
-      <div class="cc"><div class="cc-bubble" style="border-color:#e05050;color:#e05050">1</div><div class="cc-body"><div class="cc-t">HP Espliciti e Struttura Boss/Goon</div><div class="cc-d">I nemici non calcolano HP con le formule dei PG — li hanno scritti sulla carta. I Boss hanno azioni Leggendarie. Scalatura: HP × N_PG / 4.</div></div></div>
-      <div class="cc"><div class="cc-bubble" style="border-color:#e05050;color:#e05050">2</div><div class="cc-body"><div class="cc-t">Stat Visive (flavor)</div><div class="cc-d">Le stat sui nemici sono indicative — per flavor e guida narrativa. Il numero che conta meccanicamente sono le difese flat sotto.</div></div></div>
-      <div class="cc"><div class="cc-bubble" style="border-color:#e05050;color:#e05050">3</div><div class="cc-body"><div class="cc-t">Difese Flat per Asse</div><div class="cc-d">C:X M:X A:X — valori di difesa piatti per ogni asse. Il master li legge direttamente, zero calcoli al tavolo.</div></div></div>
-      <div class="cc"><div class="cc-bubble" style="border-color:#48c88a;color:#48c88a">4</div><div class="cc-body"><div class="cc-t">IMM / RES / DEB</div><div class="cc-d">Immunità (verde) = danno annullato + condizioni bloccate. Resistenza (viola) = danno dimezzato. Debolezza (rosso) = danno doppio + condizioni automatiche anche se non specificate sull'azione.</div></div></div>
-      <div class="cc"><div class="cc-bubble" style="border-color:#e05050;color:#e05050">5</div><div class="cc-body"><div class="cc-t">Azioni e Azioni Leggendarie</div><div class="cc-d">Le Azioni Leggendarie (Reazione) si attivano alla fine del turno di ogni PG — non nel loro turno. Un Boss G4 con party da 4 agisce 4 volte in un round.</div></div></div>
-    </div>
-  </div>
-</div>
- 
-<!-- C4+C5 mini -->
-<div class="sec" id="c4" style="margin-bottom:16px">
-  <div class="card-subtitle">C4 · Carta Aumento<a class="btn-crea" href="carta_oggetto.html" target="_blank">✏ Crea →</a></div>
-  <div class="callout" style="font-size:13px"><strong>Aumento = potenziamento permanente.</strong> Impianti, modifiche corporee, rituali. Hanno quasi sempre una <strong>Passiva sempre attiva</strong> (+1 MOD, resistenze, bonus a movimento) e un tempo di attivazione lungo (chirurgia, rituale). Occupano il pool AO insieme agli Oggetti. Non si cambiano in combat.</div>
-</div>
-<div class="sec" id="c5">
-  <div class="card-subtitle">C5 · Carta Oggetto<a class="btn-crea" href="carta_oggetto.html" target="_blank">✏ Crea →</a></div>
-  <div class="callout" style="font-size:13px"><strong>Oggetto = tutto il resto.</strong> Pozioni, grimori, strumenti, componenti. Quasi sempre con utilizzi limitati (◉◉◯). Un utilizzo a Consumo (◉) non si recupera — la carta rimane nel mazzo vuota finché non viene "ricaricata" narrativamente. La parola chiave <strong>Istantanea</strong> indica che l'effetto non può essere contrastato da reazioni nemiche.</div>
-</div>
- 
+
 </div><!-- /part-card -->
- 
- 
-<!-- ═══════════════ PARTE III — SVILUPPO ═══════════════ -->
-<div class="part" id="part-dev">
-<div style="margin-bottom:44px;padding-bottom:22px;border-bottom:1px solid var(--border)">
-  <div style="font-family:'Cinzel',serif;font-size:26px;font-weight:700;color:var(--teal);letter-spacing:.03em;margin-bottom:5px">Sviluppo &amp; Test</div>
-  <div style="font-size:13px;color:var(--tx2)">Intenzioni di design · Test numerici pre-playtest · Analisi di bilanciamento</div>
-</div>
- 
-<div class="sec" id="da">
-  <div class="sh dev"><span class="sh-n">A</span><span class="sh-t">Intenzioni di Design</span><span class="sh-pip dev"></span></div>
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0">
-    <div class="intent-card"><div class="intent-t">Semplicità al tavolo</div><div class="intent-b">Ogni calcolo mentale. Danno = una sottrazione. MOD = divisione per 3. Soglie nemici = valori flat sulla carta.</div></div>
-    <div class="intent-card"><div class="intent-t">Profondità strategica</div><div class="intent-b">Scegliere su quale asse attaccare deve contare. Un Mago su asse Mente fa molto più danno al guerriero che su Corpo.</div></div>
-    <div class="intent-card"><div class="intent-t">Il dado conta sempre</div><div class="intent-b">MOD massimo = +8. Dado a G4 = 4–48. Il dado rimane il fattore principale ai livelli massimi.</div></div>
-    <div class="intent-card"><div class="intent-t">Carte come oggetti fisici</div><div class="intent-b">Tenere in mano le carte, scegliere il mazzo prima di partire, scambiare con un compagno — interazioni fisiche uniche.</div></div>
-    <div class="intent-card"><div class="intent-t">Party cooperativo</div><div class="intent-b">Bilanciamento su party da 4. Un nemico G1 è calibrato per 4 persone che lavorano insieme.</div></div>
-    <div class="intent-card"><div class="intent-t">Progressione leggibile</div><div class="intent-b">Ogni Grado aggiunge qualcosa di concreto: punti, oggetti, slot. La crescita deve essere sentita.</div></div>
-  </div>
-</div>
- 
-<div class="sec" id="db">
-  <div class="sh dev"><span class="sh-n">B</span><span class="sh-t">Test 1 — Scelta del Divisore MOD</span><span class="sh-pip dev"></span></div>
-  <div class="tw"><table class="tt">
-    <thead><tr><th>Divisore</th><th>MOD min</th><th>MOD max</th><th>a stat 6</th><th>a stat 24</th><th>Giudizio</th></tr></thead>
-    <tbody>
-      <tr><td>÷2</td><td>+0</td><td>+12</td><td>+3</td><td>+12</td><td class="bad">MOD schiaccia il dado</td></tr>
-      <tr><td><strong>÷3</strong></td><td><strong>+0</strong></td><td><strong>+8</strong></td><td><strong>+2</strong></td><td><strong>+8</strong></td><td class="ok">✓ Ottimale</td></tr>
-      <tr><td>÷4</td><td>+0</td><td>+6</td><td>+1</td><td>+6</td><td class="warn">Accettabile ma piatto</td></tr>
-      <tr><td>÷5+</td><td>+0</td><td>+4</td><td>+1</td><td>+4</td><td class="bad">Stat quasi irrilevanti</td></tr>
-    </tbody>
-  </table></div>
-</div>
- 
-<div class="sec" id="dc">
-  <div class="sh dev"><span class="sh-n">C</span><span class="sh-t">Test 2 — Moltiplicatore Armatura</span><span class="sh-pip dev"></span></div>
-  <div class="tw"><table class="tt">
-    <thead><tr><th>Molt.</th><th>Round con armor</th><th>Round senza</th><th>Giudizio</th></tr></thead>
-    <tbody>
-      <tr><td>×2</td><td>2–3r</td><td>1–2r</td><td class="bad">Troppo letale senza</td></tr>
-      <tr><td><strong>×3</strong></td><td class="ok"><strong>3–5r ✓</strong></td><td class="ok"><strong>2–3r</strong></td><td class="ok">✓ Ottimale</td></tr>
-      <tr><td>×4</td><td>5–8r</td><td>3–5r</td><td class="warn">Armor quasi obbligatoria</td></tr>
-    </tbody>
-  </table></div>
-</div>
- 
-<div class="sec" id="dd">
-  <div class="sh dev"><span class="sh-n">D</span><span class="sh-t">Test 3 — HP dei Nemici</span><span class="sh-pip dev"></span></div>
-  <p>Con HP = C+M+A come i PG, i nemici morivano in meno di un round contro un party da 4. DPR del party è moltiplicato ×4.</p>
-  <div class="tw"><table class="tt">
-    <thead><tr><th>Soluzione</th><th>Pro</th><th>Contro</th><th>Adottata?</th></tr></thead>
-    <tbody>
-      <tr><td>HP × N_PG</td><td>Semplice</td><td>Goblin con 40 HP non sembra un goblin</td><td class="bad">No</td></tr>
-      <tr><td><strong>HP espliciti sulla carta</strong></td><td>Controllo totale</td><td>Richiede design per ogni carta</td><td class="ok">✓ Sì</td></tr>
-    </tbody>
-  </table></div>
-</div>
- 
-<div class="sec" id="de">
-  <div class="sh dev"><span class="sh-n">E</span><span class="sh-t">Test 4 — Party Misto e Assi</span><span class="sh-pip dev"></span></div>
-  <div class="tw"><table class="tt">
-    <thead><tr><th>PG</th><th>vs Soldato (C=5)</th><th>vs Lich (M=2)</th><th>vs Banshee (A=3)</th></tr></thead>
-    <tbody>
-      <tr><td>Guerriero Corpo 10</td><td class="ok">4.5</td><td>5.5</td><td>6.5</td></tr>
-      <tr><td>Mago Mente 10</td><td>7.5 (M=2)</td><td class="warn">3.5 (M=6)</td><td class="ok">8.5 ↑</td></tr>
-      <tr><td>Bardo Anima 5</td><td>5.5</td><td class="ok">6.5</td><td class="warn">3.5</td></tr>
-    </tbody>
-  </table></div>
-</div>
- 
-<div class="sec" id="df">
-  <div class="sh dev"><span class="sh-n">F</span><span class="sh-t">Test 5 — Boss con Azioni Multiple</span><span class="sh-pip dev"></span></div>
-  <div class="tw"><table class="tt">
-    <thead><tr><th>Config</th><th>HP Boss</th><th>Danno Boss in 5r</th><th>Esito</th></tr></thead>
-    <tbody>
-      <tr><td>1 azione/round</td><td>80</td><td>~22 HP tot</td><td class="warn">Nessun PG in pericolo reale</td></tr>
-      <tr><td><strong>2 azioni/round</strong></td><td>80</td><td class="ok">~45 HP concentrati</td><td class="ok">Focus KO — scelte reali</td></tr>
-    </tbody>
-  </table></div>
-</div>
- 
-<div class="sec" id="dg">
-  <div class="sh dev"><span class="sh-n">G</span><span class="sh-t">Test 6 — Scaling G1→G4</span><span class="sh-pip dev"></span></div>
-  <div class="tw"><table class="tt">
-    <thead><tr><th>Grado</th><th>Atk avg</th><th>DPR party</th><th>HP NM</th><th>Round KO</th></tr></thead>
-    <tbody>
-      <tr><td>1</td><td class="mn">8.5</td><td class="mn">~22</td><td>70</td><td class="ok">~3.2r ✓</td></tr>
-      <tr><td>2</td><td class="mn">15.0</td><td class="mn">~36</td><td>140</td><td class="ok">~3.9r ✓</td></tr>
-      <tr><td>3</td><td class="mn">21.5</td><td class="mn">~50</td><td>210</td><td class="ok">~4.2r ✓</td></tr>
-      <tr><td>4</td><td class="mn">28.0</td><td class="mn">~64</td><td>280</td><td class="ok">~4.4r ✓</td></tr>
-    </tbody>
-  </table></div>
-</div>
- 
-<div class="sec" id="dh">
-  <div class="sh dev"><span class="sh-n">H</span><span class="sh-t">Test 7 — Goon</span><span class="sh-pip dev"></span></div>
-  <div class="tw"><table class="tt">
-    <thead><tr><th>HP Goon</th><th>DPR PG</th><th>Colpi per KO</th><th>Giudizio</th></tr></thead>
-    <tbody>
-      <tr><td>15</td><td>5</td><td>3</td><td class="bad">Troppo resistente</td></tr>
-      <tr><td>10</td><td>7</td><td>1–2</td><td class="ok">✓ Target — muore in fretta, fa paura in branco</td></tr>
-    </tbody>
-  </table></div>
-</div>
- 
-<div class="sec" id="di">
-  <div class="sh dev"><span class="sh-n">I</span><span class="sh-t">Sistemi Scartati</span><span class="sh-pip dev"></span></div>
-  <div class="scartato"><div class="sct-lbl">STAT DIRETTA INVECE DI MOD</div>A Corpo 20, attacco medio a G4 supera 110. Istant-kill ai livelli alti.</div>
-  <div class="scartato"><div class="sct-lbl">DIFESA RESIDUA COME FORMULA</div>Soglia minima = floor(MOD/2) su tutti gli assi. Era una patch. Soluzione corretta: design per ogni carta.</div>
-  <div class="scartato"><div class="sct-lbl">MOLTIPLICATORE ARMATURA ×4</div>Rendeva l'armatura quasi obbligatoria. Scartato in favore di ×3.</div>
-</div>
- 
-<div class="sec" id="dn">
-  <div class="sh dev"><span class="sh-n">N</span><span class="sh-t">Checklist Pre-Playtest</span><span class="sh-pip dev"></span></div>
-  <div class="check-item"><span>✅</span><div><div class="check-t">Divisore MOD (÷3)</div><div class="check-d">Confermato da simulazione</div></div></div>
-  <div class="check-item"><span>✅</span><div><div class="check-t">Moltiplicatore armatura (×3)</div><div class="check-d">Confermato da simulazione</div></div></div>
-  <div class="check-item"><span>✅</span><div><div class="check-t">HP nemici espliciti sulla carta</div><div class="check-d">Adottato e verificato</div></div></div>
-  <div class="check-item"><span>✅</span><div><div class="check-t">Boss/Goon — 2 azioni Boss, 2 Goon per PG</div><div class="check-d">Verificato</div></div></div>
-  <div class="check-item"><span>✅</span><div><div class="check-t">Durata scontro 3–5 round a Grado 1</div><div class="check-d">Verificata con party misto</div></div></div>
-  <div class="check-item"><span>✅</span><div><div class="check-t">Scaling G1→G4 stabile</div><div class="check-d">Round KO stabile 3–5 a tutti i Gradi</div></div></div>
-  <div class="check-item"><span>✅</span><div><div class="check-t">Slot AO — pool condiviso 2+Grado</div><div class="check-d">Definito e verificato</div></div></div>
-  <div class="check-item"><span>✅</span><div><div class="check-t">Sistema Razza (+2/+1 o +1/+1/+1 + talento)</div><div class="check-d">Definito con esempi</div></div></div>
-  <div class="check-item"><span>✅</span><div><div class="check-t">Condizioni per famiglia con colore standard</div><div class="check-d">Standardizzate</div></div></div>
-  <div class="check-item"><span>✅</span><div><div class="check-t">Parole chiave standardizzate</div><div class="check-d">Glossario definito</div></div></div>
-  <div class="check-item"><span>⚠️</span><div><div class="check-t">Primo set carte di test</div><div class="check-d">4 PG + nemici base — da creare</div></div></div>
-  <div class="check-item"><span>⏳</span><div><div class="check-t">Prima sessione di playtest reale</div><div class="check-d">In attesa</div></div></div>
-</div>
- 
-</div><!-- /part-dev -->
- 
-</main>
-</div><!-- /layout -->
- 
+
 <script>
 let curPart = 'man';
  
