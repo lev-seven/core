@@ -242,6 +242,22 @@ textarea{resize:vertical;line-height:1.5;}
         <div class="sl-row"><label>Colore titolo</label><input type="color" id="sl-efftc" value="#1a0800" oninput="applyTheme()"/></div>
         <div class="sl-row"><label>Colore punto ◆</label><input type="color" id="sl-dotc" value="#8b1a1a" oninput="applyTheme()"/></div>
       </div>
+      <div class="fs"><div class="fs-t">Simbolo Grado</div>
+        <div class="sl-row"><label>Forma simbolo</label>
+          <select id="sl-grade-shape" onchange="applyGrade()" style="flex:1;margin-bottom:0;font-size:11px">
+            <option value="polygon(50% 0%,100% 25%,100% 75%,50% 100%,0% 75%,0% 25%)">Esagono</option>
+            <option value="polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)" selected>Stella</option>
+            <option value="circle(50% at 50% 50%)">Cerchio</option>
+            <option value="polygon(50% 0%,100% 15%,100% 60%,50% 100%,0% 60%,0% 15%)">Scudo</option>
+            <option value="polygon(50% 0%,100% 50%,50% 100%,0% 50%)">Diamante</option>
+            <option value="polygon(50% 0%,100% 38%,82% 100%,18% 100%,0% 38%)">Pentagono</option>
+          </select>
+        </div>
+        <div class="sl-row"><label>Dimensione simbolo</label><input type="range" id="sl-grade-sz" min="80" max="280" value="160" oninput="applyGrade()"/><span class="sl-val" id="v-grade-sz">160px</span></div>
+        <div class="sl-row"><label>Dim. numero grado</label><input type="range" id="sl-grade-fs" min="40" max="160" value="70" oninput="applyGrade()"/><span class="sl-val" id="v-grade-fs">70px</span></div>
+        <div class="sl-row"><label>Colore simbolo</label><input type="color" id="sl-grade-col" value="#ffffff" oninput="applyGrade()"/></div>
+        <div class="sl-row"><label>Colore numero</label><input type="color" id="sl-grade-ncol" value="#060606" oninput="applyGrade()"/></div>
+      </div>
     </div>
   </div>
 </div>
@@ -662,29 +678,34 @@ function upd() {
 }
 
 
+
+
 function applyGrade() {
-  var shape = document.getElementById('sl-grade-shape');
-  var sz    = document.getElementById('sl-grade-sz');
-  var fs    = document.getElementById('sl-grade-fs');
-  var col   = document.getElementById('sl-grade-col');
-  var ncol  = document.getElementById('sl-grade-ncol');
-  if (!shape) return;
+  var shapeEl = document.getElementById('sl-grade-shape');
+  var szEl    = document.getElementById('sl-grade-sz');
+  var fsEl    = document.getElementById('sl-grade-fs');
+  var colEl   = document.getElementById('sl-grade-col');
+  var ncolEl  = document.getElementById('sl-grade-ncol');
+  if (!shapeEl) return;
   var sym = document.getElementById('grade-sym');
   var num = document.getElementById('d-grado');
+  var sz  = szEl ? szEl.value : 160;
+  var fs  = fsEl ? fsEl.value : 70;
   if (sym) {
-    sym.style.width      = sz.value + 'px';
-    sym.style.height     = sz.value + 'px';
-    sym.style.clipPath   = shape.value;
-    sym.style.background = col.value;
+    sym.style.width      = sz + 'px';
+    sym.style.height     = sz + 'px';
+    sym.style.clipPath   = shapeEl.value;
+    sym.style.webkitClipPath = shapeEl.value;
+    sym.style.background = colEl ? colEl.value : '#ffffff';
   }
   if (num) {
-    num.style.fontSize = fs.value + 'px';
-    num.style.color    = ncol.value;
+    num.style.fontSize = fs + 'px';
+    num.style.color    = ncolEl ? ncolEl.value : '#060606';
   }
   var vsz = document.getElementById('v-grade-sz');
   var vfs = document.getElementById('v-grade-fs');
-  if (vsz) vsz.textContent = sz.value + 'px';
-  if (vfs) vfs.textContent = fs.value + 'px';
+  if (vsz) vsz.textContent = sz + 'px';
+  if (vfs) vfs.textContent = fs + 'px';
 }
 
 buildGrid(); loadDef(curT); applyTheme(); applyGrade(); addEff(); addEff(); upd();
