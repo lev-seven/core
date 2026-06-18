@@ -494,22 +494,59 @@ function loadBgImg(e) {
 }
 
 async function dl() {
-  var card = document.getElementById('the-card');
-  async function run() {
-    var c = await html2canvas(card, {scale:1, useCORS:true, allowTaint:true, backgroundColor:null});
+  // Carica html2canvas se non presente
+  async function ensureH2C() {
+    if (typeof html2canvas !== 'undefined') return;
+    await new Promise(function(resolve, reject) {
+      var s = document.createElement('script');
+      s.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
+      s.onload = resolve; s.onerror = reject;
+      document.head.appendChild(s);
+    });
+  }
+
+  try {
+    await ensureH2C();
+  } catch(e) {
+    alert('Connessione assente — impossibile caricare il motore di export.');
+    return;
+  }
+
+  // Clona il card-canvas (1831x2539, valori reali) e rimuovi il transform
+  var original = document.querySelector('.card-canvas');
+  var clone = original.cloneNode(true);
+
+  // Posiziona off-screen ma visibile (html2canvas ignora visibility:hidden)
+  clone.style.transform   = 'none';
+  clone.style.position    = 'fixed';
+  clone.style.top         = '-9999px';
+  clone.style.left        = '-9999px';
+  clone.style.width       = '1831px';
+  clone.style.height      = '2539px';
+  clone.style.zIndex      = '-1';
+  document.body.appendChild(clone);
+
+  // Piccola pausa per il layout
+  await new Promise(function(r){ setTimeout(r, 80); });
+
+  try {
+    var canvas = await html2canvas(clone, {
+      scale: 1,
+      useCORS: true,
+      allowTaint: true,
+      backgroundColor: null,
+      width: 1831,
+      height: 2539,
+      x: 0,
+      y: 0
+    });
+
     var a = document.createElement('a');
     a.download = CARD_FILENAME;
-    a.href = c.toDataURL('image/png');
+    a.href = canvas.toDataURL('image/png');
     a.click();
-  }
-  if (typeof html2canvas !== 'undefined') {
-    await run();
-  } else {
-    var s = document.createElement('script');
-    s.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
-    s.onload = async function() { await run(); };
-    s.onerror = function() { alert('Connessione assente. Salva la pagina e riprova offline.'); };
-    document.head.appendChild(s);
+  } finally {
+    document.body.removeChild(clone);
   }
 }
 
