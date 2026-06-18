@@ -215,6 +215,7 @@ input:focus,select:focus,textarea:focus{border-color:#2d9e40 !important;}
         <div class="sl-row"><label>Dim. label</label><input type="range" id="sl-lfs" min="20" max="60" value="36" oninput="applyTheme()"/><span class="sl-val" id="v-lfs">36px</span></div>
         <div class="sl-row"><label>Dim. valori HP/VEL</label><input type="range" id="sl-dvfs" min="40" max="130" value="94" oninput="applyTheme()"/><span class="sl-val" id="v-dvfs">94px</span></div>
         <div class="sl-row"><label>Dim. stat (CORPO…)</label><input type="range" id="sl-svfs" min="100" max="300" value="244" oninput="applyTheme()"/><span class="sl-val" id="v-svfs">244px</span></div>
+        <div class="sl-row"><label>Opacità stat</label><input type="range" id="sl-stat-op" min="0" max="100" value="90" oninput="applyStatOp(this.value)"/><span class="sl-val" id="v-stat-op">90%</span></div>
         <div class="sl-row"><label>Dim. MOD</label><input type="range" id="sl-mfs" min="40" max="110" value="80" oninput="applyTheme()"/><span class="sl-val" id="v-mfs">80px</span></div>
         <div class="sl-row"><label>Dim. talento</label><input type="range" id="sl-tfs" min="24" max="64" value="42" oninput="applyTheme()"/><span class="sl-val" id="v-tfs">42px</span></div>
         <div class="sl-row"><label>Colore testo</label><input type="color" id="sl-tc" value="#0a0a0a" oninput="applyTheme()"/></div>
@@ -494,14 +495,21 @@ function loadBgImg(e) {
 
 async function dl() {
   var card = document.getElementById('the-card');
-  if (typeof html2canvas !== 'undefined') {
-    var c = await html2canvas(card, {scale:1, useCORS:true, allowTaint:true});
+  async function run() {
+    var c = await html2canvas(card, {scale:1, useCORS:true, allowTaint:true, backgroundColor:null});
     var a = document.createElement('a');
     a.download = CARD_FILENAME;
     a.href = c.toDataURL('image/png');
     a.click();
+  }
+  if (typeof html2canvas !== 'undefined') {
+    await run();
   } else {
-    alert('DevTools (F12) → Elements → tasto dx su #the-card → Capture node screenshot');
+    var s = document.createElement('script');
+    s.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
+    s.onload = async function() { await run(); };
+    s.onerror = function() { alert('Connessione assente. Salva la pagina e riprova offline.'); };
+    document.head.appendChild(s);
   }
 }
 
@@ -602,7 +610,17 @@ function applyGrade() {
   if (vfs) vfs.textContent = fs.value + 'px';
 }
 
-buildGrid(); loadDef(curT); applyTheme(); applyGrade(); upd();
+
+function applyStatOp(v) {
+  var op = parseFloat(v) / 100;
+  document.querySelectorAll('.c-stat').forEach(function(el) {
+    el.style.opacity = op;
+  });
+  var lbl = document.getElementById('v-stat-op');
+  if (lbl) lbl.textContent = v + '%';
+}
+
+buildGrid(); loadDef(curT); applyTheme(); applyGrade(); applyStatOp(90); upd();
 </script>
 </body>
 </html>
