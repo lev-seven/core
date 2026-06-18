@@ -658,7 +658,12 @@ async function dl() {
     inlined.forEach(function(item){ item.el.style[item.prop] = item.old; });
     // Rimuovi canvas grade-sym e ripristina clip-path
     if (gradeCanvas && gradeCanvas.parentElement) {
-      gradeCanvas.parentElement.removeChild(gradeCanvas);
+      var gsym = gradeCanvas.parentElement;
+      gsym.removeChild(gradeCanvas);
+      if (gsym._savedClipPath  !== undefined) gsym.style.clipPath       = gsym._savedClipPath;
+      if (gsym._savedWebkitCP  !== undefined) gsym.style.webkitClipPath = gsym._savedWebkitCP;
+      if (gsym._savedBg        !== undefined) gsym.style.background     = gsym._savedBg;
+      delete gsym._savedClipPath; delete gsym._savedWebkitCP; delete gsym._savedBg;
     }
 
     stage.style.transform = saved.stageTransform;
@@ -761,6 +766,26 @@ function applyStatOp(v) {
 }
 
 
+function applyBorder() {
+  var szEl   = document.getElementById('sl-brd-sz');
+  var col1El = document.getElementById('sl-brd-col1');
+  var col2El = document.getElementById('sl-brd-col2');
+  if (!szEl) return;
+  var sz   = parseInt(szEl.value) || 28;
+  var col1 = col1El ? col1El.value : '#0c3518';
+  var col2 = col2El ? col2El.value : '#1a6b2a';
+  var brd  = document.querySelector('.c-border');
+  if (brd) {
+    brd.style.border       = sz + 'px solid ' + col1;
+    brd.style.boxShadow    = 'inset 0 0 0 ' + Math.round(sz*0.29) + 'px ' + col2;
+    brd.style.borderRadius = Math.round(sz * 2) + 'px';
+  }
+  var card = document.getElementById('the-card');
+  if (card) card.style.borderRadius = Math.round(sz * 2) + 'px';
+  var vbrd = document.getElementById('v-brd-sz');
+  if (vbrd) vbrd.textContent = sz + 'px';
+}
+
 function applyGrade() {
   var shapeEl = document.getElementById('sl-grade-shape');
   var szEl    = document.getElementById('sl-grade-sz');
@@ -768,20 +793,29 @@ function applyGrade() {
   var colEl   = document.getElementById('sl-grade-col');
   var ncolEl  = document.getElementById('sl-grade-ncol');
   if (!shapeEl) return;
-  var sym = document.getElementById('grade-sym');
-  var num = document.getElementById('d-grado');
-  var sz  = szEl ? szEl.value : 160;
-  var fs  = fsEl ? fsEl.value : 70;
+  var sym  = document.getElementById('grade-sym');
+  var num  = document.getElementById('d-grado');
+  var sz   = szEl  ? parseInt(szEl.value)  : 160;
+  var fs   = fsEl  ? parseInt(fsEl.value)  : 70;
+  var col  = colEl  ? colEl.value  : '#ffffff';
+  var ncol = ncolEl ? ncolEl.value : '#060606';
   if (sym) {
-    sym.style.width      = sz + 'px';
-    sym.style.height     = sz + 'px';
-    sym.style.clipPath   = shapeEl.value;
+    sym.style.width          = sz + 'px';
+    sym.style.height         = sz + 'px';
+    sym.style.clipPath       = shapeEl.value;
     sym.style.webkitClipPath = shapeEl.value;
-    sym.style.background = colEl ? colEl.value : '#ffffff';
+    sym.style.background     = col;
+    sym.style.display        = 'flex';
+    sym.style.alignItems     = 'center';
+    sym.style.justifyContent = 'center';
+    sym.style.position       = 'relative';
   }
   if (num) {
-    num.style.fontSize = fs + 'px';
-    num.style.color    = ncolEl ? ncolEl.value : '#060606';
+    num.style.fontSize   = fs + 'px';
+    num.style.color      = ncol;
+    num.style.position   = 'relative';
+    num.style.zIndex     = '2';
+    num.style.lineHeight = '1';
   }
   var vsz = document.getElementById('v-grade-sz');
   var vfs = document.getElementById('v-grade-fs');
@@ -791,60 +825,50 @@ function applyGrade() {
 
 
 function gradeSymToCanvas(sym) {
-  // Legge il clip-path corrente e disegna il simbolo su un canvas inline
   if (!sym) return null;
-  var cs   = window.getComputedStyle(sym);
-  var w    = parseInt(cs.width)  || 160;
-  var h    = parseInt(cs.height) || 160;
-  var bg   = sym.style.background || cs.backgroundColor || '#ffffff';
-  var cp   = sym.style.clipPath || cs.clipPath || '';
-
-  // Crea canvas delle stesse dimensioni
+  var shapeEl = document.getElementById('sl-grade-shape');
+  var colEl   = document.getElementById('sl-grade-col');
+  var w   = parseInt(sym.style.width)  || 160;
+  var h   = parseInt(sym.style.height) || 160;
+  var bg  = colEl ? colEl.value : (sym.style.background || '#ffffff');
+  var cp  = shapeEl ? shapeEl.value : (sym.style.clipPath || '');
+  sym._savedClipPath = sym.style.clipPath;
+  sym._savedBg       = sym.style.background;
+  sym._savedWebkitCP = sym.style.webkitClipPath;
   var cvs = document.createElement('canvas');
   cvs.width  = w; cvs.height = h;
+  cvs.style.cssText = 'position:absolute;top:0;left:0;width:'+w+'px;height:'+h+'px;z-index:0;pointer-events:none;';
   var ctx = cvs.getContext('2d');
-
-  // Parsa il clip-path polygon
   var polyMatch = cp.match(/polygon\(([^)]+)\)/);
+  var circMatch = cp.match(/circle/);
   if (polyMatch) {
-    var pts = polyMatch[1].split(',').map(function(p){
-      var parts = p.trim().split(/\s+/);
-      return {
-        x: parseFloat(parts[0]) / 100 * w,
-        y: parseFloat(parts[1]) / 100 * h
-      };
+    var pts = polyMatch[1].split(',').map(function(p) {
+      var t = p.trim().split(/\s+/);
+      return { x: parseFloat(t[0]) / 100 * w, y: parseFloat(t[1]) / 100 * h };
     });
     ctx.beginPath();
     ctx.moveTo(pts[0].x, pts[0].y);
-    for (var i=1;i<pts.length;i++) ctx.lineTo(pts[i].x, pts[i].y);
+    for (var i = 1; i < pts.length; i++) ctx.lineTo(pts[i].x, pts[i].y);
     ctx.closePath();
-    ctx.fillStyle = bg;
-    ctx.fill();
+    ctx.fillStyle = bg; ctx.fill();
+  } else if (circMatch) {
+    ctx.beginPath();
+    ctx.arc(w/2, h/2, Math.min(w,h)/2, 0, Math.PI*2);
+    ctx.fillStyle = bg; ctx.fill();
   } else {
-    // Cerchio o fallback rettangolo
-    var circleMatch = cp.match(/circle\(/);
-    if (circleMatch) {
-      ctx.beginPath();
-      ctx.arc(w/2, h/2, Math.min(w,h)/2, 0, Math.PI*2);
-      ctx.fillStyle = bg;
-      ctx.fill();
-    } else {
-      ctx.fillStyle = bg;
-      ctx.fillRect(0,0,w,h);
-    }
+    ctx.fillStyle = bg; ctx.fillRect(0,0,w,h);
   }
-
-  // Posiziona il canvas sopra il sym originale
-  cvs.style.cssText = 'position:absolute;top:0;left:0;width:'+w+'px;height:'+h+'px;z-index:1;';
   sym.style.clipPath = 'none';
   sym.style.webkitClipPath = 'none';
   sym.style.background = 'transparent';
   sym.style.position = 'relative';
-  sym.appendChild(cvs);
+  var num = document.getElementById('d-grado');
+  if (num) { num.style.position='relative'; num.style.zIndex='2'; }
+  sym.insertBefore(cvs, sym.firstChild);
   return cvs;
 }
 
-buildGrid(); loadDef(curT); applyTheme(); applyGrade(); applyStatOp(90); upd();
+buildGrid(); loadDef(curT); applyTheme(); applyGrade(); applyBorder(); applyStatOp(90); upd();
 </script>
 </body>
 </html>
