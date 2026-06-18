@@ -510,53 +510,90 @@ function loadBgImg(e) {
 }
 
 async function dl() {
+  console.log('[dl] START');
+
   async function ensureH2C() {
-    if (typeof html2canvas !== 'undefined') return;
+    if (typeof html2canvas !== 'undefined') {
+      console.log('[dl] html2canvas already loaded');
+      return;
+    }
+    console.log('[dl] loading html2canvas from CDN...');
     await new Promise(function(resolve, reject) {
       var s = document.createElement('script');
       s.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
-      s.onload = resolve; s.onerror = reject;
+      s.onload = function(){ console.log('[dl] html2canvas loaded OK'); resolve(); };
+      s.onerror = function(){ console.error('[dl] html2canvas CDN FAILED'); reject(new Error('CDN failed')); };
       document.head.appendChild(s);
     });
   }
+
   try { await ensureH2C(); }
   catch(e) { alert('Connessione assente.'); return; }
 
   var card  = document.getElementById('the-card');
-  var stage = card.parentElement; // .card-stage con transform:scale(0.3222)
-  if (!card || !stage) { alert('Carta non trovata.'); return; }
+  var stage = card ? card.parentElement : null;
+  var outer = stage ? stage.parentElement : null;
 
-  // Salva lo stato originale
-  var origTransform   = stage.style.transform;
-  var origPosition    = stage.style.position;
-  var origTop         = stage.style.top;
-  var origLeft        = stage.style.left;
-  var origZIndex      = stage.style.zIndex;
-  var origWidth       = stage.style.width;
-  var origHeight      = stage.style.height;
-  var origOuter       = card.parentElement.parentElement; // .card-outer
-  var origOuterOF     = origOuter ? origOuter.style.overflow : '';
-  var origOuterW      = origOuter ? origOuter.style.width : '';
-  var origOuterH      = origOuter ? origOuter.style.height : '';
+  console.log('[dl] card:', card);
+  console.log('[dl] stage:', stage);
+  console.log('[dl] outer:', outer);
 
-  // Porta la carta in posizione catturabile: rimuovi scale, mettila off-screen
+  if (!card)  { alert('Carta non trovata (#the-card).'); return; }
+  if (!stage) { alert('Stage non trovato (parent di #the-card).'); return; }
+
+  // Leggi dimensioni attuali
+  var cardRect  = card.getBoundingClientRect();
+  var stageRect = stage.getBoundingClientRect();
+  console.log('[dl] card boundingRect:', JSON.stringify({w:cardRect.width,h:cardRect.height,top:cardRect.top,left:cardRect.left}));
+  console.log('[dl] stage boundingRect:', JSON.stringify({w:stageRect.width,h:stageRect.height}));
+  console.log('[dl] stage computed transform:', window.getComputedStyle(stage).transform);
+  console.log('[dl] card computed w/h:', window.getComputedStyle(card).width, window.getComputedStyle(card).height);
+
+  // Salva stili originali
+  var saved = {
+    stageTransform: stage.style.transform,
+    stagePosition:  stage.style.position,
+    stageTop:       stage.style.top,
+    stageLeft:      stage.style.left,
+    stageZIndex:    stage.style.zIndex,
+    stageWidth:     stage.style.width,
+    stageHeight:    stage.style.height,
+    outerOverflow:  outer ? outer.style.overflow : '',
+    outerWidth:     outer ? outer.style.width    : '',
+    outerHeight:    outer ? outer.style.height   : ''
+  };
+  console.log('[dl] saved styles:', JSON.stringify(saved));
+
+  // Porta stage fuori schermo senza scala
   stage.style.transform = 'none';
   stage.style.position  = 'fixed';
-  stage.style.top       = '0';
+  stage.style.top       = '0px';
   stage.style.left      = '-9999px';
   stage.style.zIndex    = '9999';
   stage.style.width     = '1831px';
   stage.style.height    = '2539px';
-  if (origOuter) {
-    origOuter.style.overflow = 'visible';
-    origOuter.style.width    = '1831px';
-    origOuter.style.height   = '2539px';
+  if (outer) {
+    outer.style.overflow = 'visible';
+    outer.style.width    = '1831px';
+    outer.style.height   = '2539px';
   }
 
-  // Aspetta che il browser ridisegni
+  // Due frame per assicurare layout
   await new Promise(function(r){ requestAnimationFrame(function(){ requestAnimationFrame(r); }); });
 
+  // Verifica dopo il reflow
+  var cardRect2 = card.getBoundingClientRect();
+  console.log('[dl] card rect AFTER transform removal:', JSON.stringify({w:cardRect2.width,h:cardRect2.height,top:cardRect2.top,left:cardRect2.left}));
+  console.log('[dl] card children count:', card.children.length);
+
+  // Log z-index dei figli diretti
+  Array.from(card.children).forEach(function(el, i) {
+    var cs = window.getComputedStyle(el);
+    console.log('[dl] child['+i+'] class="'+el.className+'" zIndex='+cs.zIndex+' pos='+cs.position+' display='+cs.display+' w='+cs.width+' h='+cs.height);
+  });
+
   try {
+    console.log('[dl] calling html2canvas...');
     var canvas = await html2canvas(card, {
       scale: 1,
       useCORS: true,
@@ -569,26 +606,46 @@ async function dl() {
       x: 0,
       y: 0,
       scrollX: 0,
-      scrollY: 0
+      scrollY: 0,
+      logging: true
     });
+    console.log('[dl] canvas size:', canvas.width, 'x', canvas.height);
+
+    // Ispeziona pixel di debug: centro, angolo top-left, zona header
+    var ctx = canvas.getContext('2d');
+    function px(x, y) {
+      var d = ctx.getImageData(x, y, 1, 1).data;
+      return 'rgba('+d[0]+','+d[1]+','+d[2]+','+d[3]+')';
+    }
+    console.log('[dl] pixel(50,50)=',     px(50,50),    '  expected: header/border area');
+    console.log('[dl] pixel(900,80)=',    px(900,80),   '  expected: header black bg');
+    console.log('[dl] pixel(900,500)=',   px(900,500),  '  expected: artwork area (dark)');
+    console.log('[dl] pixel(900,1300)=',  px(900,1300), '  expected: info section');
+    console.log('[dl] pixel(900,2000)=',  px(900,2000), '  expected: stat block');
+
     var a = document.createElement('a');
     a.download = CARD_FILENAME;
     a.href = canvas.toDataURL('image/png');
     a.click();
+    console.log('[dl] download triggered OK');
+  } catch(err) {
+    console.error('[dl] html2canvas ERROR:', err);
+    alert('Errore durante la cattura: ' + err.message);
   } finally {
-    // Ripristina tutto
-    stage.style.transform = origTransform;
-    stage.style.position  = origPosition;
-    stage.style.top       = origTop;
-    stage.style.left      = origLeft;
-    stage.style.zIndex    = origZIndex;
-    stage.style.width     = origWidth;
-    stage.style.height    = origHeight;
-    if (origOuter) {
-      origOuter.style.overflow = origOuterOF;
-      origOuter.style.width    = origOuterW;
-      origOuter.style.height   = origOuterH;
+    console.log('[dl] restoring styles...');
+    stage.style.transform = saved.stageTransform;
+    stage.style.position  = saved.stagePosition;
+    stage.style.top       = saved.stageTop;
+    stage.style.left      = saved.stageLeft;
+    stage.style.zIndex    = saved.stageZIndex;
+    stage.style.width     = saved.stageWidth;
+    stage.style.height    = saved.stageHeight;
+    if (outer) {
+      outer.style.overflow = saved.outerOverflow;
+      outer.style.width    = saved.outerWidth;
+      outer.style.height   = saved.outerHeight;
     }
+    console.log('[dl] styles restored. END');
   }
 }
 
