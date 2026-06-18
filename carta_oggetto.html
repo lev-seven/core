@@ -499,44 +499,76 @@ async function dl() {
       document.head.appendChild(s);
     });
   }
-
   try { await ensureH2C(); }
-  catch(e) { alert('Connessione assente — impossibile caricare html2canvas.'); return; }
+  catch(e) { alert('Connessione assente.'); return; }
 
-  // Cattura il nodo card reale (1831x2539) rimuovendo il transform dal clone
-  var original = document.getElementById('the-card');
-  if (!original) { alert('Carta non trovata.'); return; }
+  var card  = document.getElementById('the-card');
+  var stage = card.parentElement; // .card-stage con transform:scale(0.3222)
+  if (!card || !stage) { alert('Carta non trovata.'); return; }
 
-  var wrapper = document.createElement('div');
-  wrapper.style.cssText = 'position:fixed;top:-99999px;left:-99999px;width:1831px;height:2539px;overflow:hidden;z-index:-9999;pointer-events:none;';
+  // Salva lo stato originale
+  var origTransform   = stage.style.transform;
+  var origPosition    = stage.style.position;
+  var origTop         = stage.style.top;
+  var origLeft        = stage.style.left;
+  var origZIndex      = stage.style.zIndex;
+  var origWidth       = stage.style.width;
+  var origHeight      = stage.style.height;
+  var origOuter       = card.parentElement.parentElement; // .card-outer
+  var origOuterOF     = origOuter ? origOuter.style.overflow : '';
+  var origOuterW      = origOuter ? origOuter.style.width : '';
+  var origOuterH      = origOuter ? origOuter.style.height : '';
 
-  var clone = original.cloneNode(true);
-  clone.style.transform = 'none';
-  clone.style.position  = 'relative';
-  clone.style.top       = '0';
-  clone.style.left      = '0';
-  clone.style.width     = '1831px';
-  clone.style.height    = '2539px';
+  // Porta la carta in posizione catturabile: rimuovi scale, mettila off-screen
+  stage.style.transform = 'none';
+  stage.style.position  = 'fixed';
+  stage.style.top       = '0';
+  stage.style.left      = '-9999px';
+  stage.style.zIndex    = '9999';
+  stage.style.width     = '1831px';
+  stage.style.height    = '2539px';
+  if (origOuter) {
+    origOuter.style.overflow = 'visible';
+    origOuter.style.width    = '1831px';
+    origOuter.style.height   = '2539px';
+  }
 
-  wrapper.appendChild(clone);
-  document.body.appendChild(wrapper);
-  await new Promise(function(r){ setTimeout(r, 100); });
+  // Aspetta che il browser ridisegni
+  await new Promise(function(r){ requestAnimationFrame(function(){ requestAnimationFrame(r); }); });
 
   try {
-    var canvas = await html2canvas(clone, {
+    var canvas = await html2canvas(card, {
       scale: 1,
       useCORS: true,
       allowTaint: true,
       backgroundColor: null,
       width: 1831,
-      height: 2539
+      height: 2539,
+      windowWidth: 1831,
+      windowHeight: 2539,
+      x: 0,
+      y: 0,
+      scrollX: 0,
+      scrollY: 0
     });
     var a = document.createElement('a');
     a.download = CARD_FILENAME;
     a.href = canvas.toDataURL('image/png');
     a.click();
   } finally {
-    document.body.removeChild(wrapper);
+    // Ripristina tutto
+    stage.style.transform = origTransform;
+    stage.style.position  = origPosition;
+    stage.style.top       = origTop;
+    stage.style.left      = origLeft;
+    stage.style.zIndex    = origZIndex;
+    stage.style.width     = origWidth;
+    stage.style.height    = origHeight;
+    if (origOuter) {
+      origOuter.style.overflow = origOuterOF;
+      origOuter.style.width    = origOuterW;
+      origOuter.style.height   = origOuterH;
+    }
   }
 }
 
