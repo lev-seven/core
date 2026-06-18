@@ -490,7 +490,6 @@ function loadBgImg(e) {
 }
 
 async function dl() {
-  // Carica html2canvas se non presente
   async function ensureH2C() {
     if (typeof html2canvas !== 'undefined') return;
     await new Promise(function(resolve, reject) {
@@ -501,29 +500,27 @@ async function dl() {
     });
   }
 
-  try {
-    await ensureH2C();
-  } catch(e) {
-    alert('Connessione assente — impossibile caricare il motore di export.');
-    return;
-  }
+  try { await ensureH2C(); }
+  catch(e) { alert('Connessione assente — impossibile caricare html2canvas.'); return; }
 
-  // Clona il card-canvas (1831x2539, valori reali) e rimuovi il transform
-  var original = document.querySelector('.card-canvas');
+  // Cattura il nodo card reale (1831x2539) rimuovendo il transform dal clone
+  var original = document.getElementById('the-card');
+  if (!original) { alert('Carta non trovata.'); return; }
+
+  var wrapper = document.createElement('div');
+  wrapper.style.cssText = 'position:fixed;top:-99999px;left:-99999px;width:1831px;height:2539px;overflow:hidden;z-index:-9999;pointer-events:none;';
+
   var clone = original.cloneNode(true);
+  clone.style.transform = 'none';
+  clone.style.position  = 'relative';
+  clone.style.top       = '0';
+  clone.style.left      = '0';
+  clone.style.width     = '1831px';
+  clone.style.height    = '2539px';
 
-  // Posiziona off-screen ma visibile (html2canvas ignora visibility:hidden)
-  clone.style.transform   = 'none';
-  clone.style.position    = 'fixed';
-  clone.style.top         = '-9999px';
-  clone.style.left        = '-9999px';
-  clone.style.width       = '1831px';
-  clone.style.height      = '2539px';
-  clone.style.zIndex      = '-1';
-  document.body.appendChild(clone);
-
-  // Piccola pausa per il layout
-  await new Promise(function(r){ setTimeout(r, 80); });
+  wrapper.appendChild(clone);
+  document.body.appendChild(wrapper);
+  await new Promise(function(r){ setTimeout(r, 100); });
 
   try {
     var canvas = await html2canvas(clone, {
@@ -532,17 +529,14 @@ async function dl() {
       allowTaint: true,
       backgroundColor: null,
       width: 1831,
-      height: 2539,
-      x: 0,
-      y: 0
+      height: 2539
     });
-
     var a = document.createElement('a');
     a.download = CARD_FILENAME;
     a.href = canvas.toDataURL('image/png');
     a.click();
   } finally {
-    document.body.removeChild(clone);
+    document.body.removeChild(wrapper);
   }
 }
 
