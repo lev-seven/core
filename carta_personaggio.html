@@ -91,36 +91,23 @@ input:focus,select:focus,textarea:focus{border-color:#2d9e40 !important;}
 .c-sval{font-family:'JetBrains Mono',monospace;font-size:244px;font-weight:700;color:#fff;line-height:.88;position:relative;z-index:1;text-shadow:0 8px 32px rgba(0,0,0,0.4);}
 .c-smod{font-family:'JetBrains Mono',monospace;font-size:80px;font-weight:700;color:rgba(255,255,255,0.82);position:relative;z-index:1;}
 
-/* ── PRESET STILE ── */
-.preset-grid{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-bottom:8px;}
-.preset-slot{display:flex;align-items:center;gap:4px;}
-.preset-slot input[type=text]{flex:1;font-size:10px;padding:4px 6px;margin-bottom:0;
-  border:1px solid #1c1c1c;border-radius:4px;background:#0e0e0e;color:#aaa;}
-.btn-ps{flex-shrink:0;width:26px;height:26px;border:1px solid #1c1c1c;border-radius:4px;
-  background:#0e0e0e;color:#555;cursor:pointer;font-size:11px;transition:all .15s;
-  display:flex;align-items:center;justify-content:center;}
-.btn-ps:hover{border-color:#444;color:#aaa;}
-.btn-ps.save{color:#2d9e40;border-color:#1a4020;}
-.btn-ps.save:hover{border-color:#2d9e40;}
-.btn-ps.load{color:#5890e8;border-color:#1a2040;}
-.btn-ps.load:hover{border-color:#5890e8;}
-.btn-ps.del{color:#c94040;border-color:#401010;}
-.btn-ps.del:hover{border-color:#c94040;}
-.preset-export{width:100%;margin-top:6px;}
-.preset-export textarea{width:100%;height:60px;background:#0e0e0e;border:1px solid #1c1c1c;
-  border-radius:4px;color:#888;font-family:'JetBrains Mono',monospace;font-size:9px;
-  padding:6px;resize:vertical;margin-bottom:4px;}
-.preset-export-row{display:flex;gap:5px;}
-.btn-export{flex:1;padding:5px;background:#0e0e0e;border:1px solid #1c1c1c;border-radius:4px;
-  color:#555;font-size:9px;font-weight:700;letter-spacing:.5px;cursor:pointer;transition:all .15s;}
-.btn-export:hover{border-color:#444;color:#aaa;}
 
+/* ── SALVA / IMPORTA STILE ── */
+.btn-style{padding:5px 11px;border:1px solid;border-radius:5px;
+  font-family:'Cinzel',serif;font-size:10px;font-weight:700;letter-spacing:.8px;
+  cursor:pointer;transition:all .15s;background:transparent;}
+.btn-save-style{color:#c8a030;border-color:rgba(200,160,48,0.4);}
+.btn-save-style:hover{background:rgba(200,160,48,0.12);border-color:#c8a030;}
+.btn-load-style{color:#5890e8;border-color:rgba(88,144,232,0.4);}
+.btn-load-style:hover{background:rgba(88,144,232,0.12);border-color:#5890e8;}
 </style>
 </head>
 <body>
 <div class="top-bar">
   <h1>🧬 Carta Personaggio</h1>
   <span class="badge">1831x2539px</span><span class="badge">preview 590px</span>
+  <button id="btn-save-style" class="btn-style btn-save-style" onclick="saveStyle()">💾 Salva Stile</button>
+  <button id="btn-load-style" class="btn-style btn-load-style" onclick="importStyle()">📂 Importa Stile</button>
   <button class="btn-dl" onclick="dl()">⬇ Scarica HD</button>
 </div>
 <div class="body-wrap">
@@ -274,16 +261,6 @@ input:focus,select:focus,textarea:focus{border-color:#2d9e40 !important;}
         <div class="sl-row"><label>Spessore bordo</label><input type="range" id="sl-brd-sz" min="4" max="80" value="28" oninput="applyBorder()"/><span class="sl-val" id="v-brd-sz">28px</span></div>
         <div class="sl-row"><label>Colore bordo esterno</label><input type="color" id="sl-brd-col1" value="#0c3518" oninput="applyBorder()"/></div>
         <div class="sl-row"><label>Colore bordo interno</label><input type="color" id="sl-brd-col2" value="#1a6b2a" oninput="applyBorder()"/></div>
-      </div>
-      <div class="fs"><div class="fs-t">Preset Stile</div>
-        <div class="preset-grid" id="preset-grid"></div>
-        <div class="preset-export">
-          <textarea id="preset-json" placeholder="JSON preset — incolla qui per importare..."></textarea>
-          <div class="preset-export-row">
-            <button class="btn-export" onclick="exportPreset()">⬆ Esporta JSON</button>
-            <button class="btn-export" onclick="importPreset()">⬇ Importa JSON</button>
-          </div>
-        </div>
       </div>
 
     </div>
@@ -919,33 +896,31 @@ function gradeSymToCanvas(sym) {
 }
 
 
-/* ══ SISTEMA PRESET STILE ══ */
-var PRESET_KEY = CARD_FILENAME.split('_')[0] + '_style_presets';
-var N_SLOTS = 5;
+
+
+/* ══ SALVA / IMPORTA STILE ══ */
+var STYLE_KEY = CARD_FILENAME.replace('.png','') + '_style';
 
 function getAllSliderIds() {
   var ids = [];
-  document.querySelectorAll('[id^="sl-"]').forEach(function(el) { ids.push(el.id); });
+  document.querySelectorAll('[id^="sl-"]').forEach(function(el){ ids.push(el.id); });
   return ids;
 }
 
 function captureStyle() {
-  var state = { theme: curT, sliders: {}, bgimg: null };
-  getAllSliderIds().forEach(function(id) {
+  var state = { theme: curT, sliders: {} };
+  getAllSliderIds().forEach(function(id){
     var el = document.getElementById(id);
     if (el) state.sliders[id] = el.value;
   });
-  // Cattura sfondo custom se presente
   var bgimgEl = document.getElementById('lower-bgimg');
-  if (bgimgEl && bgimgEl.style.backgroundImage && bgimgEl.style.backgroundImage !== 'none') {
+  if (bgimgEl && bgimgEl.style.backgroundImage && bgimgEl.style.backgroundImage !== 'none')
     state.bgimg = bgimgEl.style.backgroundImage;
-  }
   return state;
 }
 
 function applyStyleState(state) {
   if (!state) return;
-  // Imposta tema
   if (state.theme && typeof TEMI !== 'undefined' && TEMI[state.theme]) {
     curT = state.theme;
     document.querySelectorAll('.tbtn').forEach(function(x){ x.classList.remove('act'); });
@@ -953,14 +928,12 @@ function applyStyleState(state) {
     if (tb) tb.classList.add('act');
     loadDef(curT);
   }
-  // Ripristina tutti gli slider
   if (state.sliders) {
-    Object.keys(state.sliders).forEach(function(id) {
+    Object.keys(state.sliders).forEach(function(id){
       var el = document.getElementById(id);
       if (el) el.value = state.sliders[id];
     });
   }
-  // Sfondo immagine
   if (state.bgimg) {
     var bgimgEl = document.getElementById('lower-bgimg');
     if (bgimgEl) {
@@ -970,129 +943,65 @@ function applyStyleState(state) {
     }
   }
   applyTheme();
-  if (typeof applyGrade === 'function') applyGrade();
+  if (typeof applyGrade  === 'function') applyGrade();
   if (typeof applyBorder === 'function') applyBorder();
   if (typeof applyStatOp === 'function') {
     var sop = document.getElementById('sl-stat-op');
     applyStatOp(sop ? sop.value : 90);
   }
-  // Applica altezza artwork se presente
   if (typeof setArtH === 'function') {
     var arth = document.getElementById('sl-arth');
     if (arth) setArtH(arth.value);
   }
 }
 
-function loadPresets() {
-  try { return JSON.parse(localStorage.getItem(PRESET_KEY)) || {}; }
-  catch(e) { return {}; }
-}
-
-function savePresets(p) {
-  try { localStorage.setItem(PRESET_KEY, JSON.stringify(p)); } catch(e) {}
-}
-
-function saveSlot(i) {
-  var name = document.getElementById('preset-name-' + i).value.trim() || ('Preset ' + (i+1));
-  document.getElementById('preset-name-' + i).value = name;
-  var p = loadPresets();
-  p['slot' + i] = { name: name, state: captureStyle() };
-  savePresets(p);
-  refreshPresetGrid();
-}
-
-function loadSlot(i) {
-  var p = loadPresets();
-  var slot = p['slot' + i];
-  if (!slot) return;
-  applyStyleState(slot.state);
-  document.getElementById('preset-name-' + i).value = slot.name;
-}
-
-function deleteSlot(i) {
-  var p = loadPresets();
-  delete p['slot' + i];
-  savePresets(p);
-  refreshPresetGrid();
-}
-
-function refreshPresetGrid() {
-  var p = loadPresets();
-  var grid = document.getElementById('preset-grid');
-  if (!grid) return;
-  grid.innerHTML = '';
-  for (var i = 0; i < N_SLOTS; i++) {
-    (function(idx) {
-      var slot = p['slot' + idx];
-      var name = slot ? slot.name : ('Slot ' + (idx+1));
-      var row = document.createElement('div');
-      row.className = 'preset-slot';
-      row.innerHTML = '<input type="text" id="preset-name-' + idx + '" value="' + name + '" placeholder="Slot ' + (idx+1) + '"/>'
-        + '<button class="btn-ps save" title="Salva" onclick="saveSlot(' + idx + ')">💾</button>'
-        + '<button class="btn-ps load' + (slot ? '' : ' disabled') + '" title="Carica" onclick="loadSlot(' + idx + ')" '
-        + (slot ? '' : 'style="opacity:.3;cursor:default"') + '>📂</button>'
-        + '<button class="btn-ps del' + (slot ? '' : ' disabled') + '" title="Elimina" onclick="deleteSlot(' + idx + ')" '
-        + (slot ? '' : 'style="opacity:.3;cursor:default"') + '>🗑</button>';
-      grid.appendChild(row);
-    })(i);
-  }
-}
-
-function exportPreset() {
-  var state = captureStyle();
-  var p = loadPresets();
-  var data = { current: state, presets: p };
-  var ta = document.getElementById('preset-json');
-  if (ta) {
-    ta.value = JSON.stringify(data, null, 2);
-    ta.select();
-    try { document.execCommand('copy'); } catch(e) {}
-  }
-}
-
-function importPreset() {
-  var ta = document.getElementById('preset-json');
-  if (!ta || !ta.value.trim()) return;
+function saveStyle() {
   try {
-    var data = JSON.parse(ta.value.trim());
-    if (data.presets) {
-      savePresets(data.presets);
-      refreshPresetGrid();
-    }
-    if (data.current) {
-      applyStyleState(data.current);
-    } else if (data.sliders) {
-      // Supporta anche incollare direttamente uno stato
-      applyStyleState(data);
-    }
-  } catch(e) {
-    alert('JSON non valido: ' + e.message);
-  }
+    localStorage.setItem(STYLE_KEY, JSON.stringify(captureStyle()));
+    var btn = document.getElementById('btn-save-style');
+    if (btn) { btn.textContent = '✓ Salvato'; setTimeout(function(){ btn.textContent = '💾 Salva Stile'; }, 1400); }
+  } catch(e) { alert('Errore salvataggio: ' + e.message); }
 }
 
-/* Aggiungi data-theme ai bottoni tema per poterli trovare in applyStyleState */
-function buildGrid() {
-  var g = document.getElementById('tgrid');
-  if (!g) return;
-  Object.keys(TEMI).forEach(function(k) {
-    var t = TEMI[k];
-    var b = document.createElement('button');
-    b.className = 'tbtn' + (k===curT ? ' act' : '');
-    b.textContent = t.n;
-    b.setAttribute('data-theme', k);
-    b.onclick = function() {
-      curT = k;
-      document.querySelectorAll('.tbtn').forEach(function(x){ x.classList.remove('act'); });
-      b.classList.add('act');
-      loadDef(k);
-      applyTheme();
+function importStyle() {
+  var input = document.createElement('input');
+  input.type = 'file'; input.accept = '.json,application/json';
+  input.onchange = function(e) {
+    var file = e.target.files[0]; if (!file) return;
+    var reader = new FileReader();
+    reader.onload = function(ev) {
+      try {
+        var state = JSON.parse(ev.target.result);
+        applyStyleState(state);
+        localStorage.setItem(STYLE_KEY, JSON.stringify(state));
+        var btn = document.getElementById('btn-load-style');
+        if (btn) { btn.textContent = '✓ Importato'; setTimeout(function(){ btn.textContent = '📂 Importa Stile'; }, 1400); }
+      } catch(err) { alert('File non valido: ' + err.message); }
     };
-    g.appendChild(b);
-  });
+    reader.readAsText(file);
+  };
+  input.click();
 }
-/* ══════════════════════════════ */
 
-buildGrid(); refreshPresetGrid(); loadDef(curT); applyTheme(); applyGrade(); applyBorder(); applyStatOp(90); upd();
+function exportStyleFile() {
+  var state = captureStyle();
+  var blob = new Blob([JSON.stringify(state, null, 2)], {type:'application/json'});
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = STYLE_KEY + '.json';
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+
+// Auto-carica stile salvato all'avvio
+function autoLoadStyle() {
+  try {
+    var saved = localStorage.getItem(STYLE_KEY);
+    if (saved) applyStyleState(JSON.parse(saved));
+  } catch(e) {}
+}
+
+buildGrid(); loadDef(curT); applyTheme(); applyGrade(); applyBorder(); applyStatOp(90); upd(); autoLoadStyle();
 </script>
 </body>
 </html>
