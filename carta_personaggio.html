@@ -14,8 +14,8 @@ body{background:#0e0e0e;color:#ccc;font-family:'Outfit',sans-serif;display:flex;
 .btn-dl{margin-left:auto;padding:6px 14px;border:none;border-radius:5px;color:#fff;font-family:'Cinzel',serif;font-size:11px;font-weight:700;letter-spacing:1px;cursor:pointer;}
 .body-wrap{display:flex;flex:1;overflow:hidden;}
 .preview-col{width:640px;flex-shrink:0;background:#050505;border-right:1px solid #141414;display:flex;align-items:flex-start;justify-content:center;padding:14px;overflow-y:auto;}
-.card-outer{width:590px;height:817px;position:relative;flex-shrink:0;}
-.card-stage{width:1831px;height:2539px;transform-origin:top left;transform:scale(0.3222);position:absolute;top:0;left:0;}
+.card-outer{width:590px;height:817px;position:relative;flex-shrink:0;overflow:visible;}
+.card-stage{width:1831px;height:2539px;transform-origin:top left;-webkit-transform-origin:top left;transform:scale(0.3222);-webkit-transform:scale(0.3222);position:absolute;top:0;left:0;}
 .form-panel{flex:1;display:flex;flex-direction:column;overflow:hidden;}
 .tab-bar{display:flex;background:#080808;border-bottom:1px solid #1a1a1a;flex-shrink:0;}
 .tab{padding:9px 20px;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#333;cursor:pointer;border-bottom:2px solid transparent;transition:all .15s;}
@@ -30,7 +30,7 @@ textarea{resize:vertical;line-height:1.5;}
 .r2{display:grid;grid-template-columns:1fr 1fr;gap:7px;}
 .r3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:5px;}
 .img-up{border:2px dashed #1a1a1a;border-radius:6px;padding:12px;text-align:center;cursor:pointer;position:relative;overflow:hidden;margin-bottom:7px;}
-.img-up input{position:absolute;inset:0;opacity:0;cursor:pointer;z-index:2;}
+.img-up input{position:absolute;top:0;right:0;bottom:0;left:0;opacity:0;cursor:pointer;z-index:2;}
 .img-up-l{font-size:10px;color:#2e2e2e;}
 .img-up img{width:100%;border-radius:3px;display:none;margin-top:5px;}
 .sl-row{display:flex;align-items:center;gap:8px;margin-bottom:9px;}
@@ -54,7 +54,7 @@ textarea{resize:vertical;line-height:1.5;}
 input:focus,select:focus,textarea:focus{border-color:#2d9e40 !important;}
 /* CARTA 1831x2539 */
 .card{width:1831px;height:2539px;position:relative;font-family:'Cinzel',serif;overflow:hidden;background:#e4f0e6;}
-.c-border{position:absolute;inset:0;border:28px solid #0c3518;border-radius:56px;z-index:20;pointer-events:none;box-shadow:inset 0 0 0 8px #1a6b2a;}
+.c-border{position:absolute;top:0;right:0;bottom:0;left:0;border:28px solid #0c3518;border-radius:56px;z-index:20;pointer-events:none;box-shadow:inset 0 0 0 8px #1a6b2a;}
 .c-head{position:absolute;left:28px;right:28px;top:28px;height:148px;background:#060606;display:flex;align-items:center;padding:0 52px;gap:24px;z-index:10;;overflow:hidden}
 .c-head-icon{font-size:64px;line-height:1;flex-shrink:0;color:#666;}
 .c-head-name{flex:1;font-size:96px;font-weight:900;color:#fff;letter-spacing:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1;}
@@ -66,10 +66,10 @@ input:focus,select:focus,textarea:focus{border-color:#2d9e40 !important;}
 .c-rar{position:absolute;left:0;right:0;height:52px;z-index:4;}
 .c-rar.t{top:0;} .c-rar.b{bottom:0;}
 .c-lower{position:absolute;left:28px;right:28px;top:1086px;height:1425px;overflow:hidden;}
-.c-lower-col{position:absolute;inset:0;z-index:0;}
-.c-lower-bgimg{position:absolute;inset:0;z-index:1;background-size:cover;background-position:center;opacity:.5;}
-.c-lower-pat{position:absolute;inset:0;z-index:2;background-repeat:repeat;}
-.c-lower-brd{position:absolute;inset:0;border-top:7px solid #060606;z-index:20;pointer-events:none;}
+.c-lower-col{position:absolute;top:0;right:0;bottom:0;left:0;z-index:0;}
+.c-lower-bgimg{position:absolute;top:0;right:0;bottom:0;left:0;z-index:1;background-size:cover;background-position:center;opacity:.5;}
+.c-lower-pat{position:absolute;top:0;right:0;bottom:0;left:0;z-index:2;background-repeat:repeat;}
+.c-lower-brd{position:absolute;top:0;right:0;bottom:0;left:0;border-top:7px solid #060606;z-index:20;pointer-events:none;}
 .c-race{position:absolute;left:0;right:0;top:0;height:220px;display:flex;border-bottom:3px solid rgba(0,0,0,0.2);z-index:5;}
 .c-icell{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:16px 12px;position:relative;gap:12px;}
 .c-icell+.c-icell::before{content:'';position:absolute;left:0;top:18%;bottom:18%;width:2px;background:rgba(0,0,0,0.18);}
@@ -105,7 +105,7 @@ input:focus,select:focus,textarea:focus{border-color:#2d9e40 !important;}
 <body>
 <div class="top-bar">
   <h1>🧬 Carta Personaggio</h1>
-  <span class="badge">1831x2539px</span><span class="badge">preview 590px</span><span class="badge" style="color:#c8a030;border-color:#4a3800">v0.0.11</span>
+  <span class="badge">1831x2539px</span><span class="badge">preview 590px</span><span class="badge" style="color:#c8a030;border-color:#4a3800">v0.0.12</span>
   <button id="btn-save-style" class="btn-style btn-save-style" onclick="saveStyle()">💾 Salva Stile</button>
   <button id="btn-load-style" class="btn-style btn-load-style" onclick="importStyle()">📂 Importa Stile</button>
   <button class="btn-dl" onclick="dl()">⬇ Scarica HD</button>
@@ -216,7 +216,7 @@ input:focus,select:focus,textarea:focus{border-color:#2d9e40 !important;}
         <div class="note">0% = invisibile · 100% = piena copertura. Si sovrappone al colore base.</div>
       </div>
       <div class="fs"><div class="fs-t">Artwork</div>
-        <div class="sl-row"><label>Altezza artwork</label><input type="range" id="sl-arth" min="300" max="1600" value="910" oninput="setArtH(this.value)"/><span class="sl-val" id="v-arth">910px</span></div>
+        <div class="sl-row"><label>Altezza artwork</label><input type="range" id="sl-arth" min="300" max="1600" value="910" oninput="console.log('[sl-arth] value='+this.value); setArtH(this.value)"/><span class="sl-val" id="v-arth">910px</span></div>
       </div>
       <div class="fs"><div class="fs-t">Tipografia</div>
         <div class="sl-row"><label>Font principale</label>
@@ -480,13 +480,21 @@ function setArtH(h) {
   var lower = document.getElementById('c-lower');
   var hpx   = parseInt(h);
   var newTop = 176 + hpx;
-  if (art)   art.style.height = hpx + 'px';
-  if (lower) {
-    lower.style.top    = newTop + 'px';
-    lower.style.height = (2539 - 28 - newTop) + 'px';
-  }
+  console.log('[setArtH] h=' + h + ' hpx=' + hpx + ' newTop=' + newTop);
+  console.log('[setArtH] art el:', art, 'lower el:', lower);
+  if (!art)   { console.error('[setArtH] c-art NOT FOUND'); return; }
+  if (!lower) { console.error('[setArtH] c-lower NOT FOUND'); return; }
+  art.style.height   = hpx + 'px';
+  lower.style.top    = newTop + 'px';
+  lower.style.height = (2539 - 28 - newTop) + 'px';
+  console.log('[setArtH] applied: art.height=' + art.style.height
+    + ' lower.top=' + lower.style.top
+    + ' lower.height=' + lower.style.height);
   var lbl = document.getElementById('v-arth');
   if (lbl) lbl.textContent = hpx + 'px';
+  // Forza reflow Firefox
+  void art.offsetHeight;
+  void lower.offsetHeight;
 }
 
 function loadImg(e) {
@@ -1021,7 +1029,11 @@ function buildGrid() {
   });
 }
 
+console.log('[INIT] Browser:', navigator.userAgent);
+console.log('[INIT] c-art:', document.getElementById('c-art'));
+console.log('[INIT] c-lower:', document.getElementById('c-lower'));
 buildGrid(); loadDef(curT); applyTheme(); applyGrade(); applyBorder(); applyStatOp(90); upd();
+console.log('[INIT] done. c-art.style.height:', document.getElementById('c-art') ? document.getElementById('c-art').style.height : 'NOT FOUND');
 </script>
 </body>
 </html>
