@@ -131,7 +131,8 @@ input:focus,select:focus,textarea:focus{border-color:#2d9e40 !important;}
           <div class="c-deriv">
             <div class="c-icell"><div class="c-ilbl" id="lbl-hp">HP</div><div class="c-dval" id="d-hp">12</div></div>
             <div class="c-icell"><div class="c-ilbl" id="lbl-vel">Velocità</div><div class="c-dval" id="d-vel">4m</div></div>
-            <div class="c-icell"><div class="c-ilbl" id="lbl-cap">Cap.</div><div class="c-dval" id="d-cap">12kg</div></div>
+            <div class="c-icell"><div class="c-ilbl" id="lbl-peso">Peso</div><div class="c-dval" id="d-peso">70kg</div></div>
+            <div class="c-icell"><div class="c-ilbl" id="lbl-alt">Altezza</div><div class="c-dval" id="d-alt">170cm</div></div>
           </div>
           <div class="c-stats">
             <div class="c-stat corpo"><div class="c-slbl" id="lbl-corpo">CORPO</div><div class="c-sval" id="d-corpo">4</div><div class="c-smod" id="d-cmod">+1</div></div>
@@ -176,12 +177,15 @@ input:focus,select:focus,textarea:focus{border-color:#2d9e40 !important;}
         </div>
       </div>
       <div class="fs"><div class="fs-t">Derivati</div>
-        <div class="r3">
+        <div class="r2">
           <div><label>HP</label><input type="number" id="f-hp" value="12" oninput="upd()"/></div>
           <div><label>Vel. (m)</label><input type="number" id="f-vel" value="4" oninput="upd()"/></div>
-          <div><label>Cap. (kg)</label><input type="number" id="f-cap" value="12" oninput="upd()"/></div>
         </div>
-        <div class="note">HP=C+M+A · Vel=Corpo · Cap=Corpo×3</div>
+        <div class="r2">
+          <div><label>Peso (kg)</label><input type="number" id="f-peso" value="70" oninput="upd()"/></div>
+          <div><label>Altezza (cm)</label><input type="number" id="f-alt" value="170" oninput="upd()"/></div>
+        </div>
+        <div class="note">HP=C+M+A · Vel=Corpo</div>
       </div>
     </div>
 
@@ -731,7 +735,7 @@ function applyTheme() {
   document.getElementById('d-nome').style.fontFamily = font;
   document.getElementById('d-nome').style.fontSize   = nfs+'px';
 
-  ['lbl-razza','lbl-prim','lbl-sec','lbl-hp','lbl-vel','lbl-cap','lbl-tal'].forEach(function(id){
+  ['lbl-razza','lbl-prim','lbl-sec','lbl-hp','lbl-vel','lbl-peso','lbl-alt','lbl-tal'].forEach(function(id){
     var el=document.getElementById(id); if(!el)return;
     el.style.color=lc; el.style.fontSize=lfs+'px'; el.style.fontFamily=font;
   });
@@ -744,7 +748,7 @@ function applyTheme() {
     el.style.color=tc; el.style.fontFamily=font;
   });
   document.getElementById('d-tal').style.fontSize=tfs+'px';
-  ['d-hp','d-vel','d-cap'].forEach(function(id){
+  ['d-hp','d-vel','d-peso','d-alt'].forEach(function(id){
     var el=document.getElementById(id); if(!el)return;
     el.style.fontSize=dvfs+'px'; el.style.color=tc; el.style.fontFamily=font;
   });
@@ -765,7 +769,8 @@ function upd() {
   document.getElementById('d-tal').textContent = document.getElementById('f-tal').value||'—';
   document.getElementById('d-hp').textContent  = document.getElementById('f-hp').value||12;
   document.getElementById('d-vel').textContent = (document.getElementById('f-vel').value||4)+'m';
-  document.getElementById('d-cap').textContent = (document.getElementById('f-cap').value||12)+'kg';
+  document.getElementById('d-peso').textContent = (document.getElementById('f-peso').value||70)+'kg';
+  document.getElementById('d-alt').textContent  = (document.getElementById('f-alt').value||170)+'cm';
   var corpo=document.getElementById('f-corpo').value||4;
   var mente=document.getElementById('f-mente').value||4;
   var anima=document.getElementById('f-anima').value||4;
