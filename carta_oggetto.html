@@ -96,12 +96,19 @@ textarea{resize:vertical;line-height:1.5;}
 .btn-save-style:hover{background:rgba(200,160,48,0.12);border-color:#c8a030;}
 .btn-load-style{color:#5890e8;border-color:rgba(88,144,232,0.4);}
 .btn-load-style:hover{background:rgba(88,144,232,0.12);border-color:#5890e8;}
+
+/* ── SLIDER + NUMERO ── */
+.sl-num{width:46px;font-family:'JetBrains Mono',monospace;font-size:10px;
+  padding:3px 4px;background:#0a0a0a;border:1px solid #252525;border-radius:3px;
+  color:#aaa;text-align:center;flex-shrink:0;margin-bottom:0;
+  -moz-appearance:textfield;}
+.sl-num::-webkit-outer-spin-button,.sl-num::-webkit-inner-spin-button{-webkit-appearance:none;}
 </style>
 </head>
 <body>
 <div class="top-bar">
   <h1>🎒 Carta Oggetto</h1>
-  <span class="badge">1831x2539px</span><span class="badge">preview 590px</span><span class="badge" style="color:#c8a030;border-color:#4a3800">v0.0.12</span>
+  <span class="badge">1831x2539px</span><span class="badge">preview 590px</span><span class="badge" style="color:#c8a030;border-color:#4a3800">v0.0.10</span>
   <button id="btn-save-style" class="btn-style btn-save-style" onclick="saveStyle()">💾 Salva Stile</button>
   <button id="btn-load-style" class="btn-style btn-load-style" onclick="importStyle()">📂 Importa Stile</button>
   <button class="btn-dl" onclick="dl()">⬇ Scarica HD</button>
@@ -184,18 +191,18 @@ textarea{resize:vertical;line-height:1.5;}
       <div class="fs"><div class="fs-t">Tema</div><div class="theme-grid" id="tgrid"></div></div>
       <div class="fs"><div class="fs-t">Sfondo sezione info</div>
         <div class="sl-row"><label>Colore base</label><input type="color" id="sl-bg" value="#f0e8d0" oninput="applyTheme()"/><span class="sl-val" id="v-bg">#f0e8d0</span></div>
-        <div class="sl-row"><label>Luminosità</label><input type="range" id="sl-br" min="30" max="200" value="100" oninput="applyTheme()"/><span class="sl-val" id="v-br">100%</span></div>
-        <div class="sl-row"><label>Intensità pattern</label><input type="range" id="sl-op" min="0" max="100" value="55" oninput="applyTheme()"/><span class="sl-val" id="v-op">55%</span></div>
+        <div class="sl-row"><label>Luminosità</label><input type="range" id="sl-br" min="30" max="200" value="100" oninput="slSync('sl-br',this.value,function(v){applyTheme()})"/><input type="number" id="sl-br-num" class="sl-num" min="30" max="200" value="100" oninput="slSync('sl-br',this.value,function(v){applyTheme()})"/></div>
+        <div class="sl-row"><label>Intensità pattern</label><input type="range" id="sl-op" min="0" max="100" value="55" oninput="slSync('sl-op',this.value,function(v){applyTheme()})"/><input type="number" id="sl-op-num" class="sl-num" min="0" max="100" value="55" oninput="slSync('sl-op',this.value,function(v){applyTheme()})"/></div>
         <div class="sl-row"><label>Colore pattern</label><input type="color" id="sl-pc" value="#7a5010" oninput="applyTheme()"/></div>
       </div>
       <div class="fs"><div class="fs-t">Immagine sfondo custom</div>
         <div class="img-up"><input type="file" accept="image/*" onchange="loadBgImg(event)"/>
           <div class="img-up-l">📁 Carica immagine sfondo (opzionale)</div></div>
-        <div class="sl-row"><label>Opacità sfondo</label><input type="range" id="sl-bgimg-op" min="0" max="100" value="50" oninput="applyTheme()"/><span class="sl-val" id="v-bgimg-op">50%</span></div>
+        <div class="sl-row"><label>Opacità sfondo</label><input type="range" id="sl-bgimg-op" min="0" max="100" value="50" oninput="slSync('sl-bgimg-op',this.value,function(v){applyTheme()})"/><input type="number" id="sl-bgimg-op-num" class="sl-num" min="0" max="100" value="50" oninput="slSync('sl-bgimg-op',this.value,function(v){applyTheme()})"/></div>
         <div class="note">0% = invisibile · 100% = piena copertura. Si sovrappone al colore base.</div>
       </div>
       <div class="fs"><div class="fs-t">Artwork</div>
-        <div class="sl-row"><label>Altezza artwork</label><input type="range" id="sl-arth" min="300" max="1600" value="870" oninput="console.log('[sl-arth] value='+this.value); setArtH(this.value)"/><span class="sl-val" id="v-arth">870px</span></div>
+        <div class="sl-row"><label>Altezza artwork</label><input type="range" id="sl-arth" min="300" max="1600" value="870" step="10" oninput="slSync('sl-arth',this.value,function(v){setArtH(v)})"/><input type="number" id="sl-arth-num" class="sl-num" min="300" max="1600" value="870" step="10" oninput="slSync('sl-arth',this.value,function(v){setArtH(v)})"/></div>
       </div>
       <div class="fs"><div class="fs-t">Tipografia</div>
         <div class="sl-row"><label>Font principale</label>
@@ -206,10 +213,10 @@ textarea{resize:vertical;line-height:1.5;}
             <option value="'Uncial Antiqua',cursive">Uncial Antiqua — medievale</option>
           </select>
         </div>
-        <div class="sl-row"><label>Dim. nome header</label><input type="range" id="sl-nfs" min="50" max="140" value="96" oninput="applyTheme()"/><span class="sl-val" id="v-nfs">96px</span></div>
-        <div class="sl-row"><label>Dim. label</label><input type="range" id="sl-lfs" min="20" max="60" value="36" oninput="applyTheme()"/><span class="sl-val" id="v-lfs">36px</span></div>
-        <div class="sl-row"><label>Dim. valori info</label><input type="range" id="sl-dvfs" min="40" max="130" value="90" oninput="applyTheme()"/><span class="sl-val" id="v-dvfs">90px</span></div>
-        <div class="sl-row"><label>Dim. testo effetti</label><input type="range" id="sl-efs" min="24" max="70" value="46" oninput="applyTheme()"/><span class="sl-val" id="v-efs">46px</span></div>
+        <div class="sl-row"><label>Dim. nome header</label><input type="range" id="sl-nfs" min="50" max="140" value="96" oninput="slSync('sl-nfs',this.value,function(v){applyTheme()})"/><input type="number" id="sl-nfs-num" class="sl-num" min="50" max="140" value="96" oninput="slSync('sl-nfs',this.value,function(v){applyTheme()})"/></div>
+        <div class="sl-row"><label>Dim. label</label><input type="range" id="sl-lfs" min="20" max="60" value="36" oninput="slSync('sl-lfs',this.value,function(v){applyTheme()})"/><input type="number" id="sl-lfs-num" class="sl-num" min="20" max="60" value="36" oninput="slSync('sl-lfs',this.value,function(v){applyTheme()})"/></div>
+        <div class="sl-row"><label>Dim. valori info</label><input type="range" id="sl-dvfs" min="40" max="130" value="90" oninput="slSync('sl-dvfs',this.value,function(v){applyTheme()})"/><input type="number" id="sl-dvfs-num" class="sl-num" min="40" max="130" value="90" oninput="slSync('sl-dvfs',this.value,function(v){applyTheme()})"/></div>
+        <div class="sl-row"><label>Dim. testo effetti</label><input type="range" id="sl-efs" min="24" max="70" value="46" oninput="slSync('sl-efs',this.value,function(v){applyTheme()})"/><input type="number" id="sl-efs-num" class="sl-num" min="24" max="70" value="46" oninput="slSync('sl-efs',this.value,function(v){applyTheme()})"/></div>
         <div class="sl-row"><label>Colore testo</label><input type="color" id="sl-tc" value="#1a0e00" oninput="applyTheme()"/></div>
         <div class="sl-row"><label>Colore label</label><input type="color" id="sl-lc" value="#5a4020" oninput="applyTheme()"/></div>
       </div>
@@ -230,13 +237,13 @@ textarea{resize:vertical;line-height:1.5;}
             <option value="polygon(50% 0%,100% 38%,82% 100%,18% 100%,0% 38%)">Pentagono</option>
           </select>
         </div>
-        <div class="sl-row"><label>Dimensione simbolo</label><input type="range" id="sl-grade-sz" min="80" max="280" value="160" oninput="applyGrade()"/><span class="sl-val" id="v-grade-sz">160px</span></div>
-        <div class="sl-row"><label>Dim. numero grado</label><input type="range" id="sl-grade-fs" min="40" max="160" value="70" oninput="applyGrade()"/><span class="sl-val" id="v-grade-fs">70px</span></div>
+        <div class="sl-row"><label>Dimensione simbolo</label><input type="range" id="sl-grade-sz" min="80" max="280" value="160" step="2" oninput="slSync('sl-grade-sz',this.value,function(v){applyGrade()})"/><input type="number" id="sl-grade-sz-num" class="sl-num" min="80" max="280" value="160" step="2" oninput="slSync('sl-grade-sz',this.value,function(v){applyGrade()})"/></div>
+        <div class="sl-row"><label>Dim. numero grado</label><input type="range" id="sl-grade-fs" min="40" max="160" value="70" oninput="slSync('sl-grade-fs',this.value,function(v){applyGrade()})"/><input type="number" id="sl-grade-fs-num" class="sl-num" min="40" max="160" value="70" oninput="slSync('sl-grade-fs',this.value,function(v){applyGrade()})"/></div>
         <div class="sl-row"><label>Colore simbolo</label><input type="color" id="sl-grade-col" value="#ffffff" oninput="applyGrade()"/></div>
         <div class="sl-row"><label>Colore numero</label><input type="color" id="sl-grade-ncol" value="#060606" oninput="applyGrade()"/></div>
       </div>
       <div class="fs"><div class="fs-t">Bordo Carta</div>
-        <div class="sl-row"><label>Spessore bordo</label><input type="range" id="sl-brd-sz" min="4" max="80" value="28" oninput="applyBorder()"/><span class="sl-val" id="v-brd-sz">28px</span></div>
+        <div class="sl-row"><label>Spessore bordo</label><input type="range" id="sl-brd-sz" min="4" max="80" value="28" oninput="slSync('sl-brd-sz',this.value,function(v){applyBorder()})"/><input type="number" id="sl-brd-sz-num" class="sl-num" min="4" max="80" value="28" oninput="slSync('sl-brd-sz',this.value,function(v){applyBorder()})"/></div>
         <div class="sl-row"><label>Colore bordo esterno</label><input type="color" id="sl-brd-col1" value="#0c3518" oninput="applyBorder()"/></div>
         <div class="sl-row"><label>Colore bordo interno</label><input type="color" id="sl-brd-col2" value="#1a6b2a" oninput="applyBorder()"/></div>
       </div>
@@ -415,15 +422,17 @@ function updV() {
     'v-dvfs':'sl-dvfs', 'v-svfs':'sl-svfs',
     'v-mfs':'sl-mfs', 'v-tfs':'sl-tfs',
     'v-ivfs':'sl-ivfs', 'v-efs':'sl-efs',
-    'v-arth':'sl-arth'
+    'v-arth':'sl-arth',
+    'v-bgimg-op':'sl-bgimg-op',
+    'v-stat-op':'sl-stat-op',
+    'v-grade-sz':'sl-grade-sz','v-grade-fs':'sl-grade-fs',
+    'v-brd-sz':'sl-brd-sz'
   };
   Object.keys(map).forEach(function(vid) {
     var sid = map[vid]; if (!sid) return;
-    var vel = document.getElementById(vid), sel = document.getElementById(sid);
-    if (vel && sel) {
-      var raw = sel.value;
-      vel.textContent = (vid.indexOf('fs')>-1 || vid==='v-arth') ? raw+'px' : (vid==='v-br'||vid==='v-op' ? raw+'%' : raw);
-    }
+    var sel = document.getElementById(sid);
+    var num = document.getElementById(sid + '-num');
+    if (sel && num) num.value = sel.value;
   });
 }
 
@@ -991,6 +1000,17 @@ function exportStyleFile() {
 
 // Auto-carica stile salvato all'avvio
 
+
+
+function slSync(sliderId, val, callback) {
+  var sl  = document.getElementById(sliderId);
+  var num = document.getElementById(sliderId + '-num');
+  var v   = parseFloat(val);
+  if (sl)  sl.value  = v;
+  if (num) num.value = v;
+  if (typeof callback === 'function') callback(v);
+  console.log('[slSync] ' + sliderId + ' = ' + v);
+}
 
 function buildGrid() {
   var g = document.getElementById('tgrid');
