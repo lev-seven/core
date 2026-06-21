@@ -976,6 +976,11 @@ function applyStyleState(state) {
     var sop = document.getElementById('sl-stat-op');
     applyStatOp(sop ? sop.value : 90);
   }
+  // Applica altezza artwork se presente
+  if (typeof setArtH === 'function') {
+    var arth = document.getElementById('sl-arth');
+    if (arth) setArtH(arth.value);
+  }
 }
 
 function loadPresets() {
