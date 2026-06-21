@@ -65,7 +65,7 @@ textarea{resize:vertical;line-height:1.5;}
 .c-art-ph{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:160px;color:#282828;background:#141414;}
 .c-rar{position:absolute;left:0;right:0;height:52px;z-index:4;}
 .c-rar.t{top:0;}.c-rar.b{bottom:0;}
-.c-lower{position:absolute;left:28px;right:28px;top:1046px;bottom:28px;overflow:hidden;}
+.c-lower{position:absolute;left:28px;right:28px;top:1046px;height:1465px;overflow:hidden;}
 .c-lower-col{position:absolute;inset:0;z-index:0;}
 .c-lower-bgimg{position:absolute;inset:0;z-index:1;background-size:cover;background-position:center;opacity:.5;}
 .c-lower-pat{position:absolute;inset:0;z-index:2;background-repeat:repeat;}
@@ -455,8 +455,12 @@ function setArtH(h) {
   var art   = document.getElementById('c-art');
   var lower = document.getElementById('c-lower');
   var hpx   = parseInt(h);
-  if (art)   art.style.height   = hpx + 'px';
-  if (lower) lower.style.top    = (176 + hpx) + 'px';
+  var newTop = 176 + hpx;
+  if (art)   art.style.height = hpx + 'px';
+  if (lower) {
+    lower.style.top    = newTop + 'px';
+    lower.style.height = (2539 - 28 - newTop) + 'px';
+  }
   var lbl = document.getElementById('v-arth');
   if (lbl) lbl.textContent = hpx + 'px';
 }
