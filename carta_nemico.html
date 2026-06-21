@@ -1026,6 +1026,27 @@ function autoLoadStyle() {
   } catch(e) {}
 }
 
+
+function buildGrid() {
+  var g = document.getElementById('tgrid');
+  if (!g) return;
+  Object.keys(TEMI).forEach(function(k) {
+    var t = TEMI[k];
+    var b = document.createElement('button');
+    b.className = 'tbtn' + (k===curT ? ' act' : '');
+    b.textContent = t.n;
+    b.setAttribute('data-theme', k);
+    b.onclick = function() {
+      curT = k;
+      document.querySelectorAll('.tbtn').forEach(function(x){ x.classList.remove('act'); });
+      b.classList.add('act');
+      loadDef(k);
+      applyTheme();
+    };
+    g.appendChild(b);
+  });
+}
+
 buildGrid(); loadDef(curT); applyTheme(); applyGrade(); applyBorder(); addEff(); addEff(); upd(); autoLoadStyle();
 </script>
 </body>
