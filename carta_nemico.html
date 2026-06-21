@@ -100,6 +100,31 @@ textarea{resize:vertical;line-height:1.5;}
 .c-eff-item:last-child{border-bottom:none;}
 .c-eff-dot{font-size:48px;flex-shrink:0;line-height:1.35;margin-top:2px;}
 .c-eff-desc{font-size:34px;font-style:italic;text-align:center;padding:12px 48px 22px;border-top:2px solid rgba(0,0,0,0.15);flex-shrink:0;position:relative;z-index:1;opacity:.5;}
+
+/* ── PRESET STILE ── */
+.preset-grid{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-bottom:8px;}
+.preset-slot{display:flex;align-items:center;gap:4px;}
+.preset-slot input[type=text]{flex:1;font-size:10px;padding:4px 6px;margin-bottom:0;
+  border:1px solid #1c1c1c;border-radius:4px;background:#0e0e0e;color:#aaa;}
+.btn-ps{flex-shrink:0;width:26px;height:26px;border:1px solid #1c1c1c;border-radius:4px;
+  background:#0e0e0e;color:#555;cursor:pointer;font-size:11px;transition:all .15s;
+  display:flex;align-items:center;justify-content:center;}
+.btn-ps:hover{border-color:#444;color:#aaa;}
+.btn-ps.save{color:#2d9e40;border-color:#1a4020;}
+.btn-ps.save:hover{border-color:#2d9e40;}
+.btn-ps.load{color:#5890e8;border-color:#1a2040;}
+.btn-ps.load:hover{border-color:#5890e8;}
+.btn-ps.del{color:#c94040;border-color:#401010;}
+.btn-ps.del:hover{border-color:#c94040;}
+.preset-export{width:100%;margin-top:6px;}
+.preset-export textarea{width:100%;height:60px;background:#0e0e0e;border:1px solid #1c1c1c;
+  border-radius:4px;color:#888;font-family:'JetBrains Mono',monospace;font-size:9px;
+  padding:6px;resize:vertical;margin-bottom:4px;}
+.preset-export-row{display:flex;gap:5px;}
+.btn-export{flex:1;padding:5px;background:#0e0e0e;border:1px solid #1c1c1c;border-radius:4px;
+  color:#555;font-size:9px;font-weight:700;letter-spacing:.5px;cursor:pointer;transition:all .15s;}
+.btn-export:hover{border-color:#444;color:#aaa;}
+
 </style>
 </head>
 <body>
@@ -263,6 +288,17 @@ textarea{resize:vertical;line-height:1.5;}
         <div class="sl-row"><label>Colore bordo esterno</label><input type="color" id="sl-brd-col1" value="#0c3518" oninput="applyBorder()"/></div>
         <div class="sl-row"><label>Colore bordo interno</label><input type="color" id="sl-brd-col2" value="#1a6b2a" oninput="applyBorder()"/></div>
       </div>
+      <div class="fs"><div class="fs-t">Preset Stile</div>
+        <div class="preset-grid" id="preset-grid"></div>
+        <div class="preset-export">
+          <textarea id="preset-json" placeholder="JSON preset — incolla qui per importare..."></textarea>
+          <div class="preset-export-row">
+            <button class="btn-export" onclick="exportPreset()">⬆ Esporta JSON</button>
+            <button class="btn-export" onclick="importPreset()">⬇ Importa JSON</button>
+          </div>
+        </div>
+      </div>
+
     </div>
   </div>
 </div>
@@ -400,23 +436,7 @@ function swTab(t) {
   });
 }
 
-function buildGrid() {
-  var g = document.getElementById('tgrid');
-  Object.keys(TEMI).forEach(function(k) {
-    var t = TEMI[k];
-    var b = document.createElement('button');
-    b.className = 'tbtn' + (k===curT ? ' act' : '');
-    b.textContent = t.n;
-    b.onclick = function() {
-      curT = k;
-      document.querySelectorAll('.tbtn').forEach(function(x){ x.classList.remove('act'); });
-      b.classList.add('act');
-      loadDef(k);
-      applyTheme();
-    };
-    g.appendChild(b);
-  });
-}
+
 
 function loadDef(k) {
   var t = TEMI[k];
@@ -923,7 +943,176 @@ function gradeSymToCanvas(sym) {
   return cvs;
 }
 
-buildGrid(); loadDef(curT); applyTheme(); applyGrade(); applyBorder(); addEff(); addEff(); upd();
+
+/* ══ SISTEMA PRESET STILE ══ */
+var PRESET_KEY = CARD_FILENAME.split('_')[0] + '_style_presets';
+var N_SLOTS = 5;
+
+function getAllSliderIds() {
+  var ids = [];
+  document.querySelectorAll('[id^="sl-"]').forEach(function(el) { ids.push(el.id); });
+  return ids;
+}
+
+function captureStyle() {
+  var state = { theme: curT, sliders: {}, bgimg: null };
+  getAllSliderIds().forEach(function(id) {
+    var el = document.getElementById(id);
+    if (el) state.sliders[id] = el.value;
+  });
+  // Cattura sfondo custom se presente
+  var bgimgEl = document.getElementById('lower-bgimg');
+  if (bgimgEl && bgimgEl.style.backgroundImage && bgimgEl.style.backgroundImage !== 'none') {
+    state.bgimg = bgimgEl.style.backgroundImage;
+  }
+  return state;
+}
+
+function applyStyleState(state) {
+  if (!state) return;
+  // Imposta tema
+  if (state.theme && typeof TEMI !== 'undefined' && TEMI[state.theme]) {
+    curT = state.theme;
+    document.querySelectorAll('.tbtn').forEach(function(x){ x.classList.remove('act'); });
+    var tb = document.querySelector('.tbtn[data-theme="' + curT + '"]');
+    if (tb) tb.classList.add('act');
+    loadDef(curT);
+  }
+  // Ripristina tutti gli slider
+  if (state.sliders) {
+    Object.keys(state.sliders).forEach(function(id) {
+      var el = document.getElementById(id);
+      if (el) el.value = state.sliders[id];
+    });
+  }
+  // Sfondo immagine
+  if (state.bgimg) {
+    var bgimgEl = document.getElementById('lower-bgimg');
+    if (bgimgEl) {
+      bgimgEl.style.backgroundImage = state.bgimg;
+      bgimgEl.style.backgroundSize  = 'cover';
+      bgimgEl.style.backgroundPosition = 'center';
+    }
+  }
+  applyTheme();
+  if (typeof applyGrade === 'function') applyGrade();
+  if (typeof applyBorder === 'function') applyBorder();
+  if (typeof applyStatOp === 'function') {
+    var sop = document.getElementById('sl-stat-op');
+    applyStatOp(sop ? sop.value : 90);
+  }
+}
+
+function loadPresets() {
+  try { return JSON.parse(localStorage.getItem(PRESET_KEY)) || {}; }
+  catch(e) { return {}; }
+}
+
+function savePresets(p) {
+  try { localStorage.setItem(PRESET_KEY, JSON.stringify(p)); } catch(e) {}
+}
+
+function saveSlot(i) {
+  var name = document.getElementById('preset-name-' + i).value.trim() || ('Preset ' + (i+1));
+  document.getElementById('preset-name-' + i).value = name;
+  var p = loadPresets();
+  p['slot' + i] = { name: name, state: captureStyle() };
+  savePresets(p);
+  refreshPresetGrid();
+}
+
+function loadSlot(i) {
+  var p = loadPresets();
+  var slot = p['slot' + i];
+  if (!slot) return;
+  applyStyleState(slot.state);
+  document.getElementById('preset-name-' + i).value = slot.name;
+}
+
+function deleteSlot(i) {
+  var p = loadPresets();
+  delete p['slot' + i];
+  savePresets(p);
+  refreshPresetGrid();
+}
+
+function refreshPresetGrid() {
+  var p = loadPresets();
+  var grid = document.getElementById('preset-grid');
+  if (!grid) return;
+  grid.innerHTML = '';
+  for (var i = 0; i < N_SLOTS; i++) {
+    (function(idx) {
+      var slot = p['slot' + idx];
+      var name = slot ? slot.name : ('Slot ' + (idx+1));
+      var row = document.createElement('div');
+      row.className = 'preset-slot';
+      row.innerHTML = '<input type="text" id="preset-name-' + idx + '" value="' + name + '" placeholder="Slot ' + (idx+1) + '"/>'
+        + '<button class="btn-ps save" title="Salva" onclick="saveSlot(' + idx + ')">💾</button>'
+        + '<button class="btn-ps load' + (slot ? '' : ' disabled') + '" title="Carica" onclick="loadSlot(' + idx + ')" '
+        + (slot ? '' : 'style="opacity:.3;cursor:default"') + '>📂</button>'
+        + '<button class="btn-ps del' + (slot ? '' : ' disabled') + '" title="Elimina" onclick="deleteSlot(' + idx + ')" '
+        + (slot ? '' : 'style="opacity:.3;cursor:default"') + '>🗑</button>';
+      grid.appendChild(row);
+    })(i);
+  }
+}
+
+function exportPreset() {
+  var state = captureStyle();
+  var p = loadPresets();
+  var data = { current: state, presets: p };
+  var ta = document.getElementById('preset-json');
+  if (ta) {
+    ta.value = JSON.stringify(data, null, 2);
+    ta.select();
+    try { document.execCommand('copy'); } catch(e) {}
+  }
+}
+
+function importPreset() {
+  var ta = document.getElementById('preset-json');
+  if (!ta || !ta.value.trim()) return;
+  try {
+    var data = JSON.parse(ta.value.trim());
+    if (data.presets) {
+      savePresets(data.presets);
+      refreshPresetGrid();
+    }
+    if (data.current) {
+      applyStyleState(data.current);
+    } else if (data.sliders) {
+      // Supporta anche incollare direttamente uno stato
+      applyStyleState(data);
+    }
+  } catch(e) {
+    alert('JSON non valido: ' + e.message);
+  }
+}
+
+/* Aggiungi data-theme ai bottoni tema per poterli trovare in applyStyleState */
+function buildGrid() {
+  var g = document.getElementById('tgrid');
+  if (!g) return;
+  Object.keys(TEMI).forEach(function(k) {
+    var t = TEMI[k];
+    var b = document.createElement('button');
+    b.className = 'tbtn' + (k===curT ? ' act' : '');
+    b.textContent = t.n;
+    b.setAttribute('data-theme', k);
+    b.onclick = function() {
+      curT = k;
+      document.querySelectorAll('.tbtn').forEach(function(x){ x.classList.remove('act'); });
+      b.classList.add('act');
+      loadDef(k);
+      applyTheme();
+    };
+    g.appendChild(b);
+  });
+}
+/* ══════════════════════════════ */
+
+buildGrid(); refreshPresetGrid(); loadDef(curT); applyTheme(); applyGrade(); applyBorder(); addEff(); addEff(); upd();
 </script>
 </body>
 </html>
