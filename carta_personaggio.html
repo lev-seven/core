@@ -105,7 +105,7 @@ input:focus,select:focus,textarea:focus{border-color:#2d9e40 !important;}
 <body>
 <div class="top-bar">
   <h1>🧬 Carta Personaggio</h1>
-  <span class="badge">1831x2539px</span><span class="badge">preview 590px</span>
+  <span class="badge">1831x2539px</span><span class="badge">preview 590px</span><span class="badge" style="color:#c8a030;border-color:#4a3800">v0.0.10</span>
   <button id="btn-save-style" class="btn-style btn-save-style" onclick="saveStyle()">💾 Salva Stile</button>
   <button id="btn-load-style" class="btn-style btn-load-style" onclick="importStyle()">📂 Importa Stile</button>
   <button class="btn-dl" onclick="dl()">⬇ Scarica HD</button>
@@ -956,11 +956,13 @@ function applyStyleState(state) {
 }
 
 function saveStyle() {
-  try {
-    localStorage.setItem(STYLE_KEY, JSON.stringify(captureStyle()));
-    var btn = document.getElementById('btn-save-style');
-    if (btn) { btn.textContent = '✓ Salvato'; setTimeout(function(){ btn.textContent = '💾 Salva Stile'; }, 1400); }
-  } catch(e) { alert('Errore salvataggio: ' + e.message); }
+  var state = captureStyle();
+  var blob = new Blob([JSON.stringify(state, null, 2)], {type:'application/json'});
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = CARD_FILENAME.replace('.png', '') + '_style.json';
+  a.click();
+  URL.revokeObjectURL(a.href);
 }
 
 function importStyle() {
@@ -973,7 +975,6 @@ function importStyle() {
       try {
         var state = JSON.parse(ev.target.result);
         applyStyleState(state);
-        localStorage.setItem(STYLE_KEY, JSON.stringify(state));
         var btn = document.getElementById('btn-load-style');
         if (btn) { btn.textContent = '✓ Importato'; setTimeout(function(){ btn.textContent = '📂 Importa Stile'; }, 1400); }
       } catch(err) { alert('File non valido: ' + err.message); }
@@ -994,12 +995,6 @@ function exportStyleFile() {
 }
 
 // Auto-carica stile salvato all'avvio
-function autoLoadStyle() {
-  try {
-    var saved = localStorage.getItem(STYLE_KEY);
-    if (saved) applyStyleState(JSON.parse(saved));
-  } catch(e) {}
-}
 
 
 function buildGrid() {
@@ -1022,7 +1017,7 @@ function buildGrid() {
   });
 }
 
-buildGrid(); loadDef(curT); applyTheme(); applyGrade(); applyBorder(); applyStatOp(90); upd(); autoLoadStyle();
+buildGrid(); loadDef(curT); applyTheme(); applyGrade(); applyBorder(); applyStatOp(90); upd();
 </script>
 </body>
 </html>
