@@ -340,7 +340,12 @@ td.mn{font-family:'JetBrains Mono',monospace;font-size:11.5px;}
   <div class="g2">
     <div class="ref-item"><span class="ref-l">HP</span><span class="ref-v">Corpo + Mente + Anima (finali)</span></div>
     <div class="ref-item"><span class="ref-l">Velocità (m/turno)</span><span class="ref-v">Corpo finale</span></div>
-    <div class="ref-item"><span class="ref-l">Iniziativa</span><span class="ref-v">1d12 + MOD(Corpo)</span></div>
+    <div class="ref-item"><span class="ref-l">Iniziativa</span><span class="ref-v">1d12 + MOD(Corpo) · pareggio si ritira</span></div>
+    <div class="ref-item"><span class="ref-l">Struttura turno</span><span class="ref-v">1 Azione · 1 Rapida · 1 Reazione · Movimento libero</span></div>
+    <div class="ref-item"><span class="ref-l">Una carta, una azione</span><span class="ref-v">Non puoi usare due azioni dalla stessa carta nello stesso turno</span></div>
+    <div class="ref-item"><span class="ref-l">Attacco di Opportunità</span><span class="ref-v">Reazione: Rapido (MOD) quando nemico esce senza Disimpegno</span></div>
+    <div class="ref-item"><span class="ref-l">Mezza Copertura</span><span class="ref-v">+Grado alla Soglia dell'asse colpito</span></div>
+    <div class="ref-item"><span class="ref-l">Agonia (0 HP)</span><span class="ref-v">3 PA · azioni costano PA · 0 PA = svenuto · attaccato da svenuto = morte</span></div>
     <div class="ref-item"><span class="ref-l">Capacità Trasporto</span><span class="ref-v">Corpo finale × 3 kg</span></div>
   </div>
   <div class="tw"><table class="tm">
@@ -408,10 +413,59 @@ td.mn{font-family:'JetBrains Mono',monospace;font-size:11.5px;}
  
 <div class="sec" id="s6">
   <div class="sh man"><span class="sh-n">06</span><span class="sh-t">Il Sistema di Combattimento</span><span class="sh-pip man"></span></div>
+
+  <h3>Struttura del Turno</h3>
+  <p>Ogni combattente ha a disposizione, nel proprio turno, le seguenti risorse. L'ordine in cui le spendi è libero.</p>
+  <div class="tw"><table class="tm">
+    <thead><tr><th>Risorsa</th><th>Quantità</th><th>Note</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Azione</strong></td><td>1</td><td>Leggera, Caricata, Aiuto, Preparazione, o Azione di Movimento</td></tr>
+      <tr><td><strong>Azione Rapida</strong></td><td>1</td><td>Un'azione taggata Rapida sulla carta. Non sostituisce l'Azione.</td></tr>
+      <tr><td><strong>Reazione</strong></td><td>1</td><td>Fuori turno, in risposta a un trigger specificato sulla carta.</td></tr>
+      <tr><td><strong>Movimento</strong></td><td>Velocità m</td><td>Spezzabile prima e dopo l'Azione. Vedi Azioni di Movimento.</td></tr>
+    </tbody>
+  </table></div>
+  <p><strong>Una carta, una azione per turno.</strong> Non puoi usare due azioni diverse dalla stessa carta nello stesso turno. Una Rapida e una Leggera dalla stessa carta contano entrambe — puoi usarne solo una. Carte diverse non si limitano tra loro.</p>
+
+  <h3>Iniziativa e Sorpresa</h3>
+  <div class="tw"><table class="tm">
+    <thead><tr><th></th><th>Regola</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Iniziativa</strong></td><td>1d12 + MOD(Corpo). Pareggio: si ritira. I PG vanno prima dei nemici a parità dopo il ritiro.</td></tr>
+      <tr><td><strong>Sorpresa</strong></td><td>Il combattente sorpreso salta il primo turno. Non può usare Reazioni fino alla fine del suo primo turno regolare.</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>Azioni di Movimento</h3>
+  <p>Queste azioni costano l'<strong>Azione</strong> del turno (non il Movimento libero). Il Movimento libero rimane disponibile nello stesso turno.</p>
+  <div class="g2">
+    <div class="cond-item" style="border-left:3px solid #2ec4a0"><div class="cond-n" style="color:#2ec4a0">Scatto</div><div class="cond-e">Raddoppia la Velocità di movimento questo turno. Costa 1 Azione.</div></div>
+    <div class="cond-item" style="border-left:3px solid #2ec4a0"><div class="cond-n" style="color:#2ec4a0">Disimpegno</div><div class="cond-e">Ti allontani senza provocare Attacchi di Opportunità questo turno. Costa 1 Azione.</div></div>
+    <div class="cond-item" style="border-left:3px solid #2ec4a0"><div class="cond-n" style="color:#2ec4a0">Schivata</div><div class="cond-e">Tutti gli attacchi contro di te hanno Svantaggio fino al tuo prossimo turno. Costa 1 Azione. Non puoi attaccare nello stesso turno.</div></div>
+    <div class="cond-item" style="border-left:3px solid #2ec4a0"><div class="cond-n" style="color:#2ec4a0">Balzo / Scalata</div><div class="cond-e">Movimento verticale o su terreno difficile: distanza dimezzata. Tiro Corpo vs 7 se la superficie è instabile.</div></div>
+    <div class="cond-item" style="border-left:3px solid #2ec4a0"><div class="cond-n" style="color:#2ec4a0">Aiuto</div><div class="cond-e">Assisti un alleato adiacente: il suo prossimo attacco o tiro ha Vantaggio. Costa 1 Azione.</div></div>
+    <div class="cond-item" style="border-left:3px solid #2ec4a0"><div class="cond-n" style="color:#2ec4a0">Preparazione</div><div class="cond-e">Dichiari un'azione e un trigger ("quando entra in 2m, attacco"). La tua Reazione esegue quell'azione al verificarsi del trigger. Se il trigger non accade, l'azione è persa.</div></div>
+  </div>
+
+  <h3>Azioni Gratuite</h3>
+  <p>Non consumano risorse: <strong>parlare</strong> (una frase breve), <strong>disequipaggiare</strong> un oggetto, <strong>lasciar cadere</strong> qualcosa. Equipaggiare o scambiare un oggetto attivo costa 1 Azione.</p>
+
+  <h3>Attacchi di Opportunità</h3>
+  <p>Quando un nemico esce dalla tua portata <strong>senza</strong> usare Disimpegno, puoi usare la tua <strong>Reazione</strong> per eseguire un attacco Rapido (MOD stat, 0 azioni) contro di lui. Un solo Attacco di Opportunità per turno.</p>
+
+  <h3>Copertura</h3>
+  <div class="tw"><table class="tm">
+    <thead><tr><th>Tipo</th><th>Effetto</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Mezza Copertura</strong></td><td>+Grado alla Soglia dell'asse colpito (es. un muro fino alla vita).</td></tr>
+      <tr><td><strong>Copertura Totale</strong></td><td>Non attaccabile direttamente finché rimane coperto.</td></tr>
+    </tbody>
+  </table></div>
+
   <h3>Gli Assi</h3>
   <p>Ogni attacco avviene su uno dei tre assi. L'attaccante usa la sua stat; il difensore usa la sua soglia per quell'asse. Scegliere l'asse giusto è la profondità tattica centrale del sistema.</p>
   <div class="formula">DANNO = max( 0, Attacco − Soglia )
- 
+
 Attacco     = Grado_arma × dado + MOD(stat_atk finale)
 Soglia PG   = MOD(stat_def finale) + Armatura[asse]
 Soglia NM   = Difesa_flat[asse]  ← dalla carta nemico</div>
@@ -424,6 +478,41 @@ Soglia NM   = Difesa_flat[asse]  ← dalla carta nemico</div>
       <tr><td><strong style="color:#2ec4a0">Rapida</strong></td><td class="mn">MOD(stat)</td><td>0 azioni</td></tr>
     </tbody>
   </table></div>
+
+  <h3>A 0 HP — Agonia</h3>
+  <p>Quando scendi a 0 HP entri in stato di <strong>Agonia</strong>. Non muori subito. Hai un pool di <strong>3 Punti Agonia</strong> (PA) che rappresenta quanto ancora puoi reggere.</p>
+  <p>Puoi ancora agire, ma ogni azione consuma PA:</p>
+  <div class="tw"><table class="tm">
+    <thead><tr><th>Azione</th><th>Costo PA</th></tr></thead>
+    <tbody>
+      <tr><td><strong style="color:#e05050">Caricata</strong></td><td>3 PA</td></tr>
+      <tr><td><strong style="color:#5890e8">Leggera</strong></td><td>2 PA</td></tr>
+      <tr><td><strong style="color:#2ec4a0">Rapida</strong></td><td>1 PA</td></tr>
+      <tr><td><strong style="color:#a070e8">Reazione</strong></td><td>1 PA</td></tr>
+      <tr><td><strong>Movimento normale</strong></td><td>0 PA (velocità dimezzata)</td></tr>
+      <tr><td><strong>Scatto / Disimpegno / altre az. movimento</strong></td><td>1 PA</td></tr>
+    </tbody>
+  </table></div>
+  <p><strong>Perdita automatica di PA:</strong></p>
+  <ul style="margin:8px 0 8px 20px;line-height:1.8">
+    <li>Inizio turno con una condizione di danno continuo attiva (Sanguinante, Infuocato, ecc.) → perdi <strong>1 PA</strong> automaticamente.</li>
+    <li>Vieni colpito da un attacco → perdi PA pari al tipo di azione usata contro di te: Caricata 3, Leggera 2, Rapida 1.</li>
+  </ul>
+  <p><strong>A 0 PA: Svenuto.</strong> Crolli a terra. Non puoi agire. Se vieni attaccato mentre svenuto, muori.</p>
+  <p>Se nessuno ti attacca mentre sei svenuto: tira <strong>1d12 + Grado</strong> — il risultato indica i turni di svenimento. Al termine torni a 1 HP e i PA si resettano a 3.</p>
+
+  <h3>Stabilizzazione</h3>
+  <p>Un alleato adiacente può aiutarti spendendo parte del suo turno:</p>
+  <div class="tw"><table class="tm">
+    <thead><tr><th>Azione alleato</th><th>Effetto</th></tr></thead>
+    <tbody>
+      <tr><td><strong>In Agonia — Caricata (turno intero)</strong></td><td>Ricarica il tuo pool a 3 PA</td></tr>
+      <tr><td><strong>In Agonia — Leggera (1 azione)</strong></td><td>Ricarica +2 PA</td></tr>
+      <tr><td><strong>In Agonia — Rapida</strong></td><td>Ricarica +1 PA</td></tr>
+      <tr><td><strong>Svenuto — 1 Azione + 1d12+Grado alleato</strong></td><td>Sottrae il risultato dai turni di attesa. Se azzera o supera, torni subito a 1 HP.</td></tr>
+    </tbody>
+  </table></div>
+  <p>La stabilizzazione non ti fa uscire dall'Agonia. Solo una <strong>cura reale</strong> (recupero di HP) ti riporta fuori dall'Agonia. Quando esci dall'Agonia i PA si resettano a 3.</p>
 </div>
  
 <div class="sec" id="s7">
@@ -573,7 +662,12 @@ Requisito: Grado_PG ≥ Grado_destinazione</div>
     <div class="ref-item"><span class="ref-l">MOD</span><span class="ref-v">floor(STAT / 3)</span></div>
     <div class="ref-item"><span class="ref-l">HP</span><span class="ref-v">C + M + A (finali)</span></div>
     <div class="ref-item"><span class="ref-l">Velocità</span><span class="ref-v">Corpo finale m/t</span></div>
-    <div class="ref-item"><span class="ref-l">Iniziativa</span><span class="ref-v">1d12 + MOD(Corpo)</span></div>
+    <div class="ref-item"><span class="ref-l">Iniziativa</span><span class="ref-v">1d12 + MOD(Corpo) · pareggio si ritira</span></div>
+    <div class="ref-item"><span class="ref-l">Struttura turno</span><span class="ref-v">1 Azione · 1 Rapida · 1 Reazione · Movimento libero</span></div>
+    <div class="ref-item"><span class="ref-l">Una carta, una azione</span><span class="ref-v">Non puoi usare due azioni dalla stessa carta nello stesso turno</span></div>
+    <div class="ref-item"><span class="ref-l">Attacco di Opportunità</span><span class="ref-v">Reazione: Rapido (MOD) quando nemico esce senza Disimpegno</span></div>
+    <div class="ref-item"><span class="ref-l">Mezza Copertura</span><span class="ref-v">+Grado alla Soglia dell'asse colpito</span></div>
+    <div class="ref-item"><span class="ref-l">Agonia (0 HP)</span><span class="ref-v">3 PA · azioni costano PA · 0 PA = svenuto · attaccato da svenuto = morte</span></div>
     <div class="ref-item"><span class="ref-l">Capacità</span><span class="ref-v">Corpo × 3 kg</span></div>
     <div class="ref-item"><span class="ref-l">Attacco d12</span><span class="ref-v">G×d12 + MOD</span></div>
     <div class="ref-item"><span class="ref-l">Attacco d6+Cond</span><span class="ref-v">G×d6 + MOD + Cond</span></div>

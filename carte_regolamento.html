@@ -213,7 +213,84 @@ Facile 4+ &nbsp; Normale 7+ &nbsp; Difficile 10+ &nbsp; Estremo 14+</span></div>
 </div>`
 },
 {
-  id:'c2',num:'02',theme:'theme-red',icon:'&#127922;',
+  id:'c2',num:'02',theme:'theme-green',icon:'&#9654;',
+  title:'Il Turno',sub:'Struttura &middot; Movimento &middot; Opportunit&agrave;',
+  note:'Una carta = una sola azione per turno &middot; Rapida non sostituisce l&#39;Azione',
+  body:`
+<div class="rc-section">
+  <div class="rc-sec-title">Struttura del Turno</div>
+  <div class="rc-row"><span class="rc-row-label" style="min-width:130px">Azione</span><span class="rc-row-val">1 &middot; Leggera, Caricata, o Azione di Movimento</span></div>
+  <div class="rc-row"><span class="rc-row-label" style="min-width:130px">Azione Rapida</span><span class="rc-row-val">1 &middot; non sostituisce l&rsquo;Azione</span></div>
+  <div class="rc-row"><span class="rc-row-label" style="min-width:130px">Reazione</span><span class="rc-row-val">1 &middot; fuori turno su trigger specificato</span></div>
+  <div class="rc-row"><span class="rc-row-label" style="min-width:130px">Movimento</span><span class="rc-row-val">Velocit&agrave; m &middot; spezzabile &middot; vel. dimezzata in Agonia</span></div>
+  <div class="rc-formula">UNA CARTA = UNA AZIONE per turno<span>
+Rapida + Leggera dalla stessa carta: NON si pu&ograve;
+Rapida + Leggera da carte diverse: OK</span></div>
+</div>
+<div class="rc-section">
+  <div class="rc-sec-title">Azioni di Movimento (costano 1 Azione)</div>
+  <div class="rc-row"><span class="rc-row-label" style="min-width:120px">Scatto</span><span class="rc-row-val">Velocit&agrave; &times;2 questo turno</span></div>
+  <div class="rc-row"><span class="rc-row-label" style="min-width:120px">Disimpegno</span><span class="rc-row-val">Nessun Attacco di Opportunit&agrave; questo turno</span></div>
+  <div class="rc-row"><span class="rc-row-label" style="min-width:120px">Schivata</span><span class="rc-row-val">Svantaggio a tutti gli att. contro di te fino al tuo prossimo turno &middot; non puoi attaccare</span></div>
+  <div class="rc-row"><span class="rc-row-label" style="min-width:120px">Aiuto</span><span class="rc-row-val">Alleato adiacente: Vantaggio al prossimo att. o tiro</span></div>
+  <div class="rc-row"><span class="rc-row-label" style="min-width:120px">Preparazione</span><span class="rc-row-val">Dichiari azione + trigger &middot; Reazione esegue l&rsquo;azione al trigger</span></div>
+  <div class="rc-row"><span class="rc-row-label" style="min-width:120px">Balzo/Scalata</span><span class="rc-row-val">Vel. dimezzata &middot; tiro Corpo vs 7 se superficie instabile</span></div>
+</div>
+<div class="rc-section">
+  <div class="rc-sec-title">Azioni Gratuite (0 costo)</div>
+  <div class="rc-row"><span class="rc-row-val">Parlare (una frase) &middot; Disequipaggiare &middot; Lasciar cadere</span></div>
+  <div class="rc-row"><span class="rc-row-label" style="min-width:120px">Equipaggiare</span><span class="rc-row-val">Costa 1 Azione</span></div>
+</div>
+<div class="rc-section">
+  <div class="rc-sec-title">Attacco di Opportunit&agrave; &amp; Copertura</div>
+  <div class="rc-row"><span class="rc-row-label" style="min-width:120px">Att. Opportunit&agrave;</span><span class="rc-row-val">Nemico esce senza Disimpegno &rarr; Reazione: Rapido (MOD)</span></div>
+  <div class="rc-row"><span class="rc-row-label" style="min-width:120px">Mezza Copertura</span><span class="rc-row-val">+Grado alla Soglia dell&rsquo;asse colpito</span></div>
+  <div class="rc-row"><span class="rc-row-label" style="min-width:120px">Copertura Totale</span><span class="rc-row-val">Non attaccabile direttamente</span></div>
+  <div class="rc-row"><span class="rc-row-label" style="min-width:120px">Iniziativa</span><span class="rc-row-val">1d12+MOD(Corpo) &middot; pareggio si ritira</span></div>
+  <div class="rc-row"><span class="rc-row-label" style="min-width:120px">Sorpresa</span><span class="rc-row-val">Salta 1&deg; turno &middot; no Reazioni fino alla fine del 1&deg; turno</span></div>
+</div>`
+},
+{
+  id:'c3',num:'03',theme:'theme-red',icon:'&#128128;',
+  title:'Agonia',sub:'0 HP &middot; Punti Agonia &middot; Morte',
+  note:'PA si resettano a 3 ogni volta che esci dall&rsquo;Agonia',
+  body:`
+<div class="rc-section">
+  <div class="rc-sec-title">A 0 HP &rarr; Agonia</div>
+  <div class="rc-row"><span class="rc-row-val">Hai 3 <strong>Punti Agonia (PA)</strong>. Puoi ancora agire ma ogni azione li consuma.</span></div>
+  <div class="rc-formula">Velocit&agrave; dimezzata &middot; no Movimento gratuito pieno</div>
+</div>
+<div class="rc-section">
+  <div class="rc-sec-title">Costo Azioni in Agonia</div>
+  <div class="rc-row"><span class="rc-tag t-caricata">CARICATA</span><span class="rc-row-val"><em>3 PA</em></span></div>
+  <div class="rc-row"><span class="rc-tag t-leggera">LEGGERA</span><span class="rc-row-val"><em>2 PA</em></span></div>
+  <div class="rc-row"><span class="rc-tag t-rapida">RAPIDA</span><span class="rc-row-val"><em>1 PA</em></span></div>
+  <div class="rc-row"><span class="rc-tag t-reazione">REAZIONE</span><span class="rc-row-val"><em>1 PA</em></span></div>
+  <div class="rc-row"><span class="rc-row-label">Scatto/Dis.</span><span class="rc-row-val"><em>1 PA</em></span></div>
+  <div class="rc-row"><span class="rc-row-label">Movimento</span><span class="rc-row-val">0 PA (velocit&agrave; dimezzata)</span></div>
+</div>
+<div class="rc-section">
+  <div class="rc-sec-title">Perdita Automatica PA</div>
+  <div class="rc-row"><span class="rc-row-label" style="min-width:130px">Danno continuo</span><span class="rc-row-val">&minus;1 PA a inizio turno (Sanguinante, Infuocato, ecc.)</span></div>
+  <div class="rc-row"><span class="rc-row-label" style="min-width:130px">Colpito &rarr; Caricata</span><span class="rc-row-val">&minus;3 PA</span></div>
+  <div class="rc-row"><span class="rc-row-label" style="min-width:130px">Colpito &rarr; Leggera</span><span class="rc-row-val">&minus;2 PA</span></div>
+  <div class="rc-row"><span class="rc-row-label" style="min-width:130px">Colpito &rarr; Rapida</span><span class="rc-row-val">&minus;1 PA</span></div>
+</div>
+<div class="rc-section">
+  <div class="rc-sec-title">0 PA &rarr; Svenuto &rarr; Morte</div>
+  <div class="rc-row"><span class="rc-row-label" style="min-width:130px">Svenuto</span><span class="rc-row-val">A terra &middot; non agisce &middot; se attaccato: MUORE</span></div>
+  <div class="rc-row"><span class="rc-row-label" style="min-width:130px">Recupero</span><span class="rc-row-val">Tira 1d12+Grado = turni di attesa &middot; poi torni a 1 HP</span></div>
+</div>
+<div class="rc-section">
+  <div class="rc-sec-title">Stabilizzazione da Alleato</div>
+  <div class="rc-row"><span class="rc-row-label" style="min-width:130px">In Agonia</span><span class="rc-row-val">Caricata &rarr; +3 PA &middot; Leggera &rarr; +2 PA &middot; Rapida &rarr; +1 PA</span></div>
+  <div class="rc-row"><span class="rc-row-label" style="min-width:130px">Da Svenuto</span><span class="rc-row-val">1 Azione + 1d12+Grado alleato &rarr; sottrae turni attesa</span></div>
+  <div class="rc-row"><span class="rc-row-label" style="min-width:130px">Cura reale</span><span class="rc-row-val">Recupero HP &rarr; esce dall&rsquo;Agonia &middot; PA resettati a 3</span></div>
+</div>`
+},
+
+{
+  id:'c4',num:'04',theme:'theme-red',icon:'&#127922;',
   title:'Tipi Attacco',sub:'Azioni &middot; Formule',
   note:'G = Grado arma &middot; MOD = MOD(asse arma) &middot; Cond. = Condizione',
   body:`
@@ -268,7 +345,7 @@ Facile 4+ &nbsp; Normale 7+ &nbsp; Difficile 10+ &nbsp; Estremo 14+</span></div>
 </div>`
 },
 {
-  id:'c3',num:'03',theme:'theme-gold',icon:'&#128737;',
+  id:'c5',num:'05',theme:'theme-gold',icon:'&#128737;',
   title:'Armor & Slot',sub:'Difesa &middot; Inventario &middot; IRD',
   note:'Senza armatura: protezione = Grado PG su tutti gli assi',
   body:`
@@ -299,7 +376,7 @@ Facile 4+ &nbsp; Normale 7+ &nbsp; Difficile 10+ &nbsp; Estremo 14+</span></div>
 </div>`
 },
 {
-  id:'c4',num:'04',theme:'theme-red',icon:'&#129656;',
+  id:'c6',num:'06',theme:'theme-red',icon:'&#129656;',
   title:'Condizioni I',sub:'Fisiche &middot; Danno Continuo',
   note:'Rimuovere richiede azione (1 az.) o cura salvo indicazione diversa',
   body:`
@@ -327,7 +404,7 @@ Facile 4+ &nbsp; Normale 7+ &nbsp; Difficile 10+ &nbsp; Estremo 14+</span></div>
 </div>`
 },
 {
-  id:'c5',num:'05',theme:'theme-purple',icon:'&#129504;',
+  id:'c7',num:'07',theme:'theme-purple',icon:'&#129504;',
   title:'Condizioni II',sub:'Mentali &middot; Sensoriali',
   note:'Condizioni mentali: tiro Anima vs 7 per liberarsi (salvo diverso)',
   body:`
@@ -363,7 +440,7 @@ Fallimento = Concentrazione interrotta</span></div>
 </div>`
 },
 {
-  id:'c6',num:'06',theme:'theme-teal',icon:'&#127769;',
+  id:'c8',num:'08',theme:'theme-teal',icon:'&#127769;',
   title:'Riposo & PG',sub:'Recupero &middot; Creazione &middot; Progressione',
   note:'rec.Corto ~1h &middot; rec.Lungo ~8h &middot; Pool AO = Aumenti+Oggetti insieme',
   body:`
@@ -395,7 +472,7 @@ Fallimento = Concentrazione interrotta</span></div>
 </div>`
 },
 {
-  id:'c7',num:'07',theme:'theme-gray',icon:'&#128128;',
+  id:'c9',num:'09',theme:'theme-gray',icon:'&#128128;',
   title:'Nemici & Boss',sub:'Struttura &middot; Scalatura &middot; Boss',
   note:'I nemici non seguono le formule PG - ogni carta e self-contained',
   body:`
