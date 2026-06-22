@@ -234,6 +234,16 @@ textarea{resize:vertical;line-height:1.5;}
       </div>
       <div class="fs"><div class="fs-t">Descrizione</div>
         <textarea id="f-desc" rows="3" placeholder="Descrizione dell'oggetto..." oninput="upd()"></textarea>
+        <div style="margin-top:8px;display:flex;gap:16px;align-items:center;flex-wrap:wrap">
+          <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:11px">
+            <input type="checkbox" id="f-desc-bold" onchange="applyDescStyle()"/> <strong>Bold</strong>
+          </label>
+          <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:11px">
+            <input type="checkbox" id="f-desc-italic" onchange="applyDescStyle()" checked/> <em>Italic</em>
+          </label>
+        </div>
+        <div class="sl-row" style="margin-top:6px"><label>Grandezza</label><input type="range" id="sl-desc-fs" min="20" max="80" value="36" oninput="slSync('sl-desc-fs',this.value,function(v){applyDescStyle()})"/><input type="number" id="sl-desc-fs-num" class="sl-num" min="20" max="80" value="36" oninput="slSync('sl-desc-fs',this.value,function(v){applyDescStyle()})"/></div>
+        <div class="sl-row"><label>Colore</label><input type="color" id="sl-desc-col" value="#1a0e00" oninput="applyDescStyle()"/></div>
       </div>
     </div>
 
@@ -930,7 +940,8 @@ function applyTheme() {
     el.style.color=efftc; el.style.fontFamily=font;
   });
   var ed=document.getElementById('d-desc');
-  if(ed){ ed.style.color=tc; ed.style.fontFamily=font; }
+  if(ed){ ed.style.fontFamily=font; }
+  applyDescStyle();
   var list=document.getElementById('d-effs');
   if(list) list.style.fontSize=efs+'px';
   document.querySelectorAll('.c-eff-dot').forEach(function(el){
@@ -1018,6 +1029,20 @@ function renderFxEffs() {
     }).join('');
     list.style.fontSize = efs+'px';
   }
+}
+
+function applyDescStyle() {
+  var ed = document.getElementById('d-desc');
+  if (!ed) return;
+  var bold   = document.getElementById('f-desc-bold')   && document.getElementById('f-desc-bold').checked;
+  var italic = document.getElementById('f-desc-italic') && document.getElementById('f-desc-italic').checked;
+  var fs     = gV('sl-desc-fs', 36);
+  var col    = gV('sl-desc-col', '#1a0e00');
+  ed.style.fontWeight  = bold   ? '700'    : '400';
+  ed.style.fontStyle   = italic ? 'italic' : 'normal';
+  ed.style.fontSize    = fs + 'px';
+  ed.style.color       = col;
+  ed.style.opacity     = '1';
 }
 
 function upd() {
@@ -1174,6 +1199,13 @@ function captureStyle() {
   if(chkCar) state.fld_hasCar=chkCar.checked;
   if(chkRap) state.fld_hasRap=chkRap.checked;
   state.effs_data = effs.slice();
+  var dBold  = document.getElementById('f-desc-bold');
+  var dItal  = document.getElementById('f-desc-italic');
+  if(dBold)  state.fld_descBold  = dBold.checked;
+  if(dItal)  state.fld_descItal  = dItal.checked;
+  ['sl-desc-fs','sl-desc-col'].forEach(function(id){
+    var el=document.getElementById(id); if(el) state['fld_'+id]=el.value;
+  });
   return state;
 }
 
@@ -1200,6 +1232,11 @@ function applyStyleState(state) {
   if(state.fld_hasCar!==undefined){ var el=document.getElementById('f-has-caricata'); if(el) el.checked=state.fld_hasCar; }
   if(state.fld_hasRap!==undefined){ var el=document.getElementById('f-has-rapida'); if(el) el.checked=state.fld_hasRap; }
   if(state.effs_data){ effs=state.effs_data.slice(); }
+  if(state.fld_descBold!==undefined){ var el=document.getElementById('f-desc-bold');  if(el) el.checked=state.fld_descBold; }
+  if(state.fld_descItal!==undefined){ var el=document.getElementById('f-desc-italic'); if(el) el.checked=state.fld_descItal; }
+  ['sl-desc-fs','sl-desc-col'].forEach(function(id){
+    if(state['fld_'+id]!==undefined){ var el=document.getElementById(id); if(el) el.value=state['fld_'+id]; }
+  });
   if (state.bgimg) {
     var bgimgEl = document.getElementById('lower-bgimg');
     if (bgimgEl) {
