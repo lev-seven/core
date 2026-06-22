@@ -80,12 +80,25 @@ textarea{resize:vertical;line-height:1.5;}
 .c-big{font-family:'JetBrains Mono',monospace;font-size:90px;font-weight:700;line-height:1;}
 .c-eff{position:absolute;left:0;right:0;top:380px;bottom:0;z-index:5;display:flex;flex-direction:column;overflow:hidden;}
 .c-eff-inner{position:absolute;inset:28px;border-radius:22px;border-width:8px;border-style:solid;overflow:hidden;display:flex;flex-direction:column;}
-.c-eff-title{font-size:54px;font-weight:900;padding:34px 48px 16px;letter-spacing:2px;flex-shrink:0;position:relative;z-index:1;}
-.c-eff-list{flex:1;padding:0 48px;overflow:hidden;display:flex;flex-direction:column;position:relative;z-index:1;}
-.c-eff-item{font-family:'Outfit',sans-serif;font-size:46px;line-height:1.5;padding:14px 0;border-bottom:2px solid rgba(0,0,0,0.12);display:flex;gap:20px;flex-shrink:0;}
+/* ── Sezione attacchi ── */
+.c-atk-section{flex-shrink:0;padding:22px 48px 14px;border-bottom:3px solid rgba(0,0,0,0.15);position:relative;z-index:1;}
+.c-atk-title{font-size:42px;font-weight:900;letter-spacing:2px;margin-bottom:12px;}
+.c-atk-row{font-family:'Outfit',sans-serif;font-size:40px;line-height:1.4;padding:6px 0;display:flex;gap:16px;align-items:baseline;flex-shrink:0;}
+.c-atk-row:not(:last-child){border-bottom:1px solid rgba(0,0,0,0.10);}
+.c-atk-tag{font-size:34px;font-weight:700;letter-spacing:1px;flex-shrink:0;min-width:180px;}
+.c-atk-formula{font-family:'JetBrains Mono',monospace;font-size:36px;font-weight:700;flex-shrink:0;}
+.c-atk-cond{font-style:italic;font-size:34px;opacity:.8;}
+/* ── Sezione effetti liberi ── */
+.c-fx-section{flex-shrink:0;padding:14px 48px 10px;border-bottom:3px solid rgba(0,0,0,0.15);position:relative;z-index:1;}
+.c-fx-section.hidden{display:none;}
+.c-fx-title{font-size:38px;font-weight:900;letter-spacing:2px;margin-bottom:8px;}
+.c-eff-list{padding:0;overflow:hidden;display:flex;flex-direction:column;position:relative;z-index:1;}
+.c-eff-item{font-family:'Outfit',sans-serif;font-size:40px;line-height:1.4;padding:5px 0;border-bottom:1px solid rgba(0,0,0,0.10);display:flex;gap:14px;flex-shrink:0;}
 .c-eff-item:last-child{border-bottom:none;}
-.c-eff-dot{font-size:50px;flex-shrink:0;line-height:1.35;margin-top:2px;}
-.c-eff-desc{font-size:36px;font-style:italic;text-align:center;padding:14px 48px 26px;border-top:2px solid rgba(0,0,0,0.15);flex-shrink:0;position:relative;z-index:1;opacity:.5;}
+.c-eff-dot{font-size:44px;flex-shrink:0;line-height:1.3;margin-top:2px;}
+/* ── Sezione descrizione ── */
+.c-desc-section{flex:1;padding:14px 48px 24px;display:flex;align-items:center;justify-content:center;position:relative;z-index:1;}
+.c-eff-desc{font-size:36px;font-style:italic;text-align:center;opacity:.6;line-height:1.5;}
 
 
 /* ── SALVA / IMPORTA STILE ── */
@@ -142,9 +155,20 @@ textarea{resize:vertical;line-height:1.5;}
           </div>
           <div class="c-eff">
             <div class="c-eff-inner" id="eff-inner">
-              <div class="c-eff-title" id="eff-title">Effetti dell'oggetto</div>
-              <div class="c-eff-list" id="d-effs"><div class="c-eff-item"><span class="c-eff-dot">◆</span><span>—</span></div></div>
-              <div class="c-eff-desc" id="d-desc">Descrizione dell'oggetto</div>
+              <!-- Sezione Attacchi (sempre visibile) -->
+              <div class="c-atk-section" id="atk-section">
+                <div class="c-atk-title" id="atk-title">Attacchi</div>
+                <div id="d-atks"></div>
+              </div>
+              <!-- Sezione Effetti liberi (visibile solo se presenti) -->
+              <div class="c-fx-section hidden" id="fx-section">
+                <div class="c-fx-title" id="fx-title">Effetti</div>
+                <div class="c-eff-list" id="d-effs"></div>
+              </div>
+              <!-- Descrizione -->
+              <div class="c-desc-section">
+                <div class="c-eff-desc" id="d-desc">Descrizione dell'oggetto</div>
+              </div>
             </div>
           </div>
         </div>
@@ -178,10 +202,30 @@ textarea{resize:vertical;line-height:1.5;}
           <div><label>Attivazione</label><input type="text" id="f-attiv" placeholder="1 azione" oninput="upd()"/></div>
         </div>
       </div>
-      <div class="fs"><div class="fs-t">Effetti / Azioni</div>
-        <div class="note">Es: Colpo: Leggera, COR, 1d12+MOD [3 usi, rec. Lungo]</div>
+      <div class="fs"><div class="fs-t">Attacchi</div>
+        <div class="note">Colpo e Condizione sono presenti su tutte le armi.</div>
+        <label>Asse Colpo</label>
+        <select id="f-atk-asse" onchange="upd()">
+          <option value="COR">COR — Corpo</option>
+          <option value="MEN">MEN — Mente</option>
+          <option value="ANI">ANI — Anima</option>
+        </select>
+        <label>Condizione</label>
+        <input type="text" id="f-atk-cond" placeholder="es. Sanguinante" maxlength="28" oninput="upd()"/>
+        <div style="margin-top:10px">
+          <label style="display:flex;align-items:center;gap:8px;cursor:pointer;margin-bottom:6px">
+            <input type="checkbox" id="f-has-caricata" onchange="upd()"/> Caricata (Azione + Rapida)
+          </label>
+          <input type="text" id="f-car-cond" placeholder="Condizione caricata (es. Stordito)" maxlength="28" oninput="upd()" style="display:none"/>
+          <label style="display:flex;align-items:center;gap:8px;cursor:pointer;margin-top:6px">
+            <input type="checkbox" id="f-has-rapida" onchange="upd()"/> Rapida (Rapida o Reazione)
+          </label>
+        </div>
+      </div>
+      <div class="fs"><div class="fs-t">Effetti (opzionale)</div>
+        <div class="note">Effetti speciali, passivi, utilizzi limitati, ecc.</div>
         <div id="eff-container"></div>
-        <button class="add-eff" onclick="addEff()">+ Aggiungi effetto / azione</button>
+        <button class="add-eff" onclick="addEff()">+ Aggiungi effetto</button>
       </div>
       <div class="fs"><div class="fs-t">Descrizione</div>
         <textarea id="f-desc" rows="3" placeholder="Descrizione dell'oggetto..." oninput="upd()"></textarea>
@@ -872,8 +916,11 @@ function applyTheme() {
   });
   var ei=document.getElementById('eff-inner');
   if(ei){ ei.style.background=effbg; ei.style.borderColor=effbr; }
-  var et=document.getElementById('eff-title');
-  if(et){ et.style.color=efftc; et.style.fontFamily=font; }
+  // Titoli sezioni
+  ['atk-title','fx-title'].forEach(function(id){
+    var el=document.getElementById(id); if(!el)return;
+    el.style.color=efftc; el.style.fontFamily=font;
+  });
   var ed=document.getElementById('d-desc');
   if(ed){ ed.style.color=tc; ed.style.fontFamily=font; }
   var list=document.getElementById('d-effs');
@@ -882,29 +929,79 @@ function applyTheme() {
     el.style.color=dotc; el.style.fontSize=(parseInt(efs)+4)+'px';
   });
   document.querySelectorAll('.c-eff-item span:last-child').forEach(function(el){ el.style.color=tc; });
+  document.querySelectorAll('.c-atk-formula').forEach(function(el){ el.style.color=tc; el.style.fontFamily=font; });
+  renderAtk();
 }
 
 function addEff() {
   var i=effs.length; effs.push('');
   var c=document.getElementById('eff-container');
   var d=document.createElement('div'); d.className='eff-row';
-  d.innerHTML='<input type="text" placeholder="Es: Colpo: Leggera, COR, 1d12+MOD [3 usi, rec. Lungo]" oninput="effs['+i+']=this.value;renderEff()"/>'
-    +'<button onclick="effs['+i+']=null;this.parentElement.remove();renderEff()">x</button>';
-  c.appendChild(d); renderEff();
+  d.innerHTML='<input type="text" placeholder="es. Passivo: +1 a tutti i dadi fuoco" oninput="effs['+i+']=this.value;renderFxEffs()"/>'
+    +'<button onclick="effs['+i+']=null;this.parentElement.remove();renderFxEffs()">x</button>';
+  c.appendChild(d); renderFxEffs();
 }
 
-function renderEff() {
-  var list=document.getElementById('d-effs');
-  var active=effs.filter(function(e){ return e!==null&&e.trim()!==''; });
-  var tc=gV('sl-tc','#1a0e00'), dotc=gV('sl-dotc','#3d2a7a'), efs=gV('sl-efs',46);
-  var html = active.length===0
-    ? '<div class="c-eff-item"><span class="c-eff-dot" style="color:'+dotc+';font-size:'+(parseInt(efs)+4)+'px">&#9670;</span><span style="color:'+tc+'">&#8212;</span></div>'
-    : active.map(function(e){ return '<div class="c-eff-item"><span class="c-eff-dot" style="color:'+dotc+';font-size:'+(parseInt(efs)+4)+'px">&#9670;</span><span style="color:'+tc+'">'+e+'</span></div>'; }).join('');
-  list.innerHTML = html;
-  list.style.fontSize = efs+'px';
-  var tries=0;
-  while(list.scrollHeight>list.clientHeight+8&&parseInt(list.style.fontSize)>22&&tries<30){
-    list.style.fontSize=(parseInt(list.style.fontSize)-2)+'px'; tries++;
+function renderAtk() {
+  var container = document.getElementById('d-atks');
+  if (!container) return;
+  var tc   = gV('sl-tc','#1a0e00');
+  var dotc = gV('sl-dotc','#3d2a7a');
+  var efs  = parseInt(gV('sl-efs', 46));
+  var asse = (document.getElementById('f-atk-asse')||{value:'COR'}).value || 'COR';
+  var cond = (document.getElementById('f-atk-cond')||{value:''}).value.trim();
+  var hasCar= document.getElementById('f-has-caricata') && document.getElementById('f-has-caricata').checked;
+  var carCond=(document.getElementById('f-car-cond')||{value:''}).value.trim();
+  var hasRap= document.getElementById('f-has-rapida') && document.getElementById('f-has-rapida').checked;
+  // Mostra/nasconde campo condizione caricata
+  var carCondEl = document.getElementById('f-car-cond');
+  if (carCondEl) carCondEl.style.display = hasCar ? '' : 'none';
+  var rows = [];
+  // Colpo — sempre
+  rows.push({tag:'Colpo', formula:'2d6+MOD('+asse+')', cond:''});
+  // Condizione — sempre
+  rows.push({tag:'Condizione', formula:'1d6+MOD('+asse+')', cond: cond||'—'});
+  // Caricata — opzionale
+  if (hasCar) rows.push({tag:'Caricata', formula:'2d6+MOD('+asse+')', cond: carCond||cond||'—'});
+  // Rapida — opzionale
+  if (hasRap) rows.push({tag:'Rapida', formula:'1d6+MOD('+asse+')', cond:''});
+
+  var fs = efs;
+  var tagFs = Math.round(fs * 0.85);
+  var formFs = Math.round(fs * 0.88);
+  var condFs = Math.round(fs * 0.78);
+
+  container.innerHTML = rows.map(function(r) {
+    // Colori per tipo
+    var col = r.tag==='Caricata' ? '#e05050'
+            : r.tag==='Rapida'   ? '#2ec4a0'
+            : '#5890e8';
+    return '<div class="c-atk-row">'
+      + '<span class="c-atk-tag" style="color:'+col+';font-size:'+tagFs+'px">('+r.tag+')</span>'
+      + '<span class="c-atk-formula" style="color:'+tc+';font-size:'+formFs+'px">'+r.formula+'</span>'
+      + (r.cond ? '<span class="c-atk-cond" style="color:'+dotc+';font-size:'+condFs+'px">+'+r.cond+'</span>' : '')
+      + '</div>';
+  }).join('');
+  container.style.fontSize = fs+'px';
+}
+
+function renderFxEffs() {
+  var list = document.getElementById('d-effs');
+  var fxSec = document.getElementById('fx-section');
+  if (!list) return;
+  var active = effs.filter(function(e){ return e!==null&&e.trim()!==''; });
+  var tc   = gV('sl-tc','#1a0e00');
+  var dotc = gV('sl-dotc','#3d2a7a');
+  var efs  = gV('sl-efs', 46);
+  if (active.length === 0) {
+    if (fxSec) fxSec.classList.add('hidden');
+    list.innerHTML = '';
+  } else {
+    if (fxSec) fxSec.classList.remove('hidden');
+    list.innerHTML = active.map(function(e){
+      return '<div class="c-eff-item"><span class="c-eff-dot" style="color:'+dotc+';font-size:'+(parseInt(efs)+4)+'px">&#9670;</span><span style="color:'+tc+'">'+e+'</span></div>';
+    }).join('');
+    list.style.fontSize = efs+'px';
   }
 }
 
@@ -921,7 +1018,8 @@ function upd() {
   document.getElementById('rb-t').style.background=rar;
   document.getElementById('rb-b').style.background=rar;
   CARD_FILENAME='obj_'+(document.getElementById('f-nome').value||'oggetto').toLowerCase().replace(/\s+/g,'_')+'.png';
-  renderEff();
+  renderAtk();
+  renderFxEffs();
 }
 
 
@@ -1050,6 +1148,15 @@ function captureStyle() {
   var bgimgEl = document.getElementById('lower-bgimg');
   if (bgimgEl && bgimgEl.style.backgroundImage && bgimgEl.style.backgroundImage !== 'none')
     state.bgimg = bgimgEl.style.backgroundImage;
+  // Salva campi attacchi
+  ['f-atk-asse','f-atk-cond','f-car-cond'].forEach(function(id){
+    var el=document.getElementById(id); if(el) state['fld_'+id]=el.value;
+  });
+  var chkCar=document.getElementById('f-has-caricata');
+  var chkRap=document.getElementById('f-has-rapida');
+  if(chkCar) state.fld_hasCar=chkCar.checked;
+  if(chkRap) state.fld_hasRap=chkRap.checked;
+  state.effs_data = effs.slice();
   return state;
 }
 
@@ -1068,6 +1175,13 @@ function applyStyleState(state) {
       if (el) el.value = state.sliders[id];
     });
   }
+  // Ripristina campi attacchi
+  ['f-atk-asse','f-atk-cond','f-car-cond'].forEach(function(id){
+    if(state['fld_'+id]!==undefined){ var el=document.getElementById(id); if(el) el.value=state['fld_'+id]; }
+  });
+  if(state.fld_hasCar!==undefined){ var el=document.getElementById('f-has-caricata'); if(el) el.checked=state.fld_hasCar; }
+  if(state.fld_hasRap!==undefined){ var el=document.getElementById('f-has-rapida'); if(el) el.checked=state.fld_hasRap; }
+  if(state.effs_data){ effs=state.effs_data.slice(); }
   if (state.bgimg) {
     var bgimgEl = document.getElementById('lower-bgimg');
     if (bgimgEl) {
@@ -1083,6 +1197,8 @@ function applyStyleState(state) {
     var sop = document.getElementById('sl-stat-op');
     applyStatOp(sop ? sop.value : 90);
   }
+  renderAtk();
+  renderFxEffs();
   if (typeof setArtH === 'function') {
     var arth = document.getElementById('sl-arth');
     if (arth) setArtH(arth.value);
