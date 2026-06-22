@@ -229,6 +229,14 @@ textarea{resize:vertical;line-height:1.5;}
         <div class="sl-row"><label>Colore base</label><input type="color" id="sl-bg" value="#f0e8d0" oninput="applyTheme()"/><span class="sl-val" id="v-bg">#f0e8d0</span></div>
         <div class="sl-row"><label>Luminosità</label><input type="range" id="sl-br" min="30" max="200" value="100" oninput="slSync('sl-br',this.value,function(v){applyTheme()})"/><input type="number" id="sl-br-num" class="sl-num" min="30" max="200" value="100" oninput="slSync('sl-br',this.value,function(v){applyTheme()})"/></div>
         <div class="sl-row"><label>Intensità pattern</label><input type="range" id="sl-op" min="0" max="100" value="55" oninput="slSync('sl-op',this.value,function(v){applyTheme()})"/><input type="number" id="sl-op-num" class="sl-num" min="0" max="100" value="55" oninput="slSync('sl-op',this.value,function(v){applyTheme()})"/></div>
+        <div class="sl-row"><label>Tipo pattern</label>
+          <select id="sl-pat-mode" onchange="applyTheme()" style="flex:1;margin-bottom:0;font-size:11px">
+            <option value="tile">Ripetuto (tile)</option>
+            <option value="center1">Centrato ×1</option>
+            <option value="center4">Centrato ×4</option>
+            <option value="none">Nessuno</option>
+          </select>
+        </div>
         <div class="sl-row"><label>Colore pattern</label><input type="color" id="sl-pc" value="#7a5010" oninput="applyTheme()"/></div>
       </div>
       <div class="fs"><div class="fs-t">Immagine sfondo custom</div>
@@ -485,19 +493,99 @@ function applyBgColor() {
   var br   = parseFloat(gV('sl-br',100)) / 100;
   col.style.background = bg;
   col.style.filter = 'brightness(' + br + ')';
-  var t = TEMI[curT];
-  var pc = gV('sl-pc','#000');
-  var op = parseFloat(gV('sl-op',55));
+  var t    = TEMI[curT];
+  var pc   = gV('sl-pc','#000');
+  var op   = parseFloat(gV('sl-op',55));
+  var mode = gV('sl-pat-mode','tile');
   if (pat) {
-    pat.style.backgroundImage = t.pat(pc, op);
-    pat.style.backgroundSize = '800px';
-    pat.style.backgroundRepeat = 'repeat';
+    if (mode === 'none') {
+      pat.style.backgroundImage  = 'none';
+      pat.style.backgroundSize   = 'auto';
+      pat.style.backgroundRepeat = 'no-repeat';
+    } else if (mode === 'tile') {
+      pat.style.backgroundImage  = t.pat(pc, op);
+      pat.style.backgroundSize   = '800px';
+      pat.style.backgroundRepeat = 'repeat';
+    } else if (mode === 'center1') {
+      pat.style.backgroundImage  = makeCenteredPat(t, pc, op, 1);
+      pat.style.backgroundSize   = '100% 100%';
+      pat.style.backgroundRepeat = 'no-repeat';
+      pat.style.backgroundPosition = 'center center';
+    } else if (mode === 'center4') {
+      pat.style.backgroundImage  = makeCenteredPat(t, pc, op, 4);
+      pat.style.backgroundSize   = '50% 50%';
+      pat.style.backgroundRepeat = 'repeat';
+    }
   }
   // sfondo immagine custom
   if (bgimg) {
     var opacity = parseFloat(gV('sl-bgimg-op', 50)) / 100;
     bgimg.style.opacity = opacity;
   }
+}
+
+// Genera un SVG con il motivo del tema ridisegnato grande, centrato
+function makeCenteredPat(t, c, o, count) {
+  var v = o / 100;
+  var k = curT; // usa la chiave del tema corrente direttamente
+  var W = 1000, H = 1000;
+  var inner = '';
+  if (k === 'sigillo') {
+    var rays = '';
+    for (var i = 0; i < 12; i++) {
+      var a = i * 30 * Math.PI / 180;
+      rays += '<line x1="500" y1="500" x2="'+(500+460*Math.cos(a))+'" y2="'+(500+460*Math.sin(a))+'" stroke="'+c+'" stroke-width="2.5" opacity="'+(v*0.5)+'"/>';
+    }
+    inner = '<circle cx="500" cy="500" r="460" stroke="'+c+'" stroke-width="6" fill="none" opacity="'+(v*0.6)+'"/>'
+          + '<circle cx="500" cy="500" r="370" stroke="'+c+'" stroke-width="3" fill="none" opacity="'+(v*0.45)+'"/>'
+          + '<circle cx="500" cy="500" r="260" stroke="'+c+'" stroke-width="4" fill="none" opacity="'+(v*0.5)+'"/>'
+          + '<circle cx="500" cy="500" r="120" stroke="'+c+'" stroke-width="2.5" fill="none" opacity="'+(v*0.45)+'"/>'
+          + rays
+          + '<polygon points="500,85 855,755 145,755" stroke="'+c+'" stroke-width="5" fill="none" opacity="'+(v*0.42)+'"/>'
+          + '<polygon points="500,915 145,245 855,245" stroke="'+c+'" stroke-width="5" fill="none" opacity="'+(v*0.42)+'"/>';
+  } else if (k === 'pietra') {
+    inner = '<line x1="0" y1="0" x2="1000" y2="1000" stroke="'+c+'" stroke-width="3" opacity="'+(v*0.4)+'"/>'
+          + '<line x1="1000" y1="0" x2="0" y2="1000" stroke="'+c+'" stroke-width="3" opacity="'+(v*0.3)+'"/>'
+          + '<line x1="500" y1="0" x2="500" y2="1000" stroke="'+c+'" stroke-width="2" opacity="'+(v*0.25)+'"/>'
+          + '<line x1="0" y1="500" x2="1000" y2="500" stroke="'+c+'" stroke-width="2" opacity="'+(v*0.25)+'"/>'
+          + '<rect x="60" y="60" width="880" height="880" fill="none" stroke="'+c+'" stroke-width="4" opacity="'+(v*0.35)+'"/>'
+          + '<rect x="180" y="180" width="640" height="640" fill="none" stroke="'+c+'" stroke-width="2.5" opacity="'+(v*0.25)+'"/>'
+          + '<rect x="300" y="300" width="400" height="400" fill="none" stroke="'+c+'" stroke-width="2" opacity="'+(v*0.2)+'"/>';
+  } else if (k === 'metallo') {
+    var ls = '';
+    for (var j = 0; j < 20; j++) {
+      var oy = j % 5 === 0 ? v*0.45 : v*0.18;
+      var sw = j % 5 === 0 ? 4 : 1.5;
+      ls += '<line x1="0" y1="'+(j*52)+'" x2="1000" y2="'+(j*52)+'" stroke="'+c+'" stroke-width="'+sw+'" opacity="'+oy+'"/>';
+    }
+    inner = ls
+          + '<line x1="0" y1="0" x2="1000" y2="1000" stroke="'+c+'" stroke-width="3" opacity="'+(v*0.22)+'"/>'
+          + '<line x1="1000" y1="0" x2="0" y2="1000" stroke="'+c+'" stroke-width="3" opacity="'+(v*0.16)+'"/>'
+          + '<defs><radialGradient id="sh2" cx="35%" cy="28%" r="55%">'
+          + '<stop offset="0%" stop-color="white" stop-opacity="'+(v*0.4)+'"/>'
+          + '<stop offset="100%" stop-color="white" stop-opacity="0"/>'
+          + '</radialGradient></defs>'
+          + '<rect width="1000" height="1000" fill="url(#sh2)"/>';
+  } else if (k === 'legno') {
+    var ws = '';
+    for (var jj = 0; jj < 18; jj++) {
+      var sww = jj % 6 === 0 ? 5 : 2;
+      var opw = jj % 6 === 0 ? v*0.4 : v*0.18;
+      ws += '<path d="M0,'+(jj*58)+' Q250,'+(jj*58+32)+' 500,'+(jj*58)+' Q750,'+(jj*58-32)+' 1000,'+(jj*58)+'" stroke="'+c+'" stroke-width="'+sww+'" fill="none" opacity="'+opw+'"/>';
+    }
+    inner = ws;
+  } else { // pergamena
+    inner = '<filter id="n2"><feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="4" stitchTiles="stitch"/>'
+          + '<feColorMatrix type="saturate" values="0"/></filter>'
+          + '<rect width="1000" height="1000" filter="url(#n2)" opacity="'+(v*0.2)+'"/>'
+          + '<line x1="0" y1="333" x2="1000" y2="333" stroke="'+c+'" stroke-width="3" opacity="'+(v*0.22)+'"/>'
+          + '<line x1="0" y1="666" x2="1000" y2="666" stroke="'+c+'" stroke-width="3" opacity="'+(v*0.22)+'"/>'
+          + '<line x1="333" y1="0" x2="333" y2="1000" stroke="'+c+'" stroke-width="1.5" opacity="'+(v*0.12)+'"/>'
+          + '<line x1="666" y1="0" x2="666" y2="1000" stroke="'+c+'" stroke-width="1.5" opacity="'+(v*0.12)+'"/>'
+          + '<ellipse cx="500" cy="500" rx="420" ry="340" stroke="'+c+'" stroke-width="2.5" fill="none" opacity="'+(v*0.1)+'"/>';
+  }
+  var svg = '<svg xmlns="http://www.w3.org/2000/svg" width="'+W+'" height="'+H+'" viewBox="0 0 '+W+' '+H+'">' + inner + '</svg>';
+  return 'url("data:image/svg+xml,' + encodeURIComponent(svg) + '")';
 }
 
 function setArtH(h) {
