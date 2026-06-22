@@ -61,7 +61,7 @@ input:focus,select:focus,textarea:focus{border-color:#2d9e40 !important;}
 .c-hex{width:160px;height:160px;flex-shrink:0;clip-path:polygon(50% 0%,100% 25%,100% 75%,50% 100%,0% 75%,0% 25%);background:#fff;display:flex;align-items:center;justify-content:center;;overflow:hidden}
 .c-hex span{font-size:70px;font-weight:900;color:#060606;line-height:1;}
 .c-art{position:absolute;left:28px;right:28px;top:176px;height:910px;background:#181818;overflow:hidden;}
-.c-art img{width:100%;height:100%;object-fit:cover;object-position:center;display:none;}
+.c-art img{position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;object-position:center;display:none;transform-origin:center center;transition:transform .1s;}
 .c-art-ph{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:160px;color:#282828;background:#141414;}
 .c-rar{position:absolute;left:0;right:0;height:52px;z-index:4;}
 .c-rar.t{top:0;} .c-rar.b{bottom:0;}
@@ -172,6 +172,7 @@ input:focus,select:focus,textarea:focus{border-color:#2d9e40 !important;}
         <div class="img-up"><input type="file" accept="image/*" onchange="loadImg(event)"/>
           <div class="img-up-l" id="img-lbl">📷 Carica immagine</div>
           <img id="img-prev"/></div>
+        <button id="btn-clear-art" onclick="clearArt()" style="display:none;width:100%;padding:5px;background:#1a0808;border:1px solid #3a1010;border-radius:4px;color:#c04040;font-family:'Cinzel',serif;font-size:10px;font-weight:700;cursor:pointer;letter-spacing:.5px;margin-bottom:7px;">🗑 Rimuovi artwork</button>
       </div>
       <div class="fs"><div class="fs-t">Intestazione</div>
         <label>Nome PG</label><input type="text" id="f-nome" placeholder="es. Lyra Sunthorn" maxlength="20" oninput="upd()"/>
@@ -227,11 +228,14 @@ input:focus,select:focus,textarea:focus{border-color:#2d9e40 !important;}
       <div class="fs"><div class="fs-t">Immagine sfondo custom</div>
         <div class="img-up"><input type="file" accept="image/*" onchange="loadBgImg(event)"/>
           <div class="img-up-l">📁 Carica immagine sfondo (opzionale)</div></div>
+        <button id="btn-clear-bgimg" onclick="clearBgImg()" style="display:none;width:100%;padding:5px;background:#1a0808;border:1px solid #3a1010;border-radius:4px;color:#c04040;font-family:'Cinzel',serif;font-size:10px;font-weight:700;cursor:pointer;letter-spacing:.5px;margin-bottom:7px;">🗑 Rimuovi sfondo</button>
         <div class="sl-row"><label>Opacità sfondo</label><input type="range" id="sl-bgimg-op" min="0" max="100" value="50" oninput="slSync('sl-bgimg-op',this.value,function(v){applyTheme()})"/><input type="number" id="sl-bgimg-op-num" class="sl-num" min="0" max="100" value="50" oninput="slSync('sl-bgimg-op',this.value,function(v){applyTheme()})"/></div>
         <div class="note">0% = invisibile · 100% = piena copertura. Si sovrappone al colore base.</div>
       </div>
       <div class="fs"><div class="fs-t">Artwork</div>
         <div class="sl-row"><label>Altezza artwork</label><input type="range" id="sl-arth" min="300" max="1600" value="910" step="10" oninput="slSync('sl-arth',this.value,function(v){setArtH(v)})"/><input type="number" id="sl-arth-num" class="sl-num" min="300" max="1600" value="910" step="10" oninput="slSync('sl-arth',this.value,function(v){setArtH(v)})"/></div>
+        <div class="sl-row"><label>Zoom artwork</label><input type="range" id="sl-art-scale" min="50" max="200" value="100" step="1" oninput="slSync('sl-art-scale',this.value,function(v){applyArtTransform()})"/><input type="number" id="sl-art-scale-num" class="sl-num" min="50" max="200" value="100" step="1" oninput="slSync('sl-art-scale',this.value,function(v){applyArtTransform()})"/></div>
+        <div class="sl-row"><label>Posizione verticale</label><input type="range" id="sl-art-y" min="-50" max="50" value="0" step="1" oninput="slSync('sl-art-y',this.value,function(v){applyArtTransform()})"/><input type="number" id="sl-art-y-num" class="sl-num" min="-50" max="50" value="0" step="1" oninput="slSync('sl-art-y',this.value,function(v){applyArtTransform()})"/></div>
       </div>
       <div class="fs"><div class="fs-t">Tipografia</div>
         <div class="sl-row"><label>Font principale</label>
@@ -603,10 +607,12 @@ function loadImg(e) {
     var ph   = document.getElementById('art-ph');
     var prev = document.getElementById('img-prev');
     var lbl  = document.getElementById('img-lbl');
+    var btn  = document.getElementById('btn-clear-art');
     if (img)  { img.src = ev.target.result; img.style.display = 'block'; }
     if (ph)   ph.style.display = 'none';
     if (prev) { prev.src = ev.target.result; prev.style.display = 'block'; }
     if (lbl)  lbl.style.display = 'none';
+    if (btn)  btn.style.display = 'block';
   };
   r.readAsDataURL(f);
 }
@@ -615,14 +621,50 @@ function loadBgImg(e) {
   var f = e.target.files[0]; if (!f) return;
   var r = new FileReader();
   r.onload = function(ev) {
-    var el = document.getElementById('lower-bgimg');
+    var el  = document.getElementById('lower-bgimg');
+    var btn = document.getElementById('btn-clear-bgimg');
     if (el) {
       el.style.backgroundImage = 'url(' + ev.target.result + ')';
       el.style.backgroundSize  = 'cover';
       el.style.backgroundPosition = 'center';
     }
+    if (btn) btn.style.display = 'block';
   };
   r.readAsDataURL(f);
+}
+
+function clearArt() {
+  var img  = document.getElementById('art-img');
+  var ph   = document.getElementById('art-ph');
+  var prev = document.getElementById('img-prev');
+  var lbl  = document.getElementById('img-lbl');
+  var btn  = document.getElementById('btn-clear-art');
+  if (img)  { img.src = ''; img.style.display = 'none'; img.style.transform = ''; }
+  if (ph)   ph.style.display = 'flex';
+  if (prev) { prev.src = ''; prev.style.display = 'none'; }
+  if (lbl)  lbl.style.display = '';
+  if (btn)  btn.style.display = 'none';
+  var sc = document.getElementById('sl-art-scale');
+  var sy = document.getElementById('sl-art-y');
+  var scn= document.getElementById('sl-art-scale-num');
+  var syn= document.getElementById('sl-art-y-num');
+  if (sc) sc.value = 100; if (scn) scn.value = 100;
+  if (sy) sy.value = 0;   if (syn) syn.value = 0;
+}
+
+function clearBgImg() {
+  var el  = document.getElementById('lower-bgimg');
+  var btn = document.getElementById('btn-clear-bgimg');
+  if (el)  el.style.backgroundImage = 'none';
+  if (btn) btn.style.display = 'none';
+}
+
+function applyArtTransform() {
+  var img = document.getElementById('art-img');
+  if (!img || img.style.display === 'none') return;
+  var scale = parseFloat(gV('sl-art-scale', 100)) / 100;
+  var ty    = parseFloat(gV('sl-art-y', 0));
+  img.style.transform = 'scale(' + scale + ') translateY(' + ty + '%)';
 }
 
 async function dl() {
