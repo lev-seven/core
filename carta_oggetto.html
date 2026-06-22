@@ -121,7 +121,7 @@ textarea{resize:vertical;line-height:1.5;}
 <body>
 <div class="top-bar">
   <h1>🎒 Carta Oggetto</h1>
-  <span class="badge">1831x2539px</span><span class="badge">preview 590px</span><span class="badge" style="color:#c8a030;border-color:#4a3800">v0.0.13</span>
+  <span class="badge">1831x2539px</span><span class="badge">preview 590px</span><span class="badge" style="color:#c8a030;border-color:#4a3800">v0.0.17</span>
   <button id="btn-save-style" class="btn-style btn-save-style" onclick="saveStyle()">💾 Salva Stile</button>
   <button id="btn-load-style" class="btn-style btn-load-style" onclick="importStyle()">📂 Importa Stile</button>
   <button class="btn-dl" onclick="dl()">⬇ Scarica HD</button>
@@ -225,6 +225,7 @@ textarea{resize:vertical;line-height:1.5;}
               <input type="checkbox" id="f-has-rapida" onchange="upd()"/> Rapida (Rapida o Reazione)
             </label>
           </div>
+        <div class="sl-row" style="margin-top:10px"><label>Dim. testo attacchi</label><input type="range" id="sl-atk-fs-dati" min="24" max="70" value="46" oninput="slSync('sl-atk-fs',this.value,function(v){applyTheme()})"/><input type="number" id="sl-atk-fs-dati-num" class="sl-num" min="24" max="70" value="46" oninput="slSync('sl-atk-fs',this.value,function(v){applyTheme()})"/></div>
         </div>
       </div>
       <div class="fs"><div class="fs-t">Effetti (opzionale)</div>
@@ -289,6 +290,7 @@ textarea{resize:vertical;line-height:1.5;}
         <div class="sl-row"><label>Dim. label</label><input type="range" id="sl-lfs" min="20" max="60" value="36" oninput="slSync('sl-lfs',this.value,function(v){applyTheme()})"/><input type="number" id="sl-lfs-num" class="sl-num" min="20" max="60" value="36" oninput="slSync('sl-lfs',this.value,function(v){applyTheme()})"/></div>
         <div class="sl-row"><label>Dim. valori info</label><input type="range" id="sl-dvfs" min="40" max="130" value="90" oninput="slSync('sl-dvfs',this.value,function(v){applyTheme()})"/><input type="number" id="sl-dvfs-num" class="sl-num" min="40" max="130" value="90" oninput="slSync('sl-dvfs',this.value,function(v){applyTheme()})"/></div>
         <div class="sl-row"><label>Dim. tag &amp; origine</label><input type="range" id="sl-tagsfs" min="24" max="120" value="40" oninput="slSync('sl-tagsfs',this.value,function(v){applyTheme()})"/><input type="number" id="sl-tagsfs-num" class="sl-num" min="24" max="120" value="40" oninput="slSync('sl-tagsfs',this.value,function(v){applyTheme()})"/></div>
+        <div class="sl-row"><label>Dim. testo attacchi</label><input type="range" id="sl-atk-fs" min="24" max="70" value="46" oninput="slSync('sl-atk-fs',this.value,function(v){applyTheme()})"/><input type="number" id="sl-atk-fs-num" class="sl-num" min="24" max="70" value="46" oninput="slSync('sl-atk-fs',this.value,function(v){applyTheme()})"/></div>
         <div class="sl-row"><label>Dim. testo effetti</label><input type="range" id="sl-efs" min="24" max="70" value="46" oninput="slSync('sl-efs',this.value,function(v){applyTheme()})"/><input type="number" id="sl-efs-num" class="sl-num" min="24" max="70" value="46" oninput="slSync('sl-efs',this.value,function(v){applyTheme()})"/></div>
         <div class="sl-row"><label>Colore testo</label><input type="color" id="sl-tc" value="#1a0e00" oninput="applyTheme()"/></div>
         <div class="sl-row"><label>Colore label</label><input type="color" id="sl-lc" value="#5a4020" oninput="applyTheme()"/></div>
@@ -474,6 +476,7 @@ function loadDef(k) {
   if(document.getElementById('sl-mfs'))  setV('sl-mfs',  t.mfs);
   if(document.getElementById('sl-tfs'))  setV('sl-tfs',  t.tfs);
   if(document.getElementById('sl-ivfs')) setV('sl-ivfs', t.ivfs);
+  if(document.getElementById('sl-atk-fs')) setV('sl-atk-fs', t.efs);
   if(document.getElementById('sl-efs'))  setV('sl-efs',  t.efs);
   updV();
 }
@@ -495,7 +498,7 @@ function updV() {
     'v-nfs':'sl-nfs', 'v-lfs':'sl-lfs',
     'v-dvfs':'sl-dvfs', 'v-svfs':'sl-svfs',
     'v-mfs':'sl-mfs', 'v-tfs':'sl-tfs',
-    'v-ivfs':'sl-ivfs', 'v-efs':'sl-efs',
+    'v-ivfs':'sl-ivfs', 'v-efs':'sl-efs', 'v-atk-fs':'sl-atk-fs',
     'v-arth':'sl-arth',
     'v-bgimg-op':'sl-bgimg-op',
     'v-stat-op':'sl-stat-op',
@@ -950,6 +953,12 @@ function applyTheme() {
   var efsDatiNum=document.getElementById('sl-efs-dati-num');
   if(efsDati) efsDati.value=efs;
   if(efsDatiNum) efsDatiNum.value=efs;
+  // Sincronizza slider dim. testo attacchi nel tab Dati
+  var atkFs = gV('sl-atk-fs', 46);
+  var atkFsDati=document.getElementById('sl-atk-fs-dati');
+  var atkFsDatiNum=document.getElementById('sl-atk-fs-dati-num');
+  if(atkFsDati) atkFsDati.value=atkFs;
+  if(atkFsDatiNum) atkFsDatiNum.value=atkFs;
   document.querySelectorAll('.c-eff-dot').forEach(function(el){
     el.style.color=dotc; el.style.fontSize=(parseInt(efs)+4)+'px';
   });
@@ -979,7 +988,7 @@ function renderAtk() {
   if (!hasAtk) { container.innerHTML = ''; return; }
   var tc   = gV('sl-tc','#1a0e00');
   var dotc = gV('sl-dotc','#3d2a7a');
-  var efs  = parseInt(gV('sl-efs', 46));
+  var efs  = parseInt(gV('sl-atk-fs', 46));
   var asse = (document.getElementById('f-atk-asse')||{value:'COR'}).value || 'COR';
   var cond = (document.getElementById('f-atk-cond')||{value:''}).value.trim();
   var hasCar= document.getElementById('f-has-caricata') && document.getElementById('f-has-caricata').checked;
