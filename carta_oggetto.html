@@ -121,7 +121,7 @@ textarea{resize:vertical;line-height:1.5;}
 <body>
 <div class="top-bar">
   <h1>🎒 Carta Oggetto</h1>
-  <span class="badge">1831x2539px</span><span class="badge">preview 590px</span><span class="badge" style="color:#c8a030;border-color:#4a3800">v0.0.15</span>
+  <span class="badge">1831x2539px</span><span class="badge">preview 590px</span><span class="badge" style="color:#c8a030;border-color:#4a3800">v0.0.13</span>
   <button id="btn-save-style" class="btn-style btn-save-style" onclick="saveStyle()">💾 Salva Stile</button>
   <button id="btn-load-style" class="btn-style btn-load-style" onclick="importStyle()">📂 Importa Stile</button>
   <button class="btn-dl" onclick="dl()">⬇ Scarica HD</button>
@@ -203,23 +203,28 @@ textarea{resize:vertical;line-height:1.5;}
         </div>
       </div>
       <div class="fs"><div class="fs-t">Attacchi</div>
-        <div class="note">Colpo e Condizione sono presenti su tutte le armi.</div>
-        <label>Asse Colpo</label>
-        <select id="f-atk-asse" onchange="upd()">
-          <option value="COR">COR — Corpo</option>
-          <option value="MEN">MEN — Mente</option>
-          <option value="ANI">ANI — Anima</option>
-        </select>
-        <label>Condizione</label>
-        <input type="text" id="f-atk-cond" placeholder="es. Sanguinante" maxlength="28" oninput="upd()"/>
-        <div style="margin-top:10px">
-          <label style="display:flex;align-items:center;gap:8px;cursor:pointer;margin-bottom:6px">
-            <input type="checkbox" id="f-has-caricata" onchange="upd()"/> Caricata (Azione + Rapida)
-          </label>
-          <input type="text" id="f-car-cond" placeholder="Condizione caricata (es. Stordito)" maxlength="28" oninput="upd()" style="display:none"/>
-          <label style="display:flex;align-items:center;gap:8px;cursor:pointer;margin-top:6px">
-            <input type="checkbox" id="f-has-rapida" onchange="upd()"/> Rapida (Rapida o Reazione)
-          </label>
+        <label style="display:flex;align-items:center;gap:8px;cursor:pointer;margin-bottom:10px">
+          <input type="checkbox" id="f-has-atk" onchange="upd()" checked/> Mostra sezione attacchi
+        </label>
+        <div id="atk-fields">
+          <div class="note">Colpo e Condizione sono presenti su tutte le armi.</div>
+          <label>Asse Colpo</label>
+          <select id="f-atk-asse" onchange="upd()">
+            <option value="COR">COR — Corpo</option>
+            <option value="MEN">MEN — Mente</option>
+            <option value="ANI">ANI — Anima</option>
+          </select>
+          <label>Condizione</label>
+          <input type="text" id="f-atk-cond" placeholder="es. Sanguinante" maxlength="28" oninput="upd()"/>
+          <div style="margin-top:10px">
+            <label style="display:flex;align-items:center;gap:8px;cursor:pointer;margin-bottom:6px">
+              <input type="checkbox" id="f-has-caricata" onchange="upd()"/> Caricata (Azione + Rapida)
+            </label>
+            <input type="text" id="f-car-cond" placeholder="Condizione caricata (es. Stordito)" maxlength="28" oninput="upd()" style="display:none"/>
+            <label style="display:flex;align-items:center;gap:8px;cursor:pointer;margin-top:6px">
+              <input type="checkbox" id="f-has-rapida" onchange="upd()"/> Rapida (Rapida o Reazione)
+            </label>
+          </div>
         </div>
       </div>
       <div class="fs"><div class="fs-t">Effetti (opzionale)</div>
@@ -948,6 +953,13 @@ function addEff() {
 function renderAtk() {
   var container = document.getElementById('d-atks');
   if (!container) return;
+  // Mostra/nasconde sezione attacchi sulla carta e i campi nel form
+  var hasAtk = !(document.getElementById('f-has-atk')) || document.getElementById('f-has-atk').checked;
+  var atkSec = document.getElementById('atk-section');
+  var atkFields = document.getElementById('atk-fields');
+  if (atkSec) atkSec.style.display = hasAtk ? '' : 'none';
+  if (atkFields) atkFields.style.display = hasAtk ? '' : 'none';
+  if (!hasAtk) { container.innerHTML = ''; return; }
   var tc   = gV('sl-tc','#1a0e00');
   var dotc = gV('sl-dotc','#3d2a7a');
   var efs  = parseInt(gV('sl-efs', 46));
@@ -1155,8 +1167,10 @@ function captureStyle() {
   ['f-atk-asse','f-atk-cond','f-car-cond'].forEach(function(id){
     var el=document.getElementById(id); if(el) state['fld_'+id]=el.value;
   });
+  var chkAtk=document.getElementById('f-has-atk');
   var chkCar=document.getElementById('f-has-caricata');
   var chkRap=document.getElementById('f-has-rapida');
+  if(chkAtk) state.fld_hasAtk=chkAtk.checked;
   if(chkCar) state.fld_hasCar=chkCar.checked;
   if(chkRap) state.fld_hasRap=chkRap.checked;
   state.effs_data = effs.slice();
@@ -1182,6 +1196,7 @@ function applyStyleState(state) {
   ['f-atk-asse','f-atk-cond','f-car-cond'].forEach(function(id){
     if(state['fld_'+id]!==undefined){ var el=document.getElementById(id); if(el) el.value=state['fld_'+id]; }
   });
+  if(state.fld_hasAtk!==undefined){ var el=document.getElementById('f-has-atk'); if(el) el.checked=state.fld_hasAtk; }
   if(state.fld_hasCar!==undefined){ var el=document.getElementById('f-has-caricata'); if(el) el.checked=state.fld_hasCar; }
   if(state.fld_hasRap!==undefined){ var el=document.getElementById('f-has-rapida'); if(el) el.checked=state.fld_hasRap; }
   if(state.effs_data){ effs=state.effs_data.slice(); }
