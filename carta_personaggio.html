@@ -76,7 +76,7 @@ input:focus,select:focus,textarea:focus{border-color:#2d9e40 !important;}
 .c-ilbl{font-size:36px;font-weight:700;letter-spacing:3px;text-transform:uppercase;opacity:.55;}
 .c-ival{font-size:58px;font-weight:900;text-align:center;line-height:1.1;}
 .c-ival.bonus{font-family:'JetBrains Mono',monospace;font-size:50px;}
-.c-racial{position:absolute;left:32px;right:32px;top:226px;border-radius:18px;padding:28px 40px;z-index:5;min-height:100px;border-width:6px;border-style:solid;}
+.c-racial{position:absolute;left:32px;right:32px;top:226px;padding:28px 40px;z-index:5;min-height:100px;border:none;background:transparent;}
 .c-racial-lbl{font-size:36px;font-weight:900;letter-spacing:2px;margin-bottom:10px;}
 .c-racial-txt{font-size:42px;font-style:italic;line-height:1.35;}
 .c-deriv{position:absolute;left:0;right:0;top:454px;height:200px;display:flex;border-top:3px solid rgba(0,0,0,0.18);border-bottom:3px solid rgba(0,0,0,0.18);z-index:5;}
@@ -244,9 +244,8 @@ input:focus,select:focus,textarea:focus{border-color:#2d9e40 !important;}
         <div class="sl-row"><label>Colore testo</label><input type="color" id="sl-tc" value="#0a0a0a" oninput="applyTheme()"/></div>
         <div class="sl-row"><label>Colore label</label><input type="color" id="sl-lc" value="#404040" oninput="applyTheme()"/></div>
       </div>
-      <div class="fs"><div class="fs-t">Banda Talento</div>
-        <div class="sl-row"><label>Sfondo</label><input type="color" id="sl-talbg" value="#f8d840" oninput="applyTheme()"/></div>
-        <div class="sl-row"><label>Bordo</label><input type="color" id="sl-talbr" value="#c09818" oninput="applyTheme()"/></div>
+      <div class="fs"><div class="fs-t">Talento Raziale</div>
+        <div class="sl-row"><label>Colore accent</label><input type="color" id="sl-talbr" value="#c09818" oninput="applyTheme()"/></div>
       </div>
       <div class="fs"><div class="fs-t">Simbolo Grado</div>
         <div class="sl-row"><label>Forma simbolo</label>
@@ -416,7 +415,7 @@ function loadDef(k) {
   setV('sl-br', t.br); setV('sl-op', t.op);
   setV('sl-font', t.font);
   setV('sl-tc', t.tc); setV('sl-lc', t.lc);
-  if(document.getElementById('sl-talbg')) { setV('sl-talbg', t.talbg); setV('sl-talbr', t.talbr); }
+  if(document.getElementById('sl-talbr')) { setV('sl-talbr', t.talbr); }
   if(document.getElementById('sl-effbg')) { setV('sl-effbg', t.effbg); setV('sl-effbr', t.effbr); setV('sl-efftc', t.efftc); setV('sl-dotc', t.dotc); }
   setV('sl-nfs', t.nfs); setV('sl-lfs', t.lfs);
   if(document.getElementById('sl-dvfs')) setV('sl-dvfs', t.dvfs);
@@ -644,11 +643,11 @@ async function dl() {
   var lbrd = card.querySelector('.c-lower-brd');
   if (lbrd) inlineComputed(lbrd, 'borderTop');
 
-  // 7. c-racial border
+  // 7. c-racial: transparent bg, no border
   var racial = card.querySelector('.c-racial');
   if (racial) {
-    inlineComputed(racial, 'border');
-    inlineComputed(racial, 'borderRadius');
+    inlineStyle(racial, 'background', 'transparent');
+    inlineStyle(racial, 'border', 'none');
   }
 
   // 8. c-icell divisori (::before non accessibili, ma i border delle celle sì)
@@ -742,7 +741,6 @@ function applyTheme() {
   var svfs = gV('sl-svfs',244);
   var mfs  = gV('sl-mfs',80);
   var tfs  = gV('sl-tfs',42);
-  var talbg= gV('sl-talbg','#f8d840');
   var talbr= gV('sl-talbr','#c09818');
   var bgop = parseFloat(gV('sl-bgimg-op',50))/100;
 
@@ -753,7 +751,7 @@ function applyTheme() {
   document.getElementById('d-nome').style.fontFamily = font;
   document.getElementById('d-nome').style.fontSize   = nfs+'px';
 
-  ['lbl-razza','lbl-prim','lbl-sec','lbl-hp','lbl-vel','lbl-peso','lbl-alt','lbl-tal'].forEach(function(id){
+  ['lbl-razza','lbl-prim','lbl-sec','lbl-hp','lbl-vel','lbl-peso','lbl-alt'].forEach(function(id){
     var el=document.getElementById(id); if(!el)return;
     el.style.color=lc; el.style.fontSize=lfs+'px'; el.style.fontFamily=font;
   });
@@ -774,8 +772,8 @@ function applyTheme() {
   ['d-cmod','d-mmod','d-amod'].forEach(function(id){ document.getElementById(id).style.fontSize=mfs+'px'; });
 
   var rb=document.getElementById('racial-band');
-  rb.style.background=talbg; rb.style.borderColor=talbr;
-  document.getElementById('lbl-tal').style.color=tc;
+  rb.style.background='transparent'; rb.style.border='none';
+  document.getElementById('lbl-tal').style.color=talbr;
 }
 
 function upd() {
