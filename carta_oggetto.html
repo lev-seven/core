@@ -121,7 +121,7 @@ textarea{resize:vertical;line-height:1.5;}
 <body>
 <div class="top-bar">
   <h1>🎒 Carta Oggetto</h1>
-  <span class="badge">1831x2539px</span><span class="badge">preview 590px</span><span class="badge" style="color:#c8a030;border-color:#4a3800">v0.0.13</span>
+  <span class="badge">1831x2539px</span><span class="badge">preview 590px</span><span class="badge" style="color:#c8a030;border-color:#4a3800">v0.0.15</span>
   <button id="btn-save-style" class="btn-style btn-save-style" onclick="saveStyle()">💾 Salva Stile</button>
   <button id="btn-load-style" class="btn-style btn-load-style" onclick="importStyle()">📂 Importa Stile</button>
   <button class="btn-dl" onclick="dl()">⬇ Scarica HD</button>
@@ -272,6 +272,7 @@ textarea{resize:vertical;line-height:1.5;}
         <div class="sl-row"><label>Dim. nome header</label><input type="range" id="sl-nfs" min="50" max="140" value="96" oninput="slSync('sl-nfs',this.value,function(v){applyTheme()})"/><input type="number" id="sl-nfs-num" class="sl-num" min="50" max="140" value="96" oninput="slSync('sl-nfs',this.value,function(v){applyTheme()})"/></div>
         <div class="sl-row"><label>Dim. label</label><input type="range" id="sl-lfs" min="20" max="60" value="36" oninput="slSync('sl-lfs',this.value,function(v){applyTheme()})"/><input type="number" id="sl-lfs-num" class="sl-num" min="20" max="60" value="36" oninput="slSync('sl-lfs',this.value,function(v){applyTheme()})"/></div>
         <div class="sl-row"><label>Dim. valori info</label><input type="range" id="sl-dvfs" min="40" max="130" value="90" oninput="slSync('sl-dvfs',this.value,function(v){applyTheme()})"/><input type="number" id="sl-dvfs-num" class="sl-num" min="40" max="130" value="90" oninput="slSync('sl-dvfs',this.value,function(v){applyTheme()})"/></div>
+        <div class="sl-row"><label>Dim. tag &amp; origine</label><input type="range" id="sl-tagsfs" min="24" max="120" value="40" oninput="slSync('sl-tagsfs',this.value,function(v){applyTheme()})"/><input type="number" id="sl-tagsfs-num" class="sl-num" min="24" max="120" value="40" oninput="slSync('sl-tagsfs',this.value,function(v){applyTheme()})"/></div>
         <div class="sl-row"><label>Dim. testo effetti</label><input type="range" id="sl-efs" min="24" max="70" value="46" oninput="slSync('sl-efs',this.value,function(v){applyTheme()})"/><input type="number" id="sl-efs-num" class="sl-num" min="24" max="70" value="46" oninput="slSync('sl-efs',this.value,function(v){applyTheme()})"/></div>
         <div class="sl-row"><label>Colore testo</label><input type="color" id="sl-tc" value="#1a0e00" oninput="applyTheme()"/></div>
         <div class="sl-row"><label>Colore label</label><input type="color" id="sl-lc" value="#5a4020" oninput="applyTheme()"/></div>
@@ -452,6 +453,7 @@ function loadDef(k) {
   if(document.getElementById('sl-effbg')) { setV('sl-effbg', t.effbg); setV('sl-effbr', t.effbr); setV('sl-efftc', t.efftc); setV('sl-dotc', t.dotc); }
   setV('sl-nfs', t.nfs); setV('sl-lfs', t.lfs);
   if(document.getElementById('sl-dvfs')) setV('sl-dvfs', t.dvfs);
+  if(document.getElementById('sl-tagsfs')) setV('sl-tagsfs', t.tagsfs||40);
   if(document.getElementById('sl-svfs')) setV('sl-svfs', t.svfs);
   if(document.getElementById('sl-mfs'))  setV('sl-mfs',  t.mfs);
   if(document.getElementById('sl-tfs'))  setV('sl-tfs',  t.tfs);
@@ -906,10 +908,11 @@ function applyTheme() {
     var el=document.getElementById(id); if(!el)return;
     el.style.color=lc; el.style.fontSize=lfs+'px'; el.style.fontFamily=font;
   });
-  ['d-tipo','d-tags'].forEach(function(id){
-    var el=document.getElementById(id); if(!el)return;
-    el.style.color=tc; el.style.fontFamily=font; el.style.fontSize=dvfs+'px';
-  });
+  var tagsfs = gV('sl-tagsfs', 40);
+  var dTipo = document.getElementById('d-tipo');
+  if(dTipo){ dTipo.style.color=tc; dTipo.style.fontFamily=font; dTipo.style.fontSize=dvfs+'px'; }
+  var dTags = document.getElementById('d-tags');
+  if(dTags){ dTags.style.color=tc; dTags.style.fontFamily=font; dTags.style.fontSize=tagsfs+'px'; }
   ['d-peso','d-attiv'].forEach(function(id){
     var el=document.getElementById(id); if(!el)return;
     el.style.color=tc; el.style.fontFamily=font; el.style.fontSize=dvfs+'px';
