@@ -121,7 +121,7 @@ textarea{resize:vertical;line-height:1.5;}
 <body>
 <div class="top-bar">
   <h1>🎒 Carta Oggetto</h1>
-  <span class="badge">1831x2539px</span><span class="badge">preview 590px</span><span class="badge" style="color:#c8a030;border-color:#4a3800">v0.0.16</span>
+  <span class="badge">1831x2539px</span><span class="badge">preview 590px</span><span class="badge" style="color:#c8a030;border-color:#4a3800">v0.0.13</span>
   <button id="btn-save-style" class="btn-style btn-save-style" onclick="saveStyle()">💾 Salva Stile</button>
   <button id="btn-load-style" class="btn-style btn-load-style" onclick="importStyle()">📂 Importa Stile</button>
   <button class="btn-dl" onclick="dl()">⬇ Scarica HD</button>
@@ -231,6 +231,7 @@ textarea{resize:vertical;line-height:1.5;}
         <div class="note">Effetti speciali, passivi, utilizzi limitati, ecc.</div>
         <div id="eff-container"></div>
         <button class="add-eff" onclick="addEff()">+ Aggiungi effetto</button>
+        <div class="sl-row" style="margin-top:8px"><label>Dim. testo</label><input type="range" id="sl-efs-dati" min="24" max="70" value="46" oninput="slSync('sl-efs',this.value,function(v){applyTheme()})"/><input type="number" id="sl-efs-dati-num" class="sl-num" min="24" max="70" value="46" oninput="slSync('sl-efs',this.value,function(v){applyTheme()})"/></div>
       </div>
       <div class="fs"><div class="fs-t">Descrizione</div>
         <textarea id="f-desc" rows="3" placeholder="Descrizione dell'oggetto..." oninput="upd()"></textarea>
@@ -944,6 +945,11 @@ function applyTheme() {
   applyDescStyle();
   var list=document.getElementById('d-effs');
   if(list) list.style.fontSize=efs+'px';
+  // Sincronizza slider dim. testo effetti nel tab Dati
+  var efsDati=document.getElementById('sl-efs-dati');
+  var efsDatiNum=document.getElementById('sl-efs-dati-num');
+  if(efsDati) efsDati.value=efs;
+  if(efsDatiNum) efsDatiNum.value=efs;
   document.querySelectorAll('.c-eff-dot').forEach(function(el){
     el.style.color=dotc; el.style.fontSize=(parseInt(efs)+4)+'px';
   });
