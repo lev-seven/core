@@ -121,7 +121,7 @@ textarea{resize:vertical;line-height:1.5;}
 <body>
 <div class="top-bar">
   <h1>🎒 Carta Oggetto</h1>
-  <span class="badge">1831x2539px</span><span class="badge">preview 590px</span><span class="badge" style="color:#c8a030;border-color:#4a3800">v0.0.19</span>
+  <span class="badge">1831x2539px</span><span class="badge">preview 590px</span><span class="badge" style="color:#c8a030;border-color:#4a3800">v0.0.20</span>
   <button id="btn-save-style" class="btn-style btn-save-style" onclick="saveStyle()">💾 Salva Stile</button>
   <button id="btn-load-style" class="btn-style btn-load-style" onclick="importStyle()">📂 Importa Stile</button>
   <button class="btn-dl" onclick="dl()">⬇ Scarica HD</button>
@@ -1041,7 +1041,7 @@ function renderFxEffs() {
   } else {
     if (fxSec) fxSec.classList.remove('hidden');
     list.innerHTML = active.map(function(e){
-      return '<div class="c-eff-item"><span class="c-eff-dot" style="color:'+dotc+';font-size:'+(parseInt(efs)+4)+'px">&#9670;</span><span style="color:'+tc+'">'+e+'</span></div>';
+      return '<div class="c-eff-item"><span class="c-eff-dot" style="color:'+dotc+';font-size:'+(parseInt(efs)+4)+'px">&#9670;</span><span style="color:'+tc+';font-size:'+efs+'px">'+e+'</span></div>';
     }).join('');
     list.style.fontSize = efs+'px';
   }
